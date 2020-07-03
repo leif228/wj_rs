@@ -1,13 +1,4 @@
-/**
- * Copyright (C), 2016-2018, 广州航运电子商务有限公司
- * FileName: UserService
- * Author:   Guoqiang
- * Date:     2018/11/16 下午1:46
- * Description: 用户服务接口
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
+
 package com.wujie.fclient.service;
 
 import com.wujie.common.base.ApiResult;
