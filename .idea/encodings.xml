@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-app-center/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-dispatch-center/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-feign-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-http-center/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-register-center/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-tcp-center/src/main/java" charset="UTF-8" />
+  </component>
+</project>
