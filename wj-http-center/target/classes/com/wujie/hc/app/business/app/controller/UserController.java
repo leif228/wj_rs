@@ -46,7 +46,7 @@ public class UserController {
 
     @PostMapping("/getTreeData")
     public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId) {
-        return tcpUserService.getTreeData(nodeId);
+        return dispatchUserService.getTreeData(nodeId);
     }
 
     @PostMapping("/userRegist")

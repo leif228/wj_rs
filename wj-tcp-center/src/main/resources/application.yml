@@ -34,7 +34,7 @@ eureka:
 
 spring:
   application:
-    name: wj-tcp-center
+    name: wj-tc-center
   servlet:
     multipart:
       max-file-size: 50MB
