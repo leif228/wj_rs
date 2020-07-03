@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
         value = "wj-hc-center",
         fallback = HttpUserService.HttpUserServiceFallBack.class
+
 )
 public interface HttpUserService {
 

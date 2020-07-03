@@ -19,30 +19,31 @@ public class TcpClient {
 
     private String ip;
     private int port;
-    public  void init() throws InterruptedException {
+
+    public void init() throws InterruptedException {
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
-        Bootstrap bootstrap = new Bootstrap();
-        bootstrap.group(group);
-        bootstrap.channel(NioSocketChannel.class);
-        bootstrap.option(ChannelOption.SO_KEEPALIVE,true);
-        bootstrap.handler(new ChannelInitializer() {
-            @Override
-            protected void initChannel(Channel ch) throws Exception {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group);
+            bootstrap.channel(NioSocketChannel.class);
+            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            bootstrap.handler(new ChannelInitializer() {
+                @Override
+                protected void initChannel(Channel ch) throws Exception {
 //                ch.pipeline().addLast("logging",new LoggingHandler("DEBUG"));
-                ch.pipeline().addLast(new WjEncoderHandler());
-                ch.pipeline().addLast(new WjEchoHandler());
-                ch.pipeline().addLast(new DecoderHandler());//解码器，接收消息时候用
-                ch.pipeline().addLast(new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
-            }
-        });
-        bootstrap.remoteAddress(ip,port);
-        ChannelFuture future = bootstrap.connect().sync();
+                    ch.pipeline().addLast(new WjEncoderHandler());
+                    ch.pipeline().addLast(new WjEchoHandler());
+                    ch.pipeline().addLast(new DecoderHandler());//解码器，接收消息时候用
+                    ch.pipeline().addLast(new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
+                }
+            });
+            bootstrap.remoteAddress(ip, port);
+            ChannelFuture future = bootstrap.connect().sync();
 
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             group.shutdownGracefully().sync();
         }
     }
@@ -54,19 +55,21 @@ public class TcpClient {
 
     public static void main(String[] args) throws InterruptedException {
         Properties properties = FileUtils.readFile("E:\\config.properties");
-        if(properties != null)
-            new TcpClient(properties.getProperty("ip"),Integer.valueOf(properties.getProperty("port"))).init();
+
+        if (properties != null)
+            new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
         else
-            new TcpClient("127.0.0.1",8777).init();
+            new TcpClient("127.0.0.1", 8777).init();
+
     }
 
-    public static boolean startTcpClient () {
-        try{
+    public static boolean startTcpClient() {
+        try {
             Properties properties = FileUtils.readFile("E:\\config.properties");
-            if(properties != null)
-                new TcpClient(properties.getProperty("ip"),Integer.valueOf(properties.getProperty("port"))).init();
+            if (properties != null)
+                new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
