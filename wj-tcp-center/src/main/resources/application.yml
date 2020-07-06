@@ -1,5 +1,5 @@
 server:
-  port: 8889
+  port: 8879
 logging:
   config: classpath:logback-spring.xml
 
@@ -143,6 +143,9 @@ xcxwxpay:
   projectEnv: dev
   serverDomain: https://127.0.0.1/api
 
+  tcpClientConfigPath: E:\cconfig.properties
+  tcpServiceConfigPath: E:\sconfig.properties
+
 secure:
   ignored:
     urls: #安全路径白名单
@@ -157,7 +160,7 @@ secure:
       - /webjars/springfox-swagger-ui/**
       - /actuator/**
       - /druid/**
-#      - /deviceRegist
+      #      - /deviceRegist
       - /userLogin
       - /userRegist
 

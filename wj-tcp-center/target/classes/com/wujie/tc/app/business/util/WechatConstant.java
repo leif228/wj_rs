@@ -47,5 +47,8 @@ public class WechatConstant {
     private String key;
     private String secret;
 
+    private String tcpClientConfigPath;
+    private String tcpServiceConfigPath;
+
 
 }

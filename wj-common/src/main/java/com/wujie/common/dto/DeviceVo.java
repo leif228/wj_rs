@@ -30,4 +30,5 @@ public class DeviceVo implements Serializable {
     public void setFzwno(String fzwno) {
         this.fzwno = fzwno;
     }
+
 }

@@ -15,14 +15,19 @@ import com.wujie.tc.app.business.repository.NodeStandbyMapper;
 import com.wujie.tc.app.business.repository.WjuserMapper;
 import com.wujie.tc.app.business.util.MDA;
 import com.wujie.tc.app.business.util.NumConvertUtil;
+import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.app.business.util.date.DateUtil;
+import com.wujie.tc.netty.client.TcpClient;
+import com.wujie.tc.netty.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,10 +38,12 @@ public class UserServiceImpl implements UserService {
     private NodeMapper nodeMapper;
     private NodeStandbyMapper nodeStandbyMapper;
     private WjuserMapper wjuserMapper;
+    private WechatConstant wechatConstant;
 
     @Autowired
-    public UserServiceImpl(NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(WechatConstant wechatConstant,NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
         this.nodeStandbyMapper = nodeStandbyMapper;
+        this.wechatConstant = wechatConstant;
         this.nodeMapper = nodeMapper;
         this.deviceMapper = deviceMapper;
         this.wjuserMapper = wjuserMapper;
@@ -46,7 +53,7 @@ public class UserServiceImpl implements UserService {
     public ApiResult getTreeData(Long nodeId) {
         NodeVo nodeVo = new NodeVo();
         List<NodeVo> list = nodeMapper.getAllChildNodeVosLayer();
-        if(list.size()>0){
+        if (list.size() > 0) {
             Map<Integer, List<NodeVo>> map = list.stream().collect(Collectors.groupingBy(NodeVo::getLayer));
             int mapSize = map.size();
             if (mapSize > 0) {
@@ -75,6 +82,28 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(nodeVo);
+    }
+
+    @Override
+    public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
+        Map<String, String> keyValueMap = new HashMap<>();
+        keyValueMap.put("ip", ip);
+        keyValueMap.put("port", port);
+        keyValueMap.put("fzwno", fzwno);
+        log.debug("===============================ip:"+ip+":port"+port);
+        boolean issuccess = FileUtils.updatePropertiess(wechatConstant.getTcpClientConfigPath(), keyValueMap);
+        if (issuccess) {
+            boolean isconnect = TcpClient.startTcpClient(wechatConstant);
+            if (isconnect)
+                return ApiResult.success();
+            else{
+                log.debug("===============================连接tcp服务器失败：" + ip + ":" + port);
+                return ApiResult.error(ErrorEnum.ERR_CONNECTTCP_NOT);
+            }
+        } else {
+            log.debug("===============================写cconfig.properties失败！");
+            return ApiResult.error(ErrorEnum.ERR_CCONFIGWRITE_NOT);
+        }
     }
 
 }

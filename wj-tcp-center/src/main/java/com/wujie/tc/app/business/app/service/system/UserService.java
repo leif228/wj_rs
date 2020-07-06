@@ -10,4 +10,6 @@ import java.util.List;
 public interface UserService {
 
     ApiResult getTreeData(Long nodeId);
+
+    ApiResult tcpClientConnect(String ip, String port, String fzwno);
 }

@@ -142,6 +142,16 @@
       "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
     },
     {
+      "name": "xcxwxpay.tcp-client-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.tcp-service-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
       "name": "xcxwxpay.u-r-l-c-o-d-e2-s-e-s-s-i-o-n",
       "type": "java.lang.String",
       "sourceType": "com.wujie.tc.app.business.util.WechatConstant",

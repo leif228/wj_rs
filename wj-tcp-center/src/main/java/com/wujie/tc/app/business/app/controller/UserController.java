@@ -31,4 +31,13 @@ public class UserController {
         return userService.getTreeData(nodeId);
     }
 
+    @PostMapping("/tcpClientConnect")
+    public ApiResult tcpClientConnect(@RequestParam(value = "ip") String ip,
+                                      @RequestParam(value = "port") String port,
+                                      @RequestParam(value = "fzwno") String fzwno
+
+    ) {
+        return userService.tcpClientConnect(ip, port, fzwno);
+    }
+
 }

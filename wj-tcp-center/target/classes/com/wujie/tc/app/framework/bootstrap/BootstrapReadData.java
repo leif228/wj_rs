@@ -1,5 +1,6 @@
 package com.wujie.tc.app.framework.bootstrap;
 
+import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.app.business.util.jdbc.impl.SHCommonDaoImpl;
 import com.wujie.tc.app.framework.util.base.impl.BaseServiceImpl;
 import com.wujie.tc.netty.server.TcpServer;
@@ -31,7 +32,9 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 
 	@Autowired
 	private SHCommonDaoImpl shCommonDaoImpl;
-	
+	@Autowired
+	private WechatConstant wechatConstant;
+
 	@Override
 	public void run(String... args) throws Exception {
 //		Supplier<List<Map<String, Object>>> deal = () -> {
@@ -61,6 +64,6 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //			}
 //		});
 //		thread.start();
-		TcpServer.StartTcpServer();
+		TcpServer.StartTcpServer(wechatConstant);
 	}
 }

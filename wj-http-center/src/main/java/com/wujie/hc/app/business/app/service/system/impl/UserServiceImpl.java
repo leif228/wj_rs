@@ -4,6 +4,7 @@ import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.AuthUserService;
 import com.wujie.hc.app.business.app.service.system.UserService;
 import com.wujie.hc.app.business.entity.Device;
@@ -43,10 +44,12 @@ public class UserServiceImpl implements UserService {
     private AuthUserService authUserService;
     private PasswordEncoder passwordEncoder;
     private JwtTokenUtil jwtTokenUtil;
+    private TcpUserService tcpUserService;
 
     @Autowired
-    public UserServiceImpl(NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(TcpUserService tcpUserService,NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
         this.nodeStandbyMapper = nodeStandbyMapper;
+        this.tcpUserService = tcpUserService;
         this.nodeMapper = nodeMapper;
         this.deviceMapper = deviceMapper;
         this.wjuserMapper = wjuserMapper;
@@ -216,6 +219,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(nodeVo);
+    }
+
+    @Override
+    public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
+        return tcpUserService.tcpClientConnect(ip,port,fzwno);
     }
 
 }

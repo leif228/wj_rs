@@ -1,9 +1,11 @@
 package com.wujie.tc.netty.server.decoder;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.tc.netty.pojo.LoginTask;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
 import com.wujie.tc.netty.pojo.Device;
+import com.wujie.tc.netty.utils.FileUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Properties;
 
 @Slf4j
 public class WjDecoderHandler extends ByteToMessageDecoder {
@@ -144,6 +147,8 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
     }
     private void nettyReq(ChannelHandlerContext ctx, String tx) {
         log.info("心跳nettyReq" + tx);
+        if ("ping".equalsIgnoreCase(tx))
+            sendReq(ctx, "pong");
     }
     /**
      * 客户端 注册
@@ -184,11 +189,42 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
             if (e.state() == IdleState.ALL_IDLE) {
                 //检测心跳
 //                checkIdle(ctx);
+                sendReq(ctx,"ping");
                 log.debug(String.format("DecoderHandler# # client userEventTriggered... : %s", ctx.channel()));
             }
         }
 
         super.userEventTriggered(ctx, evt);
+    }
+
+    private void sendReq(ChannelHandlerContext ctx, String pipo) {
+        WjProtocol wjProtocol = new WjProtocol();
+        wjProtocol.setPlat(Short.parseShort("20"));
+        wjProtocol.setMaincmd(Short.parseShort("0"));
+        wjProtocol.setSubcmd(Short.parseShort("0"));
+        wjProtocol.setFormat("TX");
+        wjProtocol.setBack(Short.parseShort("0"));
+
+//        LoginTask loginTask = new LoginTask();
+//        Properties properties= FileUtils.readFile("E:\\config.properties");
+//        if(properties != null)
+//            loginTask.setOid(properties.getProperty("fzwno"));
+//        else
+//            loginTask.setOid("88888888");
+
+//        byte [] objectBytes= ByteUtils.InstanceObjectMapper().writeValueAsBytes(loginTask);
+
+        String jsonStr = pipo;
+        log.debug(jsonStr);
+        byte [] objectBytes= jsonStr.getBytes();
+
+        int len = 21+objectBytes.length;
+        wjProtocol.setLen((short) len);
+        wjProtocol.setUserdata(objectBytes);
+
+        ctx.write(wjProtocol);
+
+        ctx.flush();
     }
 
 

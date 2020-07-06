@@ -1,7 +1,9 @@
 package com.wujie.tc.netty.server;
 
+import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.server.business.OutBusinessHandler;
+import com.wujie.tc.netty.server.business.WjOutBusinessHandler;
 import com.wujie.tc.netty.server.decoder.WjDecoderHandler;
 import com.wujie.tc.netty.server.encoder.EncoderHandler;
 import com.wujie.tc.netty.utils.FileUtils;
@@ -12,6 +14,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
@@ -19,6 +22,8 @@ import java.util.Properties;
 @Slf4j
 public class TcpServer {
     private int port;
+
+    private static WechatConstant wechatConstant;
 
     private void init() {
         log.info("正在启动tcp服务器……");
@@ -31,8 +36,9 @@ public class TcpServer {
             bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {//绑定通道参数
 //                    ch.pipeline().addLast("logging",new LoggingHandler("DEBUG"));//设置log监听器，并且日志级别为debug，方便观察运行流程
+                    ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
                     ch.pipeline().addLast("encode", new EncoderHandler());//编码器。发送消息时候用
-                    ch.pipeline().addLast("outHandler", new OutBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
+                    ch.pipeline().addLast("outHandler", new WjOutBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                     ch.pipeline().addLast("decode", new WjDecoderHandler());//解码器，接收消息时候用
 //                    ch.pipeline().addLast("decode",new DecoderHandler());//解码器，接收消息时候用
 //                    ch.pipeline().addLast("inHandler",new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
@@ -62,9 +68,14 @@ public class TcpServer {
         this.port = port;
     }
 
-    public static boolean StartTcpServer() {
+    public static boolean StartTcpServer(WechatConstant wechatConstant) {
+        TcpServer.wechatConstant = wechatConstant;
         try {
-            new TcpServer(8777).init();
+            Properties properties = FileUtils.readFile(wechatConstant.getTcpServiceConfigPath());
+            if (properties != null)
+                new TcpServer(Integer.valueOf(properties.getProperty("port"))).init();
+            else
+                new TcpServer(8777).init();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
