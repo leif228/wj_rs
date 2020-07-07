@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="wj-register-center:jar">
+  <artifact type="jar" build-on-make="true" name="wj-register-center:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/wj_register_center_jar</output-path>
     <root id="archive" name="wj-register-center_jar.jar">
       <element id="archive" name="wj-register-center.jar">

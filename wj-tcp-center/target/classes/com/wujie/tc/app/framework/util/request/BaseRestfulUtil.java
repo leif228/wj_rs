@@ -2,6 +2,7 @@ package com.wujie.tc.app.framework.util.request;
 
 import java.io.IOException;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.app.framework.result.GeneralResult;
 import com.wujie.tc.app.business.util.system.SystemConfig;
 import org.apache.commons.httpclient.HttpClient;
@@ -19,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
 
-import net.sf.json.JSONObject;
 
 
 /**

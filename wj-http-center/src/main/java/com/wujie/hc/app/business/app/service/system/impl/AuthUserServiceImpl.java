@@ -1,6 +1,5 @@
 package com.wujie.hc.app.business.app.service.system.impl;
 
-import com.alipay.api.domain.UserDetails;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.hc.app.business.app.service.system.AuthUserService;
 import com.wujie.hc.app.business.entity.Wjuser;

@@ -390,11 +390,11 @@
             <version>2.1.0</version>
         </dependency>-->
         <!--netty 配置-->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.19.Final</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.netty</groupId>-->
+<!--            <artifactId>netty-all</artifactId>-->
+<!--            <version>4.1.19.Final</version>-->
+<!--        </dependency>-->
         <!-- 七牛云所需要jar -->
 <!--        <dependency>-->
 <!--            <groupId>com.google.code.gson</groupId>-->
