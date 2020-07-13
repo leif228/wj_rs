@@ -15,4 +15,12 @@ public class Device {
         this.uniqueNo = uniqueNo;
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Device{" +
+                "uniqueNo='" + uniqueNo + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

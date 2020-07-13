@@ -22,60 +22,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 )
 public interface DispatchUserService {
 
-    @PostMapping("/deviceRegist")
-    public ApiResult deviceRegist(@RequestParam(value = "userId") Long userId,
-                                  @RequestParam(value = "deviceSelected") String deviceSelected,
-                                  @RequestParam(value = "deviceName") String deviceName,
-                                  @RequestParam(value = "ip") String ip,
-                                  @RequestParam(value = "port") String port,
-                                  @RequestParam(value = "nodeId") Long nodeId);
-
-    @PostMapping("/getChildNodes")
-    public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId);
 
 
     @PostMapping("/getTreeData")
     public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId);
 
-    @PostMapping("/userRegist")
-    public ApiResult userRegist(@RequestParam(value = "username") String username,
-                                       @RequestParam(value = "password") String password,
-                                       @RequestParam(value = "idcard") String idcard,
-                                       @RequestParam(value = "phone") String phone,
-                                       @RequestParam(value = "userSelected") String userSelected);
-
-    @PostMapping("/userLogin")
-    public ApiResult userLogin(@RequestParam(value = "username") String username,
-                                      @RequestParam(value = "password") String password
-    );
 
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
-        @Override
-        public ApiResult deviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId) {
-            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
-        }
-
-        @Override
-        public ApiResult getChildNodes(Long nodeId) {
-            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
-        }
 
         @Override
         public ApiResult getTreeData(Long nodeId) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
-        @Override
-        public ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected) {
-            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
-        }
-
-        @Override
-        public ApiResult userLogin(String username, String password) {
-            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
-        }
 
     }
 

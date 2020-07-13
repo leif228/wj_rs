@@ -33,10 +33,6 @@ public interface HttpUserService {
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId);
 
-
-    @PostMapping("/getTreeData")
-    public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId);
-
     @PostMapping("/userRegist")
     public ApiResult userRegist(@RequestParam(value = "username") String username,
                                 @RequestParam(value = "password") String password,
@@ -59,11 +55,6 @@ public interface HttpUserService {
 
         @Override
         public ApiResult getChildNodes(Long nodeId) {
-            return ApiResult.error(ErrorEnum.ERR_HSERVICE_NOT);
-        }
-
-        @Override
-        public ApiResult getTreeData(Long nodeId) {
             return ApiResult.error(ErrorEnum.ERR_HSERVICE_NOT);
         }
 

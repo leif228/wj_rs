@@ -18,7 +18,9 @@ import com.wujie.tc.app.business.util.NumConvertUtil;
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.app.business.util.date.DateUtil;
 import com.wujie.tc.netty.client.TcpClient;
+import com.wujie.tc.netty.server.ChannelManager;
 import com.wujie.tc.netty.utils.FileUtils;
+import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +41,11 @@ public class UserServiceImpl implements UserService {
     private NodeStandbyMapper nodeStandbyMapper;
     private WjuserMapper wjuserMapper;
     private WechatConstant wechatConstant;
+    private ChannelManager channelManager;
 
     @Autowired
-    public UserServiceImpl(WechatConstant wechatConstant,NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.channelManager = channelManager;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.wechatConstant = wechatConstant;
         this.nodeMapper = nodeMapper;
@@ -50,60 +54,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult getTreeData(Long nodeId) {
-        NodeVo nodeVo = new NodeVo();
-        List<NodeVo> list = nodeMapper.getAllChildNodeVosLayer();
-        if (list.size() > 0) {
-            Map<Integer, List<NodeVo>> map = list.stream().collect(Collectors.groupingBy(NodeVo::getLayer));
-            int mapSize = map.size();
-            if (mapSize > 0) {
-                int firstLayer = 1;
-                for (int i = firstLayer; i <= mapSize; i++) {
-                    List<NodeVo> list0 = map.get(i);
-                    int j = i + 1;
-                    if (j > mapSize)
-                        break;
-                    List<NodeVo> list1 = map.get(j);
-                    for (NodeVo parent : list0) {
-                        if (!parent.getName().contains(":"))
-                            parent.setName(parent.getName() + "(" + parent.getIp() + ":" + parent.getPort() + ")");
-                        for (NodeVo child : list1) {
-                            if (parent.getRgt() > child.getRgt() && parent.getLft() < child.getLft()) {
-                                parent.getChildren().add(child);
-                                if (!child.getName().contains(":"))
-                                    child.setName(child.getName() + "(" + child.getIp() + ":" + child.getPort() + ")");
-                            }
-                        }
-                    }
-                }
-                nodeVo = map.get(firstLayer).get(0);
-                log.debug(nodeVo.toString());
-            }
-        }
-
-        return ApiResult.success(nodeVo);
-    }
-
-    @Override
     public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put("ip", ip);
         keyValueMap.put("port", port);
         keyValueMap.put("fzwno", fzwno);
-        log.debug("===============================ip:"+ip+":port"+port);
+        log.info("===============================ip:" + ip + ":port" + port);
         boolean issuccess = FileUtils.updatePropertiess(wechatConstant.getTcpClientConfigPath(), keyValueMap);
         if (issuccess) {
             boolean isconnect = TcpClient.startTcpClient(wechatConstant);
-            if (isconnect)
+            if (isconnect) {
+                log.info("===============================连接tcp服务器成功：" + ip + ":" + port);
                 return ApiResult.success();
-            else{
-                log.debug("===============================连接tcp服务器失败：" + ip + ":" + port);
+            } else {
+                log.info("===============================连接tcp服务器失败：" + ip + ":" + port);
                 return ApiResult.error(ErrorEnum.ERR_CONNECTTCP_NOT);
             }
         } else {
-            log.debug("===============================写cconfig.properties失败！");
+            log.info("===============================写cconfig.properties失败！");
             return ApiResult.error(ErrorEnum.ERR_CCONFIGWRITE_NOT);
         }
+    }
+
+    @Override
+    public ApiResult getTcpClientConnectInfo() {
+        String fzwnos = "";
+
+        Map<String, Channel> map = channelManager.deviceChannels;
+        for (String key : map.keySet()) {
+            fzwnos = fzwnos + key + ",";
+        }
+        if (!"".equals(fzwnos))
+            fzwnos = fzwnos.substring(0, fzwnos.length() - 1);
+        return ApiResult.success(fzwnos);
     }
 
 }

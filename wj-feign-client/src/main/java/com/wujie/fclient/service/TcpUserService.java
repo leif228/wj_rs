@@ -21,25 +21,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 )
 public interface TcpUserService {
 
-    @PostMapping("/getTreeData")
-    public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId);
-
     @PostMapping("/tcpClientConnect")
     ApiResult tcpClientConnect(@RequestParam(value = "ip") String ip,
                                @RequestParam(value = "port") String port,
                                @RequestParam(value = "fzwno") String fzwno);
-
+    @PostMapping("/getTcpClientConnectInfo")
+    ApiResult getTcpClientConnectInfo();
 
     @Component
     class TcpUserServiceFallBack implements TcpUserService {
 
         @Override
-        public ApiResult getTreeData(Long nodeId) {
+        public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
             return ApiResult.error(ErrorEnum.ERR_TSERVICE_NOT);
         }
-
         @Override
-        public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
+        public ApiResult getTcpClientConnectInfo() {
             return ApiResult.error(ErrorEnum.ERR_TSERVICE_NOT);
         }
 

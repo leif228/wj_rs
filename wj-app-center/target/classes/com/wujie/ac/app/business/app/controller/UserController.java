@@ -29,26 +29,6 @@ public class UserController {
         this.httpUserService = httpUserService;
     }
 
-    @PostMapping("/deviceRegist")
-    public ApiResult deviceRegist(@RequestParam(value = "userId") Long userId,
-                                  @RequestParam(value = "deviceSelected") String deviceSelected,
-                                  @RequestParam(value = "deviceName") String deviceName,
-                                  @RequestParam(value = "ip") String ip,
-                                  @RequestParam(value = "port") String port,
-                                  @RequestParam(value = "nodeId") Long nodeId) {
-        try {
-            return userService.deviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ApiResult.error(ErrorEnum.ERR_ADD_NODE);
-        }
-    }
-
-    @PostMapping("/getChildNodes")
-    public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
-        return httpUserService.getChildNodes(nodeId);
-    }
-
     @PostMapping("/getTreeData")
     public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId) {
         return userService.getTreeData(nodeId);

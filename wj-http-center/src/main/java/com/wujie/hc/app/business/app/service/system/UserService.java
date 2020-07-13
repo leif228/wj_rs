@@ -12,7 +12,5 @@ public interface UserService {
 
     ApiResult getChildNodes(Long nodeId);
 
-    ApiResult getTreeData(Long nodeId);
-
     ApiResult tcpClientConnect(String ip, String port, String fzwno);
 }

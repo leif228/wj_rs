@@ -10,10 +10,5 @@ import java.util.List;
 public interface UserService {
 
 
-    ApiResult deviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId);
-
-
-    ApiResult getChildNodes(Long nodeId);
-
     ApiResult getTreeData(Long nodeId);
 }

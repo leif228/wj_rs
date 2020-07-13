@@ -187,41 +187,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult getTreeData(Long nodeId) {
-        NodeVo nodeVo = new NodeVo();
-        List<NodeVo> list = nodeMapper.getAllChildNodeVosLayer();
-        if(list.size()>0){
-            Map<Integer, List<NodeVo>> map = list.stream().collect(Collectors.groupingBy(NodeVo::getLayer));
-            int mapSize = map.size();
-            if (mapSize > 0) {
-                int firstLayer = 1;
-                for (int i = firstLayer; i <= mapSize; i++) {
-                    List<NodeVo> list0 = map.get(i);
-                    int j = i + 1;
-                    if (j > mapSize)
-                        break;
-                    List<NodeVo> list1 = map.get(j);
-                    for (NodeVo parent : list0) {
-                        if (!parent.getName().contains(":"))
-                            parent.setName(parent.getName() + "(" + parent.getIp() + ":" + parent.getPort() + ")");
-                        for (NodeVo child : list1) {
-                            if (parent.getRgt() > child.getRgt() && parent.getLft() < child.getLft()) {
-                                parent.getChildren().add(child);
-                                if (!child.getName().contains(":"))
-                                    child.setName(child.getName() + "(" + child.getIp() + ":" + child.getPort() + ")");
-                            }
-                        }
-                    }
-                }
-                nodeVo = map.get(firstLayer).get(0);
-                log.debug(nodeVo.toString());
-            }
-        }
-
-        return ApiResult.success(nodeVo);
-    }
-
-    @Override
     public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
         return tcpUserService.tcpClientConnect(ip,port,fzwno);
     }

@@ -30,6 +30,10 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.wj</groupId>
             <artifactId>wj-feign-client</artifactId>
             <version>${wj.version}</version>
@@ -384,6 +388,8 @@
             <artifactId>activerecord</artifactId>
             <version>4.3</version>
         </dependency>
+
+
 
         <!-- 七牛云 sdk-->
         <!--<dependency>

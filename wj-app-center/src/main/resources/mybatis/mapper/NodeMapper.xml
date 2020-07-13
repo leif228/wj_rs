@@ -125,13 +125,13 @@
     WHERE b.lft &lt;= a.lft AND b.rgt &gt;=a.rgt
   </select>
   <select id="getAllChildNodeVosLayer" resultType="com.wujie.common.dto.NodeVo" >
-    SELECT a.*,b.ip,b.port
-    FROM node_standby b,
+    SELECT a.*,b.ip,b.port,d.fzwno
+    FROM node_standby b,device d,
     (select child.id,child.name,child.lft,child.rgt, count(child.id) layer
     from node parent,node child
     where  child.lft &gt;= parent.lft and child.rgt &lt;= parent.rgt
     group by child.id
     order by child.lft) a
-    WHERE b.node_id = a.id
+    WHERE b.node_id = a.id and b.type = 0 and d.id = b.device_id
   </select>
 </mapper>

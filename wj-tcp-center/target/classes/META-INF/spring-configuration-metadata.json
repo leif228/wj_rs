@@ -1,6 +1,11 @@
 {
   "groups": [
     {
+      "name": "management.endpoint.custom-endpoint",
+      "type": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint"
+    },
+    {
       "name": "spring.datasource.druid",
       "type": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties",
       "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
@@ -17,6 +22,20 @@
     }
   ],
   "properties": [
+    {
+      "name": "management.endpoint.custom-endpoint.cache.time-to-live",
+      "type": "java.time.Duration",
+      "description": "Maximum time that a response can be cached.",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "defaultValue": "0ms"
+    },
+    {
+      "name": "management.endpoint.custom-endpoint.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable the custom-endpoint endpoint.",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "defaultValue": true
+    },
     {
       "name": "spring.datasource.druid.driver-class-name",
       "type": "java.lang.String",

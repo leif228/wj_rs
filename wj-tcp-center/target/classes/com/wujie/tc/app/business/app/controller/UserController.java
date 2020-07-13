@@ -26,11 +26,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/getTreeData")
-    public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId) {
-        return userService.getTreeData(nodeId);
-    }
-
     @PostMapping("/tcpClientConnect")
     public ApiResult tcpClientConnect(@RequestParam(value = "ip") String ip,
                                       @RequestParam(value = "port") String port,
@@ -38,6 +33,11 @@ public class UserController {
 
     ) {
         return userService.tcpClientConnect(ip, port, fzwno);
+    }
+
+    @PostMapping("/getTcpClientConnectInfo")
+    public ApiResult getTcpClientConnectInfo() {
+        return userService.getTcpClientConnectInfo();
     }
 
 }

@@ -73,4 +73,9 @@ public class UserController {
     ) {
         return userService.tcpClientConnect(ip, port, fzwno);
     }
+
+    @PostMapping("/getTcpClientConnectInfo")
+    public ApiResult getTcpClientConnectInfo() {
+        return tcpUserService.getTcpClientConnectInfo();
+    }
 }

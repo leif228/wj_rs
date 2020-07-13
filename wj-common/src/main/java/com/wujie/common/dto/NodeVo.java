@@ -10,6 +10,7 @@ public class NodeVo extends NodeDto implements Serializable {
     private String ip;
     private String port;
     private int layer;
+    private String fzwno;
     /** 子级分类 */
     private List<NodeVo> children = new ArrayList<>();
 
@@ -43,5 +44,13 @@ public class NodeVo extends NodeDto implements Serializable {
 
     public void setChildren(List<NodeVo> children) {
         this.children = children;
+    }
+
+    public String getFzwno() {
+        return fzwno;
+    }
+
+    public void setFzwno(String fzwno) {
+        this.fzwno = fzwno;
     }
 }

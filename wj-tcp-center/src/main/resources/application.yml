@@ -32,6 +32,12 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:9010/eureka/
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: custom-endpoint
+
 spring:
   application:
     name: wj-tc-center
