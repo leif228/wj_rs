@@ -3,11 +3,13 @@ package com.wujie.tc.app.framework.bootstrap;
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.app.business.util.jdbc.impl.SHCommonDaoImpl;
 import com.wujie.tc.app.framework.util.base.impl.BaseServiceImpl;
+import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.server.TcpServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -17,26 +19,26 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * 
- *************************************************
- * 	初始化数据
- * @author  Mr.Chen->MengDaNai->shishi              
- * @version 2.2                
- * @date    2018年12月4日 创建文件                                             
- * @see                        
- *************************************************
+ * ************************************************
+ * 初始化数据
+ *
+ * @author Mr.Chen->MengDaNai->shishi
+ * @version 2.2
+ * @date 2018年12月4日 创建文件
+ * @see ************************************************
  */
 @Configuration
 @Slf4j
+@Order(value = 1)
 public class BootstrapReadData extends BaseServiceImpl implements CommandLineRunner {
 
-	@Autowired
-	private SHCommonDaoImpl shCommonDaoImpl;
-	@Autowired
-	private WechatConstant wechatConstant;
+//    @Autowired
+//    private SHCommonDaoImpl shCommonDaoImpl;
+    @Autowired
+    private WechatConstant wechatConstant;
 
-	@Override
-	public void run(String... args) throws Exception {
+    @Override
+    public void run(String... args) throws Exception {
 //		Supplier<List<Map<String, Object>>> deal = () -> {
 //			StringBuffer sql = new StringBuffer();
 //			sql.append(" select * from system_cfg_tbl ");
@@ -64,6 +66,10 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //			}
 //		});
 //		thread.start();
-		TcpServer.StartTcpServer(wechatConstant);
-	}
+
+        Thread thread = new Thread(() -> {
+            TcpServer.StartTcpServer(wechatConstant);
+        });
+        thread.start();
+    }
 }

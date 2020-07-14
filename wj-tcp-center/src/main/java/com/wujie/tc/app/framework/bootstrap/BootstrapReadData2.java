@@ -1,7 +1,6 @@
 package com.wujie.tc.app.framework.bootstrap;
 
 import com.wujie.tc.app.business.util.WechatConstant;
-import com.wujie.tc.app.business.util.jdbc.impl.SHCommonDaoImpl;
 import com.wujie.tc.app.framework.util.base.impl.BaseServiceImpl;
 import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.server.TcpServer;
@@ -10,13 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * ************************************************
@@ -29,8 +21,8 @@ import java.util.function.Supplier;
  */
 @Configuration
 @Slf4j
-@Order(value = 1)
-public class BootstrapReadData extends BaseServiceImpl implements CommandLineRunner {
+@Order(value = 2)
+public class BootstrapReadData2 extends BaseServiceImpl implements CommandLineRunner {
 
 //    @Autowired
 //    private SHCommonDaoImpl shCommonDaoImpl;
@@ -68,7 +60,7 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //		thread.start();
 
         Thread thread = new Thread(() -> {
-            TcpServer.StartTcpServer(wechatConstant);
+            TcpClient.startTcpClient(wechatConstant);
         });
         thread.start();
     }

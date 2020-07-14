@@ -35,6 +35,7 @@ public class TcpClient {
 
     public void init() throws InterruptedException {
         try {
+            log.info("启动tcp客户端:去连接:" + ip + ":" + port);
             bootstrap = new Bootstrap();
             bootstrap.group(worker);
             bootstrap.channel(NioSocketChannel.class);
@@ -85,18 +86,18 @@ public class TcpClient {
                 if (channelFuture.isSuccess()) {
                     channel = channelFuture.channel();
                     sendData();
+                    log.info("连接成功:" + ip + ":" + port);
                     System.out.println("连接成功");
                 } else {
-                    System.out.println("每隔2s重连....");
+                    System.out.println("每隔5s重连....");
                     channelFuture.channel().eventLoop().schedule(new Runnable() {
 
                         @SneakyThrows
                         @Override
                         public void run() {
-                            // TODO Auto-generated method stub
                             doConnect();
                         }
-                    }, 2, TimeUnit.SECONDS);
+                    }, 5, TimeUnit.SECONDS);
                 }
             }
         });
@@ -126,10 +127,10 @@ public class TcpClient {
 
             LoginTask loginTask = new LoginTask();
             Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
-            if (properties != null)
+            if (properties.getProperty("fzwno") != null)
                 loginTask.setOid(properties.getProperty("fzwno"));
             else
-                loginTask.setOid("88888888");
+                loginTask.setOid("0000000000");
 
 //        byte [] objectBytes= ByteUtils.InstanceObjectMapper().writeValueAsBytes(loginTask);
 
@@ -149,7 +150,7 @@ public class TcpClient {
         try {
             Properties properties = FileUtils.readFile("E:\\config.properties");
 
-            if (properties != null)
+            if (properties.getProperty("ip") != null&&properties.getProperty("port")!=null)
                 new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
             else
                 new TcpClient("127.0.0.1", 8777).init();
@@ -162,7 +163,7 @@ public class TcpClient {
         TcpClient.wechatConstant = wechatConstant;
         try {
             Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
-            if (properties != null)
+            if (properties.getProperty("ip") != null&&properties.getProperty("port")!=null)
                 new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
             else
                 return false;

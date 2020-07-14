@@ -72,7 +72,7 @@ public class TcpServer {
         TcpServer.wechatConstant = wechatConstant;
         try {
             Properties properties = FileUtils.readFile(wechatConstant.getTcpServiceConfigPath());
-            if (properties != null)
+            if (properties.getProperty("port") != null)
                 new TcpServer(Integer.valueOf(properties.getProperty("port"))).init();
             else
                 new TcpServer(8777).init();

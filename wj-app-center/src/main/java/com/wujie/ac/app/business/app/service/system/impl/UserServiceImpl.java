@@ -58,6 +58,11 @@ public class UserServiceImpl implements UserService {
                 for (int i = firstLayer; i <= mapSize; i++) {
                     List<NodeVo> list0 = map.get(i);
                     int j = i + 1;
+                    if(mapSize ==1){
+                        nodeVo = map.get(firstLayer).get(0);
+                        nodeVo.setName(nodeVo.getName() + "(" + nodeVo.getIp() + ":" + nodeVo.getPort() + ")" + nodeVo.getFzwno().substring(13,nodeVo.getFzwno().length()-1));
+                        break;
+                    }
                     if (j > mapSize)
                         break;
                     List<NodeVo> list1 = map.get(j);

@@ -34,7 +34,7 @@ public class TcApplication   {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = SpringApplication.run(TcApplication.class, args);
-		applicationContext.getBean(WebsocketDanmuServer.class).run();
+//		applicationContext.getBean(WebsocketDanmuServer.class).run();
 	}
 
 }
