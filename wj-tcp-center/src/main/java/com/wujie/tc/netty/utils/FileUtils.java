@@ -16,7 +16,10 @@ public class FileUtils {
             bufferedReader = new BufferedReader(new FileReader(path));
 
             properties.load(bufferedReader);
-        } catch (Exception e) {
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return properties;

@@ -59,17 +59,12 @@ public class UserServiceImpl implements UserService {
         keyValueMap.put("ip", ip);
         keyValueMap.put("port", port);
         keyValueMap.put("fzwno", fzwno);
-        log.info("===============================ip:" + ip + ":port" + port);
+        log.info("===============================写cconfig.properties成功！ip:" + ip + ":port" + port);
         boolean issuccess = FileUtils.updatePropertiess(wechatConstant.getTcpClientConfigPath(), keyValueMap);
         if (issuccess) {
-            boolean isconnect = TcpClient.startTcpClient(wechatConstant);
-            if (isconnect) {
-                log.info("===============================连接tcp服务器成功：" + ip + ":" + port);
-                return ApiResult.success();
-            } else {
-                log.info("===============================连接tcp服务器失败：" + ip + ":" + port);
-                return ApiResult.error(ErrorEnum.ERR_CONNECTTCP_NOT);
-            }
+            TcpClient.startTcpClient(wechatConstant);
+
+            return ApiResult.success("写配置文件成功");
         } else {
             log.info("===============================写cconfig.properties失败！");
             return ApiResult.error(ErrorEnum.ERR_CCONFIGWRITE_NOT);

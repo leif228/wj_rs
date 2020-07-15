@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class TcpClient {
 
     private static String ip;
-    private static int port;
+    private static Integer port;
     private static NioEventLoopGroup worker = new NioEventLoopGroup();
 
     private static Channel channel;
@@ -33,7 +33,7 @@ public class TcpClient {
     private static Bootstrap bootstrap;
     private static WechatConstant wechatConstant;
 
-    public void init() throws InterruptedException {
+    public static int init() {
         try {
             log.info("启动tcp客户端:去连接:" + ip + ":" + port);
             bootstrap = new Bootstrap();
@@ -57,14 +57,12 @@ public class TcpClient {
 //
 //            future.channel().closeFuture().sync();//以异步的方式关闭端口
             doConnect();
+
+            return 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return 2;
         }
-    }
-
-    public TcpClient(String ip, int port) {
-        this.ip = ip;
-        this.port = port;
     }
 
     /**
@@ -150,28 +148,30 @@ public class TcpClient {
         try {
             Properties properties = FileUtils.readFile("E:\\config.properties");
 
-            if (properties.getProperty("ip") != null&&properties.getProperty("port")!=null)
-                new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
-            else
-                new TcpClient("127.0.0.1", 8777).init();
+            ip = properties.getProperty("ip");
+            port = Integer.valueOf(properties.getProperty("port"));
+            if (ip != null && port != null)
+                init();
+            else{
+                ip = "127.0.0.1";
+                port = 8777;
+                init();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static boolean startTcpClient(WechatConstant wechatConstant) {
+    public static int startTcpClient(WechatConstant wechatConstant) {
         TcpClient.wechatConstant = wechatConstant;
-        try {
-            Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
-            if (properties.getProperty("ip") != null&&properties.getProperty("port")!=null)
-                new TcpClient(properties.getProperty("ip"), Integer.valueOf(properties.getProperty("port"))).init();
-            else
-                return false;
+        Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
+        ip = properties.getProperty("ip");
+        port = Integer.valueOf(properties.getProperty("port"));
+        if (ip != null && port != null) {
 
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            return init();
+        } else {
+            return 1;
         }
     }
 }
