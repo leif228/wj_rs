@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private TcpUserService tcpUserService;
 
     @Autowired
-    public UserServiceImpl(TcpUserService tcpUserService,NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(TcpUserService tcpUserService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.tcpUserService = tcpUserService;
         this.nodeMapper = nodeMapper;
@@ -83,7 +83,8 @@ public class UserServiceImpl implements UserService {
         String fzwNo = "";
 
         String country = "chn";
-        String area = wjuser.getIdcard().substring(0, 6);
+        String trade = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
+        String area = wjuser.getIdcard().substring(0, 5);
         String timeStr = DateUtil.getDateTime("yyyyMMdd");
         String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
         String catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + area + timeStr);
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
         }
         int userType = wjuser.getUserType();//1表示个人2团体、公司等
 
-        fzwNo = country + area + timeStr + seqno + userType;
+        fzwNo = country + trade + area + timeStr + seqno + userType;
 
         DeviceVo deviceVo = new DeviceVo();
         deviceVo.setIp("");
@@ -114,11 +115,12 @@ public class UserServiceImpl implements UserService {
 
         log.info("设备注册第一步成功" + fzwNo);
 
-        return ApiResult.success("设备注册第一步成功",deviceVo);
+        return ApiResult.success("设备注册第一步成功", deviceVo);
 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno) {
         Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
         if (wjuser == null)
@@ -168,76 +170,76 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ApiResult deviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId) {
-        Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
-        if (wjuser == null)
-            return ApiResult.error(ErrorEnum.NOT_USER_ERR);
-
-        Device device = new Device();
-        device.setUserId(userId);
-        device.setDeviceType(Integer.valueOf(deviceSelected));
-        device.setDeviceName(deviceName);
-        device.setIp(ip);
-        device.setPort(port);
-        device.setCreatTime(DateUtil.getDate());
-
-        //生成泛在网编号
-        String fzwNo = "";
-
-        String country = "chn";
-        String area = wjuser.getIdcard().substring(0, 6);
-        String timeStr = DateUtil.getDateTime("yyyyMMdd");
-        String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
-        String catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + area + timeStr);
-        if (null == catMaxFzwno) {
-            seqno = NumConvertUtil.IntToHexStringLimit4(1);
-        } else {
-            String limitPre = catMaxFzwno.substring(0, 21).substring(17);
-            int seqInt = NumConvertUtil.HexStringToInt(limitPre);
-            seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
-            if (seqno == null)
-                return ApiResult.error(ErrorEnum.ERR_SEQNO_MAX);
-        }
-        int userType = wjuser.getUserType();//1表示个人2团体、公司等
-
-        fzwNo = country + area + timeStr + seqno + userType;
-
-        device.setFzwno(fzwNo);
-        deviceMapper.insertSelective(device);
-
+//        Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
+//        if (wjuser == null)
+//            return ApiResult.error(ErrorEnum.NOT_USER_ERR);
+//
+//        Device device = new Device();
+//        device.setUserId(userId);
+//        device.setDeviceType(Integer.valueOf(deviceSelected));
+//        device.setDeviceName(deviceName);
+//        device.setIp(ip);
+//        device.setPort(port);
+//        device.setCreatTime(DateUtil.getDate());
+//
+//        //生成泛在网编号
+//        String fzwNo = "";
+//
+//        String country = "chn";
+//        String area = wjuser.getIdcard().substring(0, 6);
+//        String timeStr = DateUtil.getDateTime("yyyyMMdd");
+//        String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
+//        String catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + area + timeStr);
+//        if (null == catMaxFzwno) {
+//            seqno = NumConvertUtil.IntToHexStringLimit4(1);
+//        } else {
+//            String limitPre = catMaxFzwno.substring(0, 21).substring(17);
+//            int seqInt = NumConvertUtil.HexStringToInt(limitPre);
+//            seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
+//            if (seqno == null)
+//                return ApiResult.error(ErrorEnum.ERR_SEQNO_MAX);
+//        }
+//        int userType = wjuser.getUserType();//1表示个人2团体、公司等
+//
+//        fzwNo = country + area + timeStr + seqno + userType;
+//
+//        device.setFzwno(fzwNo);
+//        deviceMapper.insertSelective(device);
+//
         DeviceVo deviceVo = new DeviceVo();
-        deviceVo.setIp("");
-        deviceVo.setPort("");
-        deviceVo.setFzwno(fzwNo);
-
-        //增加下级节点
-        if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
-            Node preNode = nodeMapper.selectByPrimaryKey(nodeId);
-            NodeStandby preNodeStandby = nodeStandbyMapper.findByNodeAndType(nodeId, MDA.numEnum.ZERO.ordinal());
-            deviceVo.setIp(preNodeStandby.getIp());
-            deviceVo.setPort(preNodeStandby.getPort());
-
-            nodeMapper.updateRgt(preNode.getRgt());
-            nodeMapper.updateLft(preNode.getRgt());
-
-            Node currNode = new Node();
-            currNode.setName(deviceName);
-            currNode.setLft(preNode.getRgt());
-            currNode.setRgt(preNode.getRgt() + 1);
-            currNode.setCreatTime(DateUtil.getDate());
-            nodeMapper.insertSelective(currNode);
-
-            NodeStandby nodeStandby = new NodeStandby();
-            nodeStandby.setNodeId(currNode.getId());
-            nodeStandby.setDeviceId(device.getId());
-            nodeStandby.setIp(ip);
-            nodeStandby.setPort(port);
-            nodeStandby.setType(MDA.numEnum.ZERO.ordinal());//默认设置为当前节点的主服务器
-            nodeStandby.setCreatTime(DateUtil.getDate());
-            nodeStandbyMapper.insertSelective(nodeStandby);
-        }
-
-        log.info("设备注册成功" + fzwNo);
-
+//        deviceVo.setIp("");
+//        deviceVo.setPort("");
+//        deviceVo.setFzwno(fzwNo);
+//
+//        //增加下级节点
+//        if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
+//            Node preNode = nodeMapper.selectByPrimaryKey(nodeId);
+//            NodeStandby preNodeStandby = nodeStandbyMapper.findByNodeAndType(nodeId, MDA.numEnum.ZERO.ordinal());
+//            deviceVo.setIp(preNodeStandby.getIp());
+//            deviceVo.setPort(preNodeStandby.getPort());
+//
+//            nodeMapper.updateRgt(preNode.getRgt());
+//            nodeMapper.updateLft(preNode.getRgt());
+//
+//            Node currNode = new Node();
+//            currNode.setName(deviceName);
+//            currNode.setLft(preNode.getRgt());
+//            currNode.setRgt(preNode.getRgt() + 1);
+//            currNode.setCreatTime(DateUtil.getDate());
+//            nodeMapper.insertSelective(currNode);
+//
+//            NodeStandby nodeStandby = new NodeStandby();
+//            nodeStandby.setNodeId(currNode.getId());
+//            nodeStandby.setDeviceId(device.getId());
+//            nodeStandby.setIp(ip);
+//            nodeStandby.setPort(port);
+//            nodeStandby.setType(MDA.numEnum.ZERO.ordinal());//默认设置为当前节点的主服务器
+//            nodeStandby.setCreatTime(DateUtil.getDate());
+//            nodeStandbyMapper.insertSelective(nodeStandby);
+//        }
+//
+//        log.info("设备注册成功" + fzwNo);
+//
         return ApiResult.success(deviceVo);
     }
 
@@ -280,7 +282,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
-        return tcpUserService.tcpClientConnect(ip,port,fzwno);
+        return tcpUserService.tcpClientConnect(ip, port, fzwno);
     }
 
 

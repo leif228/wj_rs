@@ -85,9 +85,8 @@ public class TcpClient {
                     channel = channelFuture.channel();
                     sendData();
                     log.info("连接成功:" + ip + ":" + port);
-                    System.out.println("连接成功");
                 } else {
-                    System.out.println("每隔5s重连....");
+                    log.info("每隔5s重连....");
                     channelFuture.channel().eventLoop().schedule(new Runnable() {
 
                         @SneakyThrows

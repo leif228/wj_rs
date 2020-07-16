@@ -29,14 +29,23 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/deviceRegist")
-    public ApiResult deviceRegist(@RequestParam(value = "userId") Long userId,
+    @PostMapping("/secDeviceRegist")
+    public ApiResult secDeviceRegist(@RequestParam(value = "userId") Long userId,
                                   @RequestParam(value = "deviceSelected") String deviceSelected,
                                   @RequestParam(value = "deviceName") String deviceName,
                                   @RequestParam(value = "ip") String ip,
                                   @RequestParam(value = "port") String port,
+                                  @RequestParam(value = "nodeId") Long nodeId,
+                                  @RequestParam(value = "fzwno") String fzwno) {
+            return userService.secDeviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId, fzwno);
+    }
+
+
+    @PostMapping("/preDeviceRegist")
+    public ApiResult preDeviceRegist(@RequestParam(value = "userId") Long userId,
+                                  @RequestParam(value = "deviceSelected") String deviceSelected,
                                   @RequestParam(value = "nodeId") Long nodeId) {
-            return userService.deviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId);
+        return userService.preDeviceRegist(userId, deviceSelected, nodeId);
     }
 
     @PostMapping("/getChildNodes")
