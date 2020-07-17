@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.BsAreaMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.BsArea" >
+    <id column="AREA_ID" property="areaId" jdbcType="INTEGER" />
+    <result column="AREA_CODE" property="areaCode" jdbcType="VARCHAR" />
+    <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+    <result column="AREA_NAME" property="areaName" jdbcType="VARCHAR" />
+    <result column="SHORT_NAME" property="shortName" jdbcType="VARCHAR" />
+    <result column="LNG" property="lng" jdbcType="VARCHAR" />
+    <result column="LAT" property="lat" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="MEMO" property="memo" jdbcType="VARCHAR" />
+    <result column="DATA_STATE" property="dataState" jdbcType="INTEGER" />
+    <result column="TENANT_CODE" property="tenantCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    AREA_ID, AREA_CODE, CITY_CODE, AREA_NAME, SHORT_NAME, LNG, LAT, SORT, GMT_CREATE, 
+    GMT_MODIFIED, MEMO, DATA_STATE, TENANT_CODE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bs_area
+    where AREA_ID = #{areaId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bs_area
+    where AREA_ID = #{areaId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.BsArea" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bs_area (AREA_ID, AREA_CODE, CITY_CODE, 
+      AREA_NAME, SHORT_NAME, LNG, 
+      LAT, SORT, GMT_CREATE, 
+      GMT_MODIFIED, MEMO, DATA_STATE, 
+      TENANT_CODE)
+    values (#{areaId,jdbcType=INTEGER}, #{areaCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
+      #{areaName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, #{lng,jdbcType=VARCHAR}, 
+      #{lat,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtModified,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=INTEGER}, 
+      #{tenantCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.BsArea" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bs_area
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="areaId != null" >
+        AREA_ID,
+      </if>
+      <if test="areaCode != null" >
+        AREA_CODE,
+      </if>
+      <if test="cityCode != null" >
+        CITY_CODE,
+      </if>
+      <if test="areaName != null" >
+        AREA_NAME,
+      </if>
+      <if test="shortName != null" >
+        SHORT_NAME,
+      </if>
+      <if test="lng != null" >
+        LNG,
+      </if>
+      <if test="lat != null" >
+        LAT,
+      </if>
+      <if test="sort != null" >
+        SORT,
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE,
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED,
+      </if>
+      <if test="memo != null" >
+        MEMO,
+      </if>
+      <if test="dataState != null" >
+        DATA_STATE,
+      </if>
+      <if test="tenantCode != null" >
+        TENANT_CODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null" >
+        #{lng,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null" >
+        #{lat,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=INTEGER},
+      </if>
+      <if test="tenantCode != null" >
+        #{tenantCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.BsArea" >
+    update bs_area
+    <set >
+      <if test="areaCode != null" >
+        AREA_CODE = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        SHORT_NAME = #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null" >
+        LNG = #{lng,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null" >
+        LAT = #{lat,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        SORT = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null" >
+        MEMO = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        DATA_STATE = #{dataState,jdbcType=INTEGER},
+      </if>
+      <if test="tenantCode != null" >
+        TENANT_CODE = #{tenantCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AREA_ID = #{areaId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.BsArea" >
+    update bs_area
+    set AREA_CODE = #{areaCode,jdbcType=VARCHAR},
+      CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      SHORT_NAME = #{shortName,jdbcType=VARCHAR},
+      LNG = #{lng,jdbcType=VARCHAR},
+      LAT = #{lat,jdbcType=VARCHAR},
+      SORT = #{sort,jdbcType=INTEGER},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+      MEMO = #{memo,jdbcType=VARCHAR},
+      DATA_STATE = #{dataState,jdbcType=INTEGER},
+      TENANT_CODE = #{tenantCode,jdbcType=VARCHAR}
+    where AREA_ID = #{areaId,jdbcType=INTEGER}
+  </update>
+
+
+
+  <select id="findByC" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_area
+    where CITY_CODE = #{cityCode}
+  </select>
+</mapper>

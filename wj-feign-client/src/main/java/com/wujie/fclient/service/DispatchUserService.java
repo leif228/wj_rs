@@ -23,10 +23,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface DispatchUserService {
 
 
-
     @PostMapping("/getTreeData")
     public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId);
 
+    @PostMapping("/secDeviceRegist")
+    public ApiResult secDeviceRegist(@RequestParam(value = "userId") Long userId,
+                                     @RequestParam(value = "deviceSelected") String deviceSelected,
+                                     @RequestParam(value = "deviceName") String deviceName,
+                                     @RequestParam(value = "ip") String ip,
+                                     @RequestParam(value = "port") String port,
+                                     @RequestParam(value = "nodeId") Long nodeId,
+                                     @RequestParam(value = "fzwno") String fzwno);
+
+
+    @PostMapping("/preDeviceRegist")
+    public ApiResult preDeviceRegist(@RequestParam(value = "userId") Long userId,
+                                     @RequestParam(value = "deviceSelected") String deviceSelected,
+                                     @RequestParam(value = "nodeId") Long nodeId,
+                                     @RequestParam(value = "pSort") Integer pSort,
+                                     @RequestParam(value = "cSort") Integer cSort,
+                                     @RequestParam(value = "aSort") Integer aSort,
+                                     @RequestParam(value = "sSort") Integer sSort);
+    @PostMapping("/getChildNodes")
+    public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) ;
+
+    @PostMapping("/addrInit")
+    public ApiResult addrInit();
+
+    @PostMapping("/cityByP")
+    public ApiResult cityByP(@RequestParam(value = "id") Integer id);
+
+    @PostMapping("/areaByC")
+    public ApiResult areaByC(@RequestParam(value = "id") Integer id);
+
+    @PostMapping("/streetByA")
+    public ApiResult streetByA(@RequestParam(value = "id") Integer id);
 
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
@@ -34,6 +65,41 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult getTreeData(Long nodeId) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getChildNodes(Long nodeId) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult addrInit() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult cityByP(Integer id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult areaByC(Integer id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult streetByA(Integer id) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

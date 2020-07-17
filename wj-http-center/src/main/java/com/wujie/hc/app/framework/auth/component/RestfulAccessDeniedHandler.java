@@ -1,7 +1,7 @@
 package com.wujie.hc.app.framework.auth.component;
 
 import com.alibaba.fastjson.JSON;
-import com.wujie.common.dto.ResultVo;
+import com.wujie.common.base.ApiResult;
 import com.wujie.common.enums.ErrorEnum;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -26,7 +26,7 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
         response.setHeader("Access-Control-Allow-Credentials", "true");*/
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println(JSON.toJSON(ResultVo.err(ErrorEnum.FORBIDDEN)));
+        response.getWriter().println(JSON.toJSON(ApiResult.error(ErrorEnum.FORBIDDEN)));
         response.getWriter().flush();
     }
 }

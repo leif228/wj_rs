@@ -12,8 +12,6 @@ public interface UserService {
 
     ApiResult getChildNodes(Long nodeId);
 
-    ApiResult tcpClientConnect(String ip, String port, String fzwno);
-
     ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId);
 
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);

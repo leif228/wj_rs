@@ -44,12 +44,10 @@ public class UserServiceImpl implements UserService {
     private AuthUserService authUserService;
     private PasswordEncoder passwordEncoder;
     private JwtTokenUtil jwtTokenUtil;
-    private TcpUserService tcpUserService;
 
     @Autowired
-    public UserServiceImpl(TcpUserService tcpUserService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
         this.nodeStandbyMapper = nodeStandbyMapper;
-        this.tcpUserService = tcpUserService;
         this.nodeMapper = nodeMapper;
         this.deviceMapper = deviceMapper;
         this.wjuserMapper = wjuserMapper;
@@ -278,11 +276,6 @@ public class UserServiceImpl implements UserService {
         List<Node> childs = nodeMapper.getChildNodes(node.getLft(), node.getRgt());
 
         return ApiResult.success(childs);
-    }
-
-    @Override
-    public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
-        return tcpUserService.tcpClientConnect(ip, port, fzwno);
     }
 
 

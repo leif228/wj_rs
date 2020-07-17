@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.AreaChangSeqMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.AreaChangSeq" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ascii10" property="ascii10" jdbcType="VARCHAR" />
+    <result column="fzw_str" property="fzwStr" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ascii10, fzw_str
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from area_chang_seq
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from area_chang_seq
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into area_chang_seq (id, ascii10, fzw_str
+      )
+    values (#{id,jdbcType=INTEGER}, #{ascii10,jdbcType=VARCHAR}, #{fzwStr,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into area_chang_seq
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ascii10 != null" >
+        ascii10,
+      </if>
+      <if test="fzwStr != null" >
+        fzw_str,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ascii10 != null" >
+        #{ascii10,jdbcType=VARCHAR},
+      </if>
+      <if test="fzwStr != null" >
+        #{fzwStr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
+    update area_chang_seq
+    <set >
+      <if test="ascii10 != null" >
+        ascii10 = #{ascii10,jdbcType=VARCHAR},
+      </if>
+      <if test="fzwStr != null" >
+        fzw_str = #{fzwStr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
+    update area_chang_seq
+    set ascii10 = #{ascii10,jdbcType=VARCHAR},
+      fzw_str = #{fzwStr,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
