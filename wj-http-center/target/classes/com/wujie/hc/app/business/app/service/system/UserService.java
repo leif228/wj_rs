@@ -8,11 +8,9 @@ public interface UserService {
 
     ApiResult deviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId) ;
 
-    ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected);
+    ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
     ApiResult getChildNodes(Long nodeId);
-
-    ApiResult tcpClientConnect(String ip, String port, String fzwno);
 
     ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId);
 

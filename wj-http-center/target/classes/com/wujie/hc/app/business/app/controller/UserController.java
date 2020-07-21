@@ -23,7 +23,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    public UserController(DispatchUserService dispatchUserService,UserService userService,TcpUserService tcpUserService) {
+    public UserController(DispatchUserService dispatchUserService, UserService userService, TcpUserService tcpUserService) {
         this.dispatchUserService = dispatchUserService;
         this.tcpUserService = tcpUserService;
         this.userService = userService;
@@ -31,26 +31,46 @@ public class UserController {
 
     @PostMapping("/secDeviceRegist")
     public ApiResult secDeviceRegist(@RequestParam(value = "userId") Long userId,
-                                  @RequestParam(value = "deviceSelected") String deviceSelected,
-                                  @RequestParam(value = "deviceName") String deviceName,
-                                  @RequestParam(value = "ip") String ip,
-                                  @RequestParam(value = "port") String port,
-                                  @RequestParam(value = "nodeId") Long nodeId,
-                                  @RequestParam(value = "fzwno") String fzwno) {
-            return userService.secDeviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId, fzwno);
+                                     @RequestParam(value = "deviceSelected") String deviceSelected,
+                                     @RequestParam(value = "deviceName") String deviceName,
+                                     @RequestParam(value = "ip") String ip,
+                                     @RequestParam(value = "port") String port,
+                                     @RequestParam(value = "nodeId") Long nodeId,
+                                     @RequestParam(value = "fzwno") String fzwno) {
+        return dispatchUserService.secDeviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId, fzwno);
     }
-
 
     @PostMapping("/preDeviceRegist")
     public ApiResult preDeviceRegist(@RequestParam(value = "userId") Long userId,
-                                  @RequestParam(value = "deviceSelected") String deviceSelected,
-                                  @RequestParam(value = "nodeId") Long nodeId) {
-        return userService.preDeviceRegist(userId, deviceSelected, nodeId);
+                                     @RequestParam(value = "deviceSelected") String deviceSelected,
+                                     @RequestParam(value = "nodeId") Long nodeId,
+                                     @RequestParam(value = "pSort") String pSort,
+                                     @RequestParam(value = "cSort") String cSort,
+                                     @RequestParam(value = "aSort") String aSort,
+                                     @RequestParam(value = "sSort") String sSort
+    ) {
+        Integer ipSort = 0;
+        if (!"".equals(pSort))
+            ipSort = Integer.valueOf(pSort);
+
+        Integer icSort = 0;
+        if (!"".equals(cSort))
+            icSort = Integer.valueOf(cSort);
+
+        Integer iaSort = 0;
+        if (!"".equals(aSort))
+            iaSort = Integer.valueOf(aSort);
+
+        Integer isSort = 0;
+        if (!"".equals(sSort))
+            isSort = Integer.valueOf(sSort);
+
+        return dispatchUserService.preDeviceRegist(userId, deviceSelected, nodeId, ipSort, icSort, iaSort, isSort);
     }
 
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
-        return userService.getChildNodes(nodeId);
+        return dispatchUserService.getChildNodes(nodeId);
     }
 
     @PostMapping("/getTreeData")
@@ -60,16 +80,37 @@ public class UserController {
 
     @PostMapping("/userRegist")
     public ApiResult userRegist(@RequestParam(value = "username") String username,
-                                       @RequestParam(value = "password") String password,
-                                       @RequestParam(value = "idcard") String idcard,
-                                       @RequestParam(value = "phone") String phone,
-                                       @RequestParam(value = "userSelected") String userSelected) {
-        return userService.userRegist(username, password, idcard, phone, userSelected);
+                                @RequestParam(value = "password") String password,
+                                @RequestParam(value = "idcard") String idcard,
+                                @RequestParam(value = "phone") String phone,
+                                @RequestParam(value = "userSelected") String userSelected,
+                                @RequestParam(value = "pSort") String pSort,
+                                @RequestParam(value = "cSort") String cSort,
+                                @RequestParam(value = "aSort") String aSort,
+                                @RequestParam(value = "sSort") String sSort
+    ) {
+        Integer ipSort = 0;
+        if (!"".equals(pSort))
+            ipSort = Integer.valueOf(pSort);
+
+        Integer icSort = 0;
+        if (!"".equals(cSort))
+            icSort = Integer.valueOf(cSort);
+
+        Integer iaSort = 0;
+        if (!"".equals(aSort))
+            iaSort = Integer.valueOf(aSort);
+
+        Integer isSort = 0;
+        if (!"".equals(sSort))
+            isSort = Integer.valueOf(sSort);
+
+        return userService.userRegist(username, password, idcard, phone, userSelected, ipSort, icSort, iaSort, isSort);
     }
 
     @PostMapping("/userLogin")
     public ApiResult userLogin(@RequestParam(value = "username") String username,
-                                      @RequestParam(value = "password") String password
+                               @RequestParam(value = "password") String password
     ) {
         return userService.userLogin(username, password);
     }
@@ -80,11 +121,31 @@ public class UserController {
                                       @RequestParam(value = "fzwno") String fzwno
 
     ) {
-        return userService.tcpClientConnect(ip, port, fzwno);
+        return tcpUserService.tcpClientConnect(ip, port, fzwno);
     }
 
     @PostMapping("/getTcpClientConnectInfo")
     public ApiResult getTcpClientConnectInfo() {
         return tcpUserService.getTcpClientConnectInfo();
+    }
+
+    @PostMapping("/addrInit")
+    public ApiResult addrInit() {
+        return dispatchUserService.addrInit();
+    }
+
+    @PostMapping("/cityByP")
+    public ApiResult cityByP(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.cityByP(id);
+    }
+
+    @PostMapping("/areaByC")
+    public ApiResult areaByC(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.areaByC(id);
+    }
+
+    @PostMapping("/streetByA")
+    public ApiResult streetByA(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.streetByA(id);
     }
 }

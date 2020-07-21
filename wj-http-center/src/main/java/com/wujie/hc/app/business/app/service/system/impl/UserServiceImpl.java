@@ -242,7 +242,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected) {
+    public ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
         Wjuser wjuser = wjuserMapper.findByUserInfoName(username);
         if (wjuser != null)
             return ApiResult.error(ErrorEnum.PRESENCE_USER_ERR);
@@ -254,6 +254,10 @@ public class UserServiceImpl implements UserService {
         wjuser.setUserType(Integer.valueOf(userSelected));
         wjuser.setPhone(phone);
         wjuser.setCreatTime(DateUtil.getDate());
+        wjuser.setPSort(pSort);
+        wjuser.setCSort(cSort);
+        wjuser.setASort(aSort);
+        wjuser.setSSort(sSort);
 
         wjuserMapper.insertSelective(wjuser);
 

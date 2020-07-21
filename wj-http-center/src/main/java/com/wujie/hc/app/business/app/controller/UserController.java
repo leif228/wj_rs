@@ -50,19 +50,19 @@ public class UserController {
                                      @RequestParam(value = "sSort") String sSort
     ) {
         Integer ipSort = 0;
-        if(!"".equals(pSort))
+        if (!"".equals(pSort))
             ipSort = Integer.valueOf(pSort);
 
         Integer icSort = 0;
-        if(!"".equals(cSort))
+        if (!"".equals(cSort))
             icSort = Integer.valueOf(cSort);
 
         Integer iaSort = 0;
-        if(!"".equals(aSort))
+        if (!"".equals(aSort))
             iaSort = Integer.valueOf(aSort);
 
         Integer isSort = 0;
-        if(!"".equals(sSort))
+        if (!"".equals(sSort))
             isSort = Integer.valueOf(sSort);
 
         return dispatchUserService.preDeviceRegist(userId, deviceSelected, nodeId, ipSort, icSort, iaSort, isSort);
@@ -83,8 +83,29 @@ public class UserController {
                                 @RequestParam(value = "password") String password,
                                 @RequestParam(value = "idcard") String idcard,
                                 @RequestParam(value = "phone") String phone,
-                                @RequestParam(value = "userSelected") String userSelected) {
-        return userService.userRegist(username, password, idcard, phone, userSelected);
+                                @RequestParam(value = "userSelected") String userSelected,
+                                @RequestParam(value = "pSort") String pSort,
+                                @RequestParam(value = "cSort") String cSort,
+                                @RequestParam(value = "aSort") String aSort,
+                                @RequestParam(value = "sSort") String sSort
+    ) {
+        Integer ipSort = 0;
+        if (!"".equals(pSort))
+            ipSort = Integer.valueOf(pSort);
+
+        Integer icSort = 0;
+        if (!"".equals(cSort))
+            icSort = Integer.valueOf(cSort);
+
+        Integer iaSort = 0;
+        if (!"".equals(aSort))
+            iaSort = Integer.valueOf(aSort);
+
+        Integer isSort = 0;
+        if (!"".equals(sSort))
+            isSort = Integer.valueOf(sSort);
+
+        return userService.userRegist(username, password, idcard, phone, userSelected, ipSort, icSort, iaSort, isSort);
     }
 
     @PostMapping("/userLogin")

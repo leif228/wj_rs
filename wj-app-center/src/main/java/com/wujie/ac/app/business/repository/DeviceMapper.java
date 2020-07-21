@@ -18,5 +18,5 @@ public interface DeviceMapper {
 
     int updateByPrimaryKey(Device record);
 
-    String findByFzwnoLikeCAT(String cat);
+    Device findByFzwnoLikeCAT(String cat);
 }
