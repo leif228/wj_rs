@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class BsAreaDto implements Serializable {
     // 自增列
-    private Integer areaId;
+    private Integer areaId = 0;
 
     // 区代码
     private String areaCode;
@@ -14,7 +14,7 @@ public class BsAreaDto implements Serializable {
     private String cityCode;
 
     // 市名称
-    private String areaName;
+    private String areaName = "选择区";
 
     // 简称
     private String shortName;
@@ -26,7 +26,7 @@ public class BsAreaDto implements Serializable {
     private String lat;
 
     // 排序
-    private Integer sort;
+    private Integer sort = 0;
 
     // 创建时间
     private Date gmtCreate;

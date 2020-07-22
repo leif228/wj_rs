@@ -5,6 +5,8 @@ import com.wujie.common.dto.ResultVo;
 import com.wujie.fclient.service.DispatchUserService;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.UserService;
+import com.wujie.hc.app.business.vo.UserDetailsVo;
+import com.wujie.hc.app.framework.auth.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,35 +39,28 @@ public class UserController {
                                      @RequestParam(value = "port") String port,
                                      @RequestParam(value = "nodeId") Long nodeId,
                                      @RequestParam(value = "fzwno") String fzwno) {
-        return dispatchUserService.secDeviceRegist(userId, deviceSelected, deviceName, ip, port, nodeId, fzwno);
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return dispatchUserService.secDeviceRegist(userInfo.getId(), deviceSelected, deviceName, ip, port, nodeId, fzwno);
     }
 
     @PostMapping("/preDeviceRegist")
     public ApiResult preDeviceRegist(@RequestParam(value = "userId") Long userId,
                                      @RequestParam(value = "deviceSelected") String deviceSelected,
                                      @RequestParam(value = "nodeId") Long nodeId,
-                                     @RequestParam(value = "pSort") String pSort,
-                                     @RequestParam(value = "cSort") String cSort,
-                                     @RequestParam(value = "aSort") String aSort,
-                                     @RequestParam(value = "sSort") String sSort
+                                     @RequestParam(value = "pSort") Integer pSort,
+                                     @RequestParam(value = "cSort") Integer cSort,
+                                     @RequestParam(value = "aSort") Integer aSort,
+                                     @RequestParam(value = "sSort") Integer sSort
     ) {
-        Integer ipSort = 0;
-        if (!"".equals(pSort))
-            ipSort = Integer.valueOf(pSort);
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return dispatchUserService.preDeviceRegist(userInfo.getId(), deviceSelected, nodeId, pSort, cSort, aSort, sSort);
+    }
 
-        Integer icSort = 0;
-        if (!"".equals(cSort))
-            icSort = Integer.valueOf(cSort);
-
-        Integer iaSort = 0;
-        if (!"".equals(aSort))
-            iaSort = Integer.valueOf(aSort);
-
-        Integer isSort = 0;
-        if (!"".equals(sSort))
-            isSort = Integer.valueOf(sSort);
-
-        return dispatchUserService.preDeviceRegist(userId, deviceSelected, nodeId, ipSort, icSort, iaSort, isSort);
+    @PostMapping("/deviceType")
+    public ApiResult deviceType(
+    ) {
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return userService.deviceType(userInfo);
     }
 
     @PostMapping("/getChildNodes")
@@ -84,28 +79,12 @@ public class UserController {
                                 @RequestParam(value = "idcard") String idcard,
                                 @RequestParam(value = "phone") String phone,
                                 @RequestParam(value = "userSelected") String userSelected,
-                                @RequestParam(value = "pSort") String pSort,
-                                @RequestParam(value = "cSort") String cSort,
-                                @RequestParam(value = "aSort") String aSort,
-                                @RequestParam(value = "sSort") String sSort
+                                @RequestParam(value = "pSort") Integer pSort,
+                                @RequestParam(value = "cSort") Integer cSort,
+                                @RequestParam(value = "aSort") Integer aSort,
+                                @RequestParam(value = "sSort") Integer sSort
     ) {
-        Integer ipSort = 0;
-        if (!"".equals(pSort))
-            ipSort = Integer.valueOf(pSort);
-
-        Integer icSort = 0;
-        if (!"".equals(cSort))
-            icSort = Integer.valueOf(cSort);
-
-        Integer iaSort = 0;
-        if (!"".equals(aSort))
-            iaSort = Integer.valueOf(aSort);
-
-        Integer isSort = 0;
-        if (!"".equals(sSort))
-            isSort = Integer.valueOf(sSort);
-
-        return userService.userRegist(username, password, idcard, phone, userSelected, ipSort, icSort, iaSort, isSort);
+        return userService.userRegist(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
     }
 
     @PostMapping("/userLogin")

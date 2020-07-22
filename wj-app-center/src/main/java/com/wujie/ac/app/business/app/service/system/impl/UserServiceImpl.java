@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         String trade = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
 //        String area = wjuser.getIdcard().substring(0, 5);
 
-        String pf = "!",cf = "!",af = "!",sf = "!";
+        String pf = "!",cf = "!",af = "!",sf = "!";//没有选择时fzw地址信息暂用“!”表示
 
         AreaChangSeq pfzw = baseDataService.fzwaddrBySort(wjuser.getPSort());
         if(pfzw != null)
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
         String area = pf + cf + af + sf + "0";
 
 
-        String timeStr = DateUtil.DateToString(wjuser.getCreatTime(),"yyyyMMdd");
+        String timeStr = DateUtil.getDateTime("yyyyMMdd");
         String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
         Device catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + trade + area + timeStr);
         if (null == catMaxFzwno) {

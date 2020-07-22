@@ -5,13 +5,13 @@ import java.util.Date;
 
 public class BsCityDto implements Serializable {
     // 自增列
-    private Integer cityId;
+    private Integer cityId = 0;
 
     // 市代码
     private String cityCode;
 
     // 市名称
-    private String cityName;
+    private String cityName = "选择市";
 
     // 简称
     private String shortName;
@@ -26,7 +26,7 @@ public class BsCityDto implements Serializable {
     private String lat;
 
     // 排序
-    private Integer sort;
+    private Integer sort = 0;
 
     // 创建时间
     private Date gmtCreate;

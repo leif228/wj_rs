@@ -40,6 +40,18 @@ public class Wjuser implements Serializable {
     @Column(name = "user_type")
     private Integer userType;
 
+    @Column(name = "p_sort")
+    private Integer pSort;
+
+    @Column(name = "c_sort")
+    private Integer cSort;
+
+    @Column(name = "a_sort")
+    private Integer aSort;
+
+    @Column(name = "s_sort")
+    private Integer sSort;
+
     //
     @Column(name = "creat_time")
     private Date creatTime;

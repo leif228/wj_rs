@@ -38,6 +38,48 @@ public class BaseDataServiceImpl implements BaseDataService {
         this.areaChangSeqMapper = areaChangSeqMapper;
     }
 
+    private List<BsCityDto> getCs(BsProvinceDto bsProvinceFirst) {
+        List<BsCityDto> bsCityDtos = new ArrayList<>();
+
+        if (bsProvinceFirst != null) {
+            List<BsCity> clist = bsCityMapper.findByP(bsProvinceFirst.getProvinceCode());
+            for (BsCity c : clist) {
+                BsCityDto bsCityDto = new BsCityDto();
+                BeanUtils.copyProperties(c, bsCityDto);
+                bsCityDtos.add(bsCityDto);
+            }
+        }
+        return bsCityDtos;
+    }
+
+    private List<BsAreaDto> getAs(BsCityDto bsCityFirst) {
+        List<BsAreaDto> bsAreaDtos = new ArrayList<>();
+
+        if (bsCityFirst != null) {
+            List<BsArea> alist = bsAreaMapper.findByC(bsCityFirst.getCityCode());
+            for (BsArea a : alist) {
+                BsAreaDto bsAreaDto = new BsAreaDto();
+                BeanUtils.copyProperties(a, bsAreaDto);
+                bsAreaDtos.add(bsAreaDto);
+            }
+        }
+        return bsAreaDtos;
+    }
+
+    private List<BsStreetDto> getSs(BsAreaDto bsAreaFirst) {
+        List<BsStreetDto> bsStreetDtos = new ArrayList<>();
+
+        if (bsAreaFirst != null) {
+            List<BsStreet> slist = bsStreetMapper.findByA(bsAreaFirst.getAreaCode());
+            for (BsStreet s : slist) {
+                BsStreetDto bsStreetDto = new BsStreetDto();
+                BeanUtils.copyProperties(s, bsStreetDto);
+                bsStreetDtos.add(bsStreetDto);
+            }
+        }
+        return bsStreetDtos;
+    }
+
     @Override
     public ApiResult addrInit() {
         Map<String, Object> map = new HashMap<>();
@@ -51,45 +93,33 @@ public class BaseDataServiceImpl implements BaseDataService {
         }
 
         List<BsCityDto> bsCityDtos = new ArrayList<>();
-        List<BsCity> clist = new ArrayList<>();
-        if (plist.size() > 0) {
-            BsProvince bsProvinceFirst = plist.get(0);
-            clist = bsCityMapper.findByP(bsProvinceFirst.getProvinceCode());
-            for(BsCity c:clist){
-                BsCityDto bsCityDto = new BsCityDto();
-                BeanUtils.copyProperties(c,bsCityDto);
-                bsCityDtos.add(bsCityDto);
-            }
+        //增加空选项
+        BsCityDto bsCityDtoNull = new BsCityDto();
+        bsCityDtos.add(bsCityDtoNull);
+        if (bsProvinceDtos.size() > 0) {
+            bsCityDtos.addAll(this.getCs(bsProvinceDtos.get(0)));
         }
 
         List<BsAreaDto> bsAreaDtos = new ArrayList<>();
-        List<BsArea> alist = new ArrayList<>();
-        if(clist.size()>0){
-            BsCity bsCityFirst = clist.get(0);
-            alist = bsAreaMapper.findByC(bsCityFirst.getCityCode());
-            for(BsArea a:alist){
-                BsAreaDto bsAreaDto = new BsAreaDto();
-                BeanUtils.copyProperties(a,bsAreaDto);
-                bsAreaDtos.add(bsAreaDto);
-            }
+        //增加空选项
+        BsAreaDto bsAreaDtoNull = new BsAreaDto();
+        bsAreaDtos.add(bsAreaDtoNull);
+        if (bsCityDtos.size() > 1) {
+            bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
         }
 
         List<BsStreetDto> bsStreetDtos = new ArrayList<>();
-        List<BsStreet> slist = new ArrayList<>();
-        if(alist.size()>0){
-            BsArea bsAreaFirst = alist.get(0);
-            slist = bsStreetMapper.findByA(bsAreaFirst.getAreaCode());
-            for(BsStreet s:slist){
-                BsStreetDto bsStreetDto = new BsStreetDto();
-                BeanUtils.copyProperties(s,bsStreetDto);
-                bsStreetDtos.add(bsStreetDto);
-            }
+        //增加空选项
+        BsStreetDto bsStreetDtoNull = new BsStreetDto();
+        bsStreetDtos.add(bsStreetDtoNull);
+        if (bsAreaDtos.size() > 1) {
+            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
-        map.put("bsp",bsProvinceDtos);
-        map.put("bsc",bsCityDtos);
-        map.put("bsa",bsAreaDtos);
-        map.put("bss",bsStreetDtos);
+        map.put("bsp", bsProvinceDtos);
+        map.put("bsc", bsCityDtos);
+        map.put("bsa", bsAreaDtos);
+        map.put("bss", bsStreetDtos);
 
         return ApiResult.success("成功", map);
     }
@@ -99,47 +129,37 @@ public class BaseDataServiceImpl implements BaseDataService {
         Map<String, Object> map = new HashMap<>();
 
         BsProvince bsProvince = bsProvinceMapper.selectByPrimaryKey(id);
-
-        List<BsCityDto> bsCityDtos = new ArrayList<>();
-        List<BsCity> clist = new ArrayList<>();
+        BsProvinceDto bsProvinceDto = null;
         if (bsProvince != null) {
-            clist = bsCityMapper.findByP(bsProvince.getProvinceCode());
-            for(BsCity c:clist){
-                BsCityDto bsCityDto = new BsCityDto();
-                BeanUtils.copyProperties(c,bsCityDto);
-                bsCityDtos.add(bsCityDto);
-            }
-        }else{
-            return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
+            bsProvinceDto = new BsProvinceDto();
+            BeanUtils.copyProperties(bsProvince, bsProvinceDto);
         }
 
+        List<BsCityDto> bsCityDtos = new ArrayList<>();
+        //增加空选项
+        BsCityDto bsCityDtoNull = new BsCityDto();
+        bsCityDtos.add(bsCityDtoNull);
+        bsCityDtos.addAll(this.getCs(bsProvinceDto));
+
         List<BsAreaDto> bsAreaDtos = new ArrayList<>();
-        List<BsArea> alist = new ArrayList<>();
-        if(clist.size()>0){
-            BsCity bsCityFirst = clist.get(0);
-            alist = bsAreaMapper.findByC(bsCityFirst.getCityCode());
-            for(BsArea a:alist){
-                BsAreaDto bsAreaDto = new BsAreaDto();
-                BeanUtils.copyProperties(a,bsAreaDto);
-                bsAreaDtos.add(bsAreaDto);
-            }
+        //增加空选项
+        BsAreaDto bsAreaDtoNull = new BsAreaDto();
+        bsAreaDtos.add(bsAreaDtoNull);
+        if (bsCityDtos.size() > 1) {
+            bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
         }
 
         List<BsStreetDto> bsStreetDtos = new ArrayList<>();
-        List<BsStreet> slist = new ArrayList<>();
-        if(alist.size()>0){
-            BsArea bsAreaFirst = alist.get(0);
-            slist = bsStreetMapper.findByA(bsAreaFirst.getAreaCode());
-            for(BsStreet s:slist){
-                BsStreetDto bsStreetDto = new BsStreetDto();
-                BeanUtils.copyProperties(s,bsStreetDto);
-                bsStreetDtos.add(bsStreetDto);
-            }
+        //增加空选项
+        BsStreetDto bsStreetDtoNull = new BsStreetDto();
+        bsStreetDtos.add(bsStreetDtoNull);
+        if (bsAreaDtos.size() > 1) {
+            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
-        map.put("bsc",bsCityDtos);
-        map.put("bsa",bsAreaDtos);
-        map.put("bss",bsStreetDtos);
+        map.put("bsc", bsCityDtos);
+        map.put("bsa", bsAreaDtos);
+        map.put("bss", bsStreetDtos);
 
         return ApiResult.success("成功", map);
     }
@@ -149,34 +169,28 @@ public class BaseDataServiceImpl implements BaseDataService {
         Map<String, Object> map = new HashMap<>();
 
         BsCity bsCity = bsCityMapper.selectByPrimaryKey(id);
+        BsCityDto bsCityDto = null;
+        if (bsCity != null) {
+            bsCityDto = new BsCityDto();
+            BeanUtils.copyProperties(bsCity, bsCityDto);
+        }
 
         List<BsAreaDto> bsAreaDtos = new ArrayList<>();
-        List<BsArea> alist = new ArrayList<>();
-        if(bsCity != null){
-            alist = bsAreaMapper.findByC(bsCity.getCityCode());
-            for(BsArea a:alist){
-                BsAreaDto bsAreaDto = new BsAreaDto();
-                BeanUtils.copyProperties(a,bsAreaDto);
-                bsAreaDtos.add(bsAreaDto);
-            }
-        }else{
-            return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
-        }
+        //增加空选项
+        BsAreaDto bsAreaDtoNull = new BsAreaDto();
+        bsAreaDtos.add(bsAreaDtoNull);
+        bsAreaDtos.addAll(this.getAs(bsCityDto));
 
         List<BsStreetDto> bsStreetDtos = new ArrayList<>();
-        List<BsStreet> slist = new ArrayList<>();
-        if(alist.size()>0){
-            BsArea bsAreaFirst = alist.get(0);
-            slist = bsStreetMapper.findByA(bsAreaFirst.getAreaCode());
-            for(BsStreet s:slist){
-                BsStreetDto bsStreetDto = new BsStreetDto();
-                BeanUtils.copyProperties(s,bsStreetDto);
-                bsStreetDtos.add(bsStreetDto);
-            }
+        //增加空选项
+        BsStreetDto bsStreetDtoNull = new BsStreetDto();
+        bsStreetDtos.add(bsStreetDtoNull);
+        if (bsAreaDtos.size() > 1) {
+            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
-        map.put("bsa",bsAreaDtos);
-        map.put("bss",bsStreetDtos);
+        map.put("bsa", bsAreaDtos);
+        map.put("bss", bsStreetDtos);
 
         return ApiResult.success("成功", map);
     }
@@ -186,19 +200,19 @@ public class BaseDataServiceImpl implements BaseDataService {
         Map<String, Object> map = new HashMap<>();
 
         BsArea bsArea = bsAreaMapper.selectByPrimaryKey(id);
-
-        List<BsStreetDto> bsStreetDtos = new ArrayList<>();
-        List<BsStreet> slist = new ArrayList<>();
-        if(bsArea != null){
-            slist = bsStreetMapper.findByA(bsArea.getAreaCode());
-            for(BsStreet s:slist){
-                BsStreetDto bsStreetDto = new BsStreetDto();
-                BeanUtils.copyProperties(s,bsStreetDto);
-                bsStreetDtos.add(bsStreetDto);
-            }
+        BsAreaDto bsAreaDto = null;
+        if (bsArea != null) {
+            bsAreaDto = new BsAreaDto();
+            BeanUtils.copyProperties(bsArea, bsAreaDto);
         }
 
-        map.put("bss",bsStreetDtos);
+        List<BsStreetDto> bsStreetDtos = new ArrayList<>();
+        //增加空选项
+        BsStreetDto bsStreetDtoNull = new BsStreetDto();
+        bsStreetDtos.add(bsStreetDtoNull);
+        bsStreetDtos.addAll(this.getSs(bsAreaDto));
+
+        map.put("bss", bsStreetDtos);
 
         return ApiResult.success("成功", map);
     }
@@ -206,7 +220,7 @@ public class BaseDataServiceImpl implements BaseDataService {
     @Override
     public AreaChangSeq fzwaddrBySort(Integer sort) {
         AreaChangSeq areaChangSeq = areaChangSeqMapper.selectByPrimaryKey(sort);
-        if(areaChangSeq == null)
+        if (areaChangSeq == null)
             return null;
         else
             return areaChangSeq;

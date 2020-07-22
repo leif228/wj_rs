@@ -99,21 +99,21 @@ public class UserServiceImpl implements UserService {
         String trade = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
 //        String area = wjuser.getIdcard().substring(0, 5);
 
-        String pf = "!",cf = "!",af = "!",sf = "!";
+        String pf = "!",cf = "!",af = "!",sf = "!";//没有选择时fzw地址信息暂用“!”表示
 
-        AreaChangSeq pfzw = baseDataService.fzwaddrBySort(pSort);
+        AreaChangSeq pfzw = baseDataService.fzwaddrBySort(wjuser.getPSort());
         if(pfzw != null)
             pf = pfzw.getFzwStr();
 
-        AreaChangSeq cfzw = baseDataService.fzwaddrBySort(cSort);
+        AreaChangSeq cfzw = baseDataService.fzwaddrBySort(wjuser.getCSort());
         if(cfzw != null)
             cf = cfzw.getFzwStr();
 
-        AreaChangSeq afzw = baseDataService.fzwaddrBySort(aSort);
+        AreaChangSeq afzw = baseDataService.fzwaddrBySort(wjuser.getASort());
         if(afzw != null)
             af = afzw.getFzwStr();
 
-        AreaChangSeq sfzw = baseDataService.fzwaddrBySort(sSort);
+        AreaChangSeq sfzw = baseDataService.fzwaddrBySort(wjuser.getSSort());
         if(sfzw != null)
             sf = sfzw.getFzwStr();
 
@@ -122,11 +122,11 @@ public class UserServiceImpl implements UserService {
 
         String timeStr = DateUtil.getDateTime("yyyyMMdd");
         String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
-        String catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + area + timeStr);
+        Device catMaxFzwno = deviceMapper.findByFzwnoLikeCAT(country + trade + area + timeStr);
         if (null == catMaxFzwno) {
             seqno = NumConvertUtil.IntToHexStringLimit4(1);
         } else {
-            String limitPre = catMaxFzwno.substring(0, 21).substring(17);
+            String limitPre = catMaxFzwno.getFzwno().substring(0, 21).substring(17);
             int seqInt = NumConvertUtil.HexStringToInt(limitPre);
             seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
             if (seqno == null)
@@ -142,15 +142,29 @@ public class UserServiceImpl implements UserService {
         deviceVo.setFzwno(fzwNo);
 
         //增加下级节点
-        if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
+//        if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
             NodeStandby preNodeStandby = nodeStandbyMapper.findByNodeAndType(nodeId, MDA.numEnum.ZERO.ordinal());
             deviceVo.setIp(preNodeStandby.getIp());
             deviceVo.setPort(preNodeStandby.getPort());
+//        }
+
+        //当注册设备类型不是（通用服务器）时，要保存fzwno
+        if(MDA.numEnum.ZERO.ordinal() != Integer.valueOf(deviceSelected)){
+            Device device = new Device();
+            device.setUserId(userId);
+            device.setDeviceType(Integer.valueOf(deviceSelected));
+            device.setCreatTime(DateUtil.getDate());
+
+            device.setFzwno(fzwNo);
+            deviceMapper.insertSelective(device);
+
+            log.info("设备注册成功" + fzwNo);
+            return ApiResult.success("设备注册成功", deviceVo);
+        }else{
+            log.info("设备注册第一步成功" + fzwNo);
+            return ApiResult.success("设备注册第一步成功", deviceVo);
         }
 
-        log.info("设备注册第一步成功" + fzwNo);
-
-        return ApiResult.success("设备注册第一步成功", deviceVo);
 
     }
 

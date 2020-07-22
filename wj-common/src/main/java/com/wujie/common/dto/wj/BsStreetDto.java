@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class BsStreetDto implements Serializable {
     // 自增列
-    private Integer streetId;
+    private Integer streetId = 0;
 
     // 街道代码
     private String streetCode;
@@ -14,7 +14,7 @@ public class BsStreetDto implements Serializable {
     private String areaCode;
 
     // 街道名称
-    private String streetName;
+    private String streetName = "选择街道";
 
     // 简称
     private String shortName;
@@ -26,7 +26,7 @@ public class BsStreetDto implements Serializable {
     private String lat;
 
     // 排序
-    private Integer sort;
+    private Integer sort = 0;
 
     // 创建时间
     private Date gmtCreate;

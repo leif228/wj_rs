@@ -3,6 +3,7 @@ package com.wujie.hc.app.business.app.service.system.impl;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
+import com.wujie.common.dto.wj.DeviceTypeDto;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.AuthUserService;
@@ -28,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +165,44 @@ public class UserServiceImpl implements UserService {
         log.info("设备注册成功");
 
         return ApiResult.success("设备注册成功");
+    }
+
+    @Override
+    public ApiResult deviceType(UserDetailsVo userInfo) {
+        List<DeviceTypeDto> list = new ArrayList<>();
+        if(userInfo.getUserName().equals("admin")){
+            DeviceTypeDto d1 = new DeviceTypeDto();
+            d1.setId(0);
+            d1.setName("管理服务器");
+            DeviceTypeDto d2 = new DeviceTypeDto();
+            d2.setId(1);
+            d2.setName("应用服务器");
+            DeviceTypeDto d3 = new DeviceTypeDto();
+            d3.setId(2);
+            d3.setName("网关");
+            DeviceTypeDto d4 = new DeviceTypeDto();
+            d4.setId(3);
+            d4.setName("手机");
+            list.add(d1);
+            list.add(d2);
+            list.add(d3);
+            list.add(d4);
+        }else{
+            DeviceTypeDto d2 = new DeviceTypeDto();
+            d2.setId(1);
+            d2.setName("应用服务器");
+            DeviceTypeDto d3 = new DeviceTypeDto();
+            d3.setId(2);
+            d3.setName("网关");
+            DeviceTypeDto d4 = new DeviceTypeDto();
+            d4.setId(3);
+            d4.setName("手机");
+            list.add(d2);
+            list.add(d3);
+            list.add(d4);
+        }
+
+        return ApiResult.success("成功",list);
     }
 
     @Override
