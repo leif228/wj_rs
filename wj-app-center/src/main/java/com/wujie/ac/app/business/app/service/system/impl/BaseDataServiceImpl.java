@@ -105,7 +105,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         BsAreaDto bsAreaDtoNull = new BsAreaDto();
         bsAreaDtos.add(bsAreaDtoNull);
         if (bsCityDtos.size() > 1) {
-            bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
+            //bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
         }
 
         List<BsStreetDto> bsStreetDtos = new ArrayList<>();
@@ -113,7 +113,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         BsStreetDto bsStreetDtoNull = new BsStreetDto();
         bsStreetDtos.add(bsStreetDtoNull);
         if (bsAreaDtos.size() > 1) {
-            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
+            //bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
         map.put("bsp", bsProvinceDtos);
@@ -146,7 +146,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         BsAreaDto bsAreaDtoNull = new BsAreaDto();
         bsAreaDtos.add(bsAreaDtoNull);
         if (bsCityDtos.size() > 1) {
-            bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
+            //bsAreaDtos.addAll(this.getAs(bsCityDtos.get(1)));
         }
 
         List<BsStreetDto> bsStreetDtos = new ArrayList<>();
@@ -154,7 +154,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         BsStreetDto bsStreetDtoNull = new BsStreetDto();
         bsStreetDtos.add(bsStreetDtoNull);
         if (bsAreaDtos.size() > 1) {
-            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
+            //bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
         map.put("bsc", bsCityDtos);
@@ -186,7 +186,7 @@ public class BaseDataServiceImpl implements BaseDataService {
         BsStreetDto bsStreetDtoNull = new BsStreetDto();
         bsStreetDtos.add(bsStreetDtoNull);
         if (bsAreaDtos.size() > 1) {
-            bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
+            //bsStreetDtos.addAll(this.getSs(bsAreaDtos.get(1)));
         }
 
         map.put("bsa", bsAreaDtos);

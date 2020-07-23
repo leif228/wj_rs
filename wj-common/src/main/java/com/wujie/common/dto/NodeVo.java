@@ -11,8 +11,17 @@ public class NodeVo extends NodeDto implements Serializable {
     private String port;
     private int layer;
     private String fzwno;
+    private int deviceType;
     /** 子级分类 */
     private List<NodeVo> children = new ArrayList<>();
+
+    public int getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(int deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public String getIp() {
         return ip;

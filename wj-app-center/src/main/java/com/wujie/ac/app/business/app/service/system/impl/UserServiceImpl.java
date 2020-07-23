@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService {
     private NodeStandbyMapper nodeStandbyMapper;
     private WjuserMapper wjuserMapper;
     private BaseDataService baseDataService;
+    private static final String COUNTRY = "chn";
+    private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
+    private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示
 
     @Autowired
     public UserServiceImpl(BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
@@ -58,9 +62,9 @@ public class UserServiceImpl implements UserService {
                 for (int i = firstLayer; i <= mapSize; i++) {
                     List<NodeVo> list0 = map.get(i);
                     int j = i + 1;
-                    if(mapSize ==1){
+                    if (mapSize == 1) {
                         nodeVo = map.get(firstLayer).get(0);
-                        nodeVo.setName(nodeVo.getName() + "(" + nodeVo.getIp() + ":" + nodeVo.getPort() + ")" + nodeVo.getFzwno().substring(3,12));
+                        nodeVo.setName(nodeVo.getName() + "(" + nodeVo.getIp() + ":" + nodeVo.getPort() + ")" + nodeVo.getFzwno().substring(3, 12) + (nodeVo.getDeviceType()==0 ? "管" :"应"));
                         break;
                     }
                     if (j > mapSize)
@@ -68,12 +72,12 @@ public class UserServiceImpl implements UserService {
                     List<NodeVo> list1 = map.get(j);
                     for (NodeVo parent : list0) {
                         if (!parent.getName().contains(":"))
-                            parent.setName(parent.getName() + "(" + parent.getIp() + ":" + parent.getPort() + ")" + parent.getFzwno().substring(3,12));
+                            parent.setName(parent.getName() + "(" + parent.getIp() + ":" + parent.getPort() + ")" + parent.getFzwno().substring(3, 12) + (nodeVo.getDeviceType()==0 ? "管" :"应"));
                         for (NodeVo child : list1) {
                             if (parent.getRgt() > child.getRgt() && parent.getLft() < child.getLft()) {
                                 parent.getChildren().add(child);
                                 if (!child.getName().contains(":"))
-                                    child.setName(child.getName() + "(" + child.getIp() + ":" + child.getPort() + ")" + child.getFzwno().substring(3,12));
+                                    child.setName(child.getName() + "(" + child.getIp() + ":" + child.getPort() + ")" + child.getFzwno().substring(3, 12) + (nodeVo.getDeviceType()==0 ? "管" :"应"));
                             }
                         }
                     }
@@ -91,34 +95,223 @@ public class UserServiceImpl implements UserService {
         Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
         if (wjuser == null)
             return ApiResult.error(ErrorEnum.NOT_USER_ERR);
+        try {
+            //一、处理管理服务器注册
+            if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
+               DeviceVo deviceVo = this.doManageService(pSort, cSort, aSort, sSort);
+
+                log.info("设备注册第一步成功" + deviceVo.getFzwno());
+                return ApiResult.success("设备注册第一步成功", deviceVo);
+            }
+            //二、处理应用服务器注册
+            else if (MDA.numEnum.ONE.ordinal() == Integer.valueOf(deviceSelected)) {
+
+//                log.info("设备注册第一步成功" + fzwNo);
+                return ApiResult.success("设备注册第一步成功", new Device());
+            }
+            //三、处理网关、手机注册
+            else {
+//                Device device = new Device();
+//                device.setUserId(userId);
+//                device.setDeviceType(Integer.valueOf(deviceSelected));
+//                device.setCreatTime(DateUtil.getDate());
+//
+//                device.setFzwno(fzwNo);
+//                deviceMapper.insertSelective(device);
+//
+//                log.info("设备注册成功" + fzwNo);
+                return ApiResult.success("设备注册成功", new Device());
+            }
+        }catch (Exception e){
+            return ApiResult.error(e.getMessage());
+        }
+    }
+    private DeviceVo doManageService(Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception{
+        DeviceVo deviceVo = new DeviceVo();
 
         //生成泛在网编号
         String fzwNo = "";
+        NodeStandby preNodeStandby = null;
+        //由下往上查找父,管理服务器只注册到父级下，不注册到同级
+        if (pSort != 0 && cSort != 0 && aSort != 0 && sSort != 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
+            //各级都没有找到，直接注册到根
+            if(preNodeStandby == null){
+                preNodeStandby = this.getRoot();
+                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            }else{//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index){
+                    case -1:
+                        throw new Exception("当前街道管理服务器已经存在了！不能重复注册！");
+                    case 7:
+                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, sSort);
+                        break;
+                    case 6:
+                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, 0);
+                        break;
+                    case 5:
+                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort != 0 && aSort != 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, 0);
+            //各级都没有找到，直接注册到根
+            if(preNodeStandby == null){
+                preNodeStandby = this.getRoot();
+                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            }else{//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index){
+                    case 7:
+                        throw new Exception("当前区管理服务器已经存在了！不能重复注册！");
+                    case 6:
+                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, 0);
+                        break;
+                    case 5:
+                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort != 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, 0, 0);
+            //各级都没有找到，直接注册到根
+            if(preNodeStandby == null){
+                preNodeStandby = this.getRoot();
+                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            }else{//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index){
+                    case 6:
+                        throw new Exception("当前市管理服务器已经存在了！不能重复注册！");
+                    case 5:
+                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort == 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, 0, 0, 0);
+            //各级都没有找到，直接注册到根
+            if(preNodeStandby == null){
+                preNodeStandby = this.getRoot();
+                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            }else{//找到就确定父级是那一级，然后在父级的下一级注册
+                throw new Exception("当前省级管理服务器已经存在了！不能重复注册！");
+            }
+        }
 
-        String country = "chn";
-        String trade = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
-//        String area = wjuser.getIdcard().substring(0, 5);
+        deviceVo.setParentNodeId(preNodeStandby.getNodeId());
+        deviceVo.setIp(preNodeStandby.getIp());
+        deviceVo.setPort(preNodeStandby.getPort());
+        deviceVo.setFzwno(fzwNo);
 
-        String pf = "!",cf = "!",af = "!",sf = "!";//没有选择时fzw地址信息暂用“!”表示
+        return  deviceVo;
+    }
 
-        AreaChangSeq pfzw = baseDataService.fzwaddrBySort(wjuser.getPSort());
-        if(pfzw != null)
+    private NodeStandby getRoot() {
+        return nodeStandbyMapper.selectByPrimaryKey(1l);
+    }
+
+    private int manageServiceAddInLayer(NodeStandby preNodeStandby){
+        Device parentDevice = deviceMapper.selectByPrimaryKey(preNodeStandby.getDeviceId());//chn0!!!!02020072100291
+        String fzwAreaLimit = parentDevice.getFzwno().substring(0,8);
+        int index = fzwAreaLimit.indexOf(SPA_STR);
+
+        return index;
+    }
+
+    private NodeStandby getParentNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        NodeStandby preNodeStandby = null;
+        //由下往上查找父
+        if (pSort != 0 && cSort != 0 && aSort != 0 && sSort != 0) {
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, aSort, sSort));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, aSort, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, 0, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+        } else if (pSort != 0 && cSort != 0 && aSort != 0 && sSort == 0) {
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, aSort, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, 0, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+        } else if (pSort != 0 && cSort != 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, 0, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+        } else if (pSort != 0 && cSort == 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ZERO.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, 0, 0, 0));
+            if (preNodeStandby != null)
+                return preNodeStandby;
+        }
+
+        return preNodeStandby;
+    }
+
+    private String doPreFzwArea(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        String country = COUNTRY;
+        String trade = TRADE;//通用（互联网）:0，电力：1，军队：2，政府：3
+
+        String area = this.doFzwArea(pSort, cSort, aSort, sSort);
+
+        String preFzwArea = country + trade + area;
+
+        return preFzwArea;
+    }
+
+    private String doFzwArea(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        String pf = SPA_STR, cf = SPA_STR, af = SPA_STR, sf = SPA_STR;//没有选择时fzw地址信息暂用“!”表示
+
+        AreaChangSeq pfzw = baseDataService.fzwaddrBySort(pSort);
+        if (pfzw != null)
             pf = pfzw.getFzwStr();
 
-        AreaChangSeq cfzw = baseDataService.fzwaddrBySort(wjuser.getCSort());
-        if(cfzw != null)
+        AreaChangSeq cfzw = baseDataService.fzwaddrBySort(cSort);
+        if (cfzw != null)
             cf = cfzw.getFzwStr();
 
-        AreaChangSeq afzw = baseDataService.fzwaddrBySort(wjuser.getASort());
-        if(afzw != null)
+        AreaChangSeq afzw = baseDataService.fzwaddrBySort(aSort);
+        if (afzw != null)
             af = afzw.getFzwStr();
 
-        AreaChangSeq sfzw = baseDataService.fzwaddrBySort(wjuser.getSSort());
-        if(sfzw != null)
+        AreaChangSeq sfzw = baseDataService.fzwaddrBySort(sSort);
+        if (sfzw != null)
             sf = sfzw.getFzwStr();
 
         String area = pf + cf + af + sf + "0";
 
+        return area;
+    }
+
+    private String doFzwno(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        String fzwNo = "";
+
+        String country = COUNTRY;
+        String trade = TRADE;//通用（互联网）:0，电力：1，军队：2，政府：3
+//        String area = wjuser.getIdcard().substring(0, 5);
+
+        String area = this.doFzwArea(pSort, cSort, aSort, sSort);
 
         String timeStr = DateUtil.getDateTime("yyyyMMdd");
         String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
@@ -130,42 +323,13 @@ public class UserServiceImpl implements UserService {
             int seqInt = NumConvertUtil.HexStringToInt(limitPre);
             seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
             if (seqno == null)
-                return ApiResult.error(ErrorEnum.ERR_SEQNO_MAX);
+                throw new Exception(ErrorEnum.ERR_SEQNO_MAX.getErrMsg());
         }
-        int userType = wjuser.getUserType();//1表示个人2团体、公司等
+        //int userType = wjuser.getUserType();//1表示个人2团体、公司等
 
         fzwNo = country + trade + area + timeStr + seqno + userType;
 
-        DeviceVo deviceVo = new DeviceVo();
-        deviceVo.setIp("");
-        deviceVo.setPort("");
-        deviceVo.setFzwno(fzwNo);
-
-        //增加下级节点
-//        if (MDA.numEnum.ZERO.ordinal() == Integer.valueOf(deviceSelected)) {
-            NodeStandby preNodeStandby = nodeStandbyMapper.findByNodeAndType(nodeId, MDA.numEnum.ZERO.ordinal());
-            deviceVo.setIp(preNodeStandby.getIp());
-            deviceVo.setPort(preNodeStandby.getPort());
-//        }
-
-        //当注册设备类型不是（通用服务器）时，要保存fzwno
-        if(MDA.numEnum.ZERO.ordinal() != Integer.valueOf(deviceSelected)){
-            Device device = new Device();
-            device.setUserId(userId);
-            device.setDeviceType(Integer.valueOf(deviceSelected));
-            device.setCreatTime(DateUtil.getDate());
-
-            device.setFzwno(fzwNo);
-            deviceMapper.insertSelective(device);
-
-            log.info("设备注册成功" + fzwNo);
-            return ApiResult.success("设备注册成功", deviceVo);
-        }else{
-            log.info("设备注册第一步成功" + fzwNo);
-            return ApiResult.success("设备注册第一步成功", deviceVo);
-        }
-
-
+        return fzwNo;
     }
 
     @Override

@@ -19,4 +19,6 @@ public interface NodeStandbyMapper {
     int updateByPrimaryKey(NodeStandby record);
 
     NodeStandby findByNodeAndType(Long nodeId, int type);
+
+    NodeStandby findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(int deviceType, int nodeStanbyType, String preFzwArea);
 }

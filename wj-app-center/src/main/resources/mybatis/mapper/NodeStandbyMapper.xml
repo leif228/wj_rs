@@ -127,5 +127,11 @@
     from node_standby
     where node_id = #{nodeId} and type = #{type}
   </select>
+  <select id="findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea" resultMap="BaseResultMap">
+    select b.*
+    from node_standby b,
+    (select * from device where device_type = #{deviceType} and fzwno like concat(#{preFzwArea},'%')) a
+    where b.device_id = a.id and b.type = #{nodeStanbyType}
+  </select>
 
 </mapper>
