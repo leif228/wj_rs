@@ -174,19 +174,19 @@ public class UserServiceImpl implements UserService {
             DeviceTypeDto d1 = new DeviceTypeDto();
             d1.setId(0);
             d1.setName("管理服务器");
-            DeviceTypeDto d2 = new DeviceTypeDto();
-            d2.setId(1);
-            d2.setName("应用服务器");
-            DeviceTypeDto d3 = new DeviceTypeDto();
-            d3.setId(2);
-            d3.setName("网关");
-            DeviceTypeDto d4 = new DeviceTypeDto();
-            d4.setId(3);
-            d4.setName("手机");
+//            DeviceTypeDto d2 = new DeviceTypeDto();
+//            d2.setId(1);
+//            d2.setName("应用服务器");
+//            DeviceTypeDto d3 = new DeviceTypeDto();
+//            d3.setId(2);
+//            d3.setName("网关");
+//            DeviceTypeDto d4 = new DeviceTypeDto();
+//            d4.setId(3);
+//            d4.setName("手机");
             list.add(d1);
-            list.add(d2);
-            list.add(d3);
-            list.add(d4);
+//            list.add(d2);
+//            list.add(d3);
+//            list.add(d4);
         }else{
             DeviceTypeDto d2 = new DeviceTypeDto();
             d2.setId(1);
@@ -286,6 +286,9 @@ public class UserServiceImpl implements UserService {
         Wjuser wjuser = wjuserMapper.findByUserInfoName(username);
         if (wjuser != null)
             return ApiResult.error(ErrorEnum.PRESENCE_USER_ERR);
+        wjuser = wjuserMapper.findByIdCard(idcard);
+        if (wjuser != null)
+            return ApiResult.error(ErrorEnum.PRESENCE_USER_IDCARD_ERR);
 
         wjuser = new Wjuser();
         wjuser.setUserName(username);

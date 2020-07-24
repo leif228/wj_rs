@@ -77,4 +77,10 @@ public class UserDispatchController {
         return userService.streetByA(id);
     }
 
+    @PostMapping("/getFullFzwno")
+    public ApiResult getFullFzwno(@RequestParam(value = "fzwno") String fzwno,
+                                  @RequestParam(value = "deviceType") Integer deviceType) {
+        return userService.getFullFzwno(fzwno, deviceType);
+    }
+
 }

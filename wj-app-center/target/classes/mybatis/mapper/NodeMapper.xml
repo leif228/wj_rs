@@ -125,7 +125,7 @@
     WHERE b.lft &lt;= a.lft AND b.rgt &gt;=a.rgt
   </select>
   <select id="getAllChildNodeVosLayer" resultType="com.wujie.common.dto.NodeVo" >
-    SELECT a.*,b.ip,b.port,d.fzwno
+    SELECT a.*,b.ip,b.port,d.fzwno,d.device_type as deviceType
     FROM node_standby b,device d,
     (select child.id,child.name,child.lft,child.rgt, count(child.id) layer
     from node parent,node child

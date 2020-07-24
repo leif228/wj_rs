@@ -59,6 +59,9 @@ public interface AppUserService {
     @PostMapping("/streetByA")
     public ApiResult streetByA(@RequestParam(value = "id") Integer id);
 
+    @PostMapping("/getFullFzwno")
+    ApiResult getFullFzwno(String fzwno, Integer deviceType);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -99,6 +102,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult streetByA(Integer id) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getFullFzwno(String fzwno, Integer deviceType) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

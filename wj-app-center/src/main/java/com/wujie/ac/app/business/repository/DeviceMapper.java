@@ -19,4 +19,6 @@ public interface DeviceMapper {
     int updateByPrimaryKey(Device record);
 
     Device findByFzwnoLikeCAT(String cat);
+
+    Device findByNotAdminUserId(Long userId);
 }

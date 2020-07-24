@@ -93,6 +93,7 @@ public enum ErrorEnum {
     ERR_APPLY_REPEAT("S00047", "已经提交过产品入驻申请，请等待审批"),
     NOT_DATA_ERR("S00048", "数据不存在"),
     PRESENCE_USER_ERR("S00049", "该用户已存在"),
+    PRESENCE_USER_IDCARD_ERR("S10049", "该身份唯一识别号已存在"),
     ERR_ROLE_TYPE("S00050", "没有相应的登陆权限"),
     ERR_SYSTEM_ROLE("S00051", "系统级角色不可修改和删除"),
     ERR_PARAMETER_IS_INVALID("S00052", "参数不合法，请检查请求参数"),

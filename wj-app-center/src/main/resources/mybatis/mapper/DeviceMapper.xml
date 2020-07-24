@@ -132,9 +132,13 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+
+
   <select id="findByFzwnoLikeCAT" resultMap="BaseResultMap">
     select * from device  where id=(
     select MAX(id) from device where fzwno like concat(#{cat},'%'))
   </select>
-
+  <select id="findByNotAdminUserId" resultMap="BaseResultMap">
+    select * from device  where user_id = #{userId}
+  </select>
 </mapper>

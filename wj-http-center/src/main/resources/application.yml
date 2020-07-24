@@ -166,6 +166,7 @@ secure:
       - /getChildNodes
       - /tcpClientConnect
       - /getTcpClientConnectInfo
+      - /getFullFzwno
 
 
 
