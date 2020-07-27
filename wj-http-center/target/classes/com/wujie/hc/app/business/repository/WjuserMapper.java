@@ -19,4 +19,6 @@ public interface WjuserMapper {
     int updateByPrimaryKey(Wjuser record);
 
     Wjuser findByUserInfoName(String username);
+
+    Wjuser findByIdCard(String idcard);
 }

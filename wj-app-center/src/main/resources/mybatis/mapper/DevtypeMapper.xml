@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.DevtypeMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.Devtype" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dev_type" property="devType" jdbcType="VARCHAR" />
+    <result column="dev_type_num" property="devTypeNum" jdbcType="VARCHAR" />
+    <result column="main_num" property="mainNum" jdbcType="VARCHAR" />
+    <result column="son_num" property="sonNum" jdbcType="VARCHAR" />
+    <result column="sub_num" property="subNum" jdbcType="VARCHAR" />
+    <result column="end_num" property="endNum" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dev_type, dev_type_num, main_num, son_num, sub_num, end_num
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from devtype
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from devtype
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.Devtype" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into devtype (id, dev_type, dev_type_num, 
+      main_num, son_num, sub_num, 
+      end_num)
+    values (#{id,jdbcType=INTEGER}, #{devType,jdbcType=VARCHAR}, #{devTypeNum,jdbcType=VARCHAR}, 
+      #{mainNum,jdbcType=VARCHAR}, #{sonNum,jdbcType=VARCHAR}, #{subNum,jdbcType=VARCHAR}, 
+      #{endNum,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.Devtype" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into devtype
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="devType != null" >
+        dev_type,
+      </if>
+      <if test="devTypeNum != null" >
+        dev_type_num,
+      </if>
+      <if test="mainNum != null" >
+        main_num,
+      </if>
+      <if test="sonNum != null" >
+        son_num,
+      </if>
+      <if test="subNum != null" >
+        sub_num,
+      </if>
+      <if test="endNum != null" >
+        end_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="devType != null" >
+        #{devType,jdbcType=VARCHAR},
+      </if>
+      <if test="devTypeNum != null" >
+        #{devTypeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="mainNum != null" >
+        #{mainNum,jdbcType=VARCHAR},
+      </if>
+      <if test="sonNum != null" >
+        #{sonNum,jdbcType=VARCHAR},
+      </if>
+      <if test="subNum != null" >
+        #{subNum,jdbcType=VARCHAR},
+      </if>
+      <if test="endNum != null" >
+        #{endNum,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.Devtype" >
+    update devtype
+    <set >
+      <if test="devType != null" >
+        dev_type = #{devType,jdbcType=VARCHAR},
+      </if>
+      <if test="devTypeNum != null" >
+        dev_type_num = #{devTypeNum,jdbcType=VARCHAR},
+      </if>
+      <if test="mainNum != null" >
+        main_num = #{mainNum,jdbcType=VARCHAR},
+      </if>
+      <if test="sonNum != null" >
+        son_num = #{sonNum,jdbcType=VARCHAR},
+      </if>
+      <if test="subNum != null" >
+        sub_num = #{subNum,jdbcType=VARCHAR},
+      </if>
+      <if test="endNum != null" >
+        end_num = #{endNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.Devtype" >
+    update devtype
+    set dev_type = #{devType,jdbcType=VARCHAR},
+      dev_type_num = #{devTypeNum,jdbcType=VARCHAR},
+      main_num = #{mainNum,jdbcType=VARCHAR},
+      son_num = #{sonNum,jdbcType=VARCHAR},
+      sub_num = #{subNum,jdbcType=VARCHAR},
+      end_num = #{endNum,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="findAll" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from devtype
+  </select>
+  <select id="getManageService" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from devtype
+    where id = 1
+  </select>
+  <select id="findMElse" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from devtype
+    where id &gt; 1
+  </select>
+</mapper>

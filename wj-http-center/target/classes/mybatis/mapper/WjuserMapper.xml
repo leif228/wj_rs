@@ -187,4 +187,10 @@
     from wjuser
     where user_name = #{username}
   </select>
+  <select id="findByIdCard" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser
+    where idcard = #{idcard}
+  </select>
 </mapper>

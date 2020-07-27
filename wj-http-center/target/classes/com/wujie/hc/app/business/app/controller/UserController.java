@@ -56,13 +56,6 @@ public class UserController {
         return dispatchUserService.preDeviceRegist(userInfo.getId(), deviceSelected, nodeId, pSort, cSort, aSort, sSort);
     }
 
-    @PostMapping("/deviceType")
-    public ApiResult deviceType(
-    ) {
-        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
-        return userService.deviceType(userInfo);
-    }
-
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
         return dispatchUserService.getChildNodes(nodeId);
@@ -71,6 +64,26 @@ public class UserController {
     @PostMapping("/getTreeData")
     public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId) {
         return dispatchUserService.getTreeData(nodeId);
+    }
+
+    @PostMapping("/addrInit")
+    public ApiResult addrInit() {
+        return dispatchUserService.addrInit();
+    }
+
+    @PostMapping("/cityByP")
+    public ApiResult cityByP(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.cityByP(id);
+    }
+
+    @PostMapping("/areaByC")
+    public ApiResult areaByC(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.areaByC(id);
+    }
+
+    @PostMapping("/streetByA")
+    public ApiResult streetByA(@RequestParam(value = "id") Integer id) {
+        return dispatchUserService.streetByA(id);
     }
 
     @PostMapping("/userRegist")
@@ -108,23 +121,16 @@ public class UserController {
         return tcpUserService.getTcpClientConnectInfo();
     }
 
-    @PostMapping("/addrInit")
-    public ApiResult addrInit() {
-        return dispatchUserService.addrInit();
+    @PostMapping("/getFullFzwno")
+    public ApiResult getFullFzwno(@RequestParam(value = "fzwno") String fzwno,
+                                  @RequestParam(value = "deviceType") Integer deviceType) {
+        return dispatchUserService.getFullFzwno(fzwno, deviceType);
     }
 
-    @PostMapping("/cityByP")
-    public ApiResult cityByP(@RequestParam(value = "id") Integer id) {
-        return dispatchUserService.cityByP(id);
+    @PostMapping("/deviceType")
+    public ApiResult getAllDevType() {
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return dispatchUserService.getAllDevType(userInfo.getId());
     }
 
-    @PostMapping("/areaByC")
-    public ApiResult areaByC(@RequestParam(value = "id") Integer id) {
-        return dispatchUserService.areaByC(id);
-    }
-
-    @PostMapping("/streetByA")
-    public ApiResult streetByA(@RequestParam(value = "id") Integer id) {
-        return dispatchUserService.streetByA(id);
-    }
 }

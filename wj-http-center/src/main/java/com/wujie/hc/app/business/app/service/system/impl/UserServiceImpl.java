@@ -168,44 +168,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult deviceType(UserDetailsVo userInfo) {
-        List<DeviceTypeDto> list = new ArrayList<>();
-        if(userInfo.getUserName().equals("admin")){
-            DeviceTypeDto d1 = new DeviceTypeDto();
-            d1.setId(0);
-            d1.setName("管理服务器");
-//            DeviceTypeDto d2 = new DeviceTypeDto();
-//            d2.setId(1);
-//            d2.setName("应用服务器");
-//            DeviceTypeDto d3 = new DeviceTypeDto();
-//            d3.setId(2);
-//            d3.setName("网关");
-//            DeviceTypeDto d4 = new DeviceTypeDto();
-//            d4.setId(3);
-//            d4.setName("手机");
-            list.add(d1);
-//            list.add(d2);
-//            list.add(d3);
-//            list.add(d4);
-        }else{
-            DeviceTypeDto d2 = new DeviceTypeDto();
-            d2.setId(1);
-            d2.setName("应用服务器");
-            DeviceTypeDto d3 = new DeviceTypeDto();
-            d3.setId(2);
-            d3.setName("网关");
-            DeviceTypeDto d4 = new DeviceTypeDto();
-            d4.setId(3);
-            d4.setName("手机");
-            list.add(d2);
-            list.add(d3);
-            list.add(d4);
-        }
-
-        return ApiResult.success("成功",list);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public ApiResult deviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId) {
 //        Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);

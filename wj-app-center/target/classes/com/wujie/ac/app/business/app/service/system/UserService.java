@@ -16,4 +16,8 @@ public interface UserService {
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);
 
     ApiResult getChildNodes(Long nodeId);
+
+    ApiResult getFullFzwno(String fzwno, Integer deviceType);
+
+    ApiResult getAllDevType(Long userId);
 }

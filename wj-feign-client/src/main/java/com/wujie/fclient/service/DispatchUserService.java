@@ -60,7 +60,11 @@ public interface DispatchUserService {
     public ApiResult streetByA(@RequestParam(value = "id") Integer id);
 
     @PostMapping("/getFullFzwno")
-    ApiResult getFullFzwno(String fzwno, Integer deviceType);
+    public ApiResult getFullFzwno(@RequestParam(value = "fzwno") String fzwno,
+                                  @RequestParam(value = "deviceType") Integer deviceType);
+
+    @PostMapping("/getAllDevType")
+    public ApiResult getAllDevType(@RequestParam(value = "userId") Long userId);
 
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
@@ -108,6 +112,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult getFullFzwno(String fzwno, Integer deviceType) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getAllDevType(Long userId) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

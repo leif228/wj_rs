@@ -83,4 +83,9 @@ public class UserDispatchController {
         return userService.getFullFzwno(fzwno, deviceType);
     }
 
+    @PostMapping("/getAllDevType")
+    public ApiResult getAllDevType(@RequestParam(value = "userId") Long userId) {
+        return userService.getAllDevType(userId);
+    }
+
 }

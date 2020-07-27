@@ -56,13 +56,6 @@ public class UserController {
         return dispatchUserService.preDeviceRegist(userInfo.getId(), deviceSelected, nodeId, pSort, cSort, aSort, sSort);
     }
 
-    @PostMapping("/deviceType")
-    public ApiResult deviceType(
-    ) {
-        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
-        return userService.deviceType(userInfo);
-    }
-
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
         return dispatchUserService.getChildNodes(nodeId);
@@ -132,6 +125,12 @@ public class UserController {
     public ApiResult getFullFzwno(@RequestParam(value = "fzwno") String fzwno,
                                   @RequestParam(value = "deviceType") Integer deviceType) {
         return dispatchUserService.getFullFzwno(fzwno, deviceType);
+    }
+
+    @PostMapping("/deviceType")
+    public ApiResult getAllDevType() {
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return dispatchUserService.getAllDevType(userInfo.getId());
     }
 
 }

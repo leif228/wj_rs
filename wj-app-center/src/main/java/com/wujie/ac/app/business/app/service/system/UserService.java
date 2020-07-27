@@ -18,4 +18,6 @@ public interface UserService {
     ApiResult getChildNodes(Long nodeId);
 
     ApiResult getFullFzwno(String fzwno, Integer deviceType);
+
+    ApiResult getAllDevType(Long userId);
 }

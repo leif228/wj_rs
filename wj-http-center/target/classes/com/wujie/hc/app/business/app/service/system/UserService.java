@@ -16,6 +16,4 @@ public interface UserService {
     ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId);
 
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);
-
-    ApiResult deviceType(UserDetailsVo userInfo);
 }
