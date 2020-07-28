@@ -1,6 +1,10 @@
 package com.wujie.ac.app.framework.util.request;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.wujie.ac.app.business.util.system.SystemConfig;
 import com.wujie.ac.app.framework.result.GeneralResult;
@@ -10,6 +14,16 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -174,6 +188,55 @@ public class BaseRestfulUtil {
             httpPost.releaseConnection();
         }
     }
+
+	/**
+	 * post请求以及参数是json
+	 *
+	 * @param url
+	 * @return
+	 */
+	public static JSONObject doPostForJson(String url, Map map) {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		JSONObject jsonObject = null;
+		HttpPost httpPost = new HttpPost(url);
+		RequestConfig requestConfig = RequestConfig.custom().
+				setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
+				.setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
+		httpPost.setConfig(requestConfig);
+		httpPost.setHeader("Content-Type", "application/json");
+		try {
+			//设置参数
+			List<BasicNameValuePair> list = new ArrayList<>();
+			Iterator iterator = map.entrySet().iterator();
+			while(iterator.hasNext()){
+				Map.Entry<String,String> elem = (Map.Entry<String, String>) iterator.next();
+				list.add(new BasicNameValuePair(elem.getKey(),elem.getValue()));
+			}
+			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list,"utf-8");
+			httpPost.setEntity(entity);
+//			httpPost.setEntity(new StringEntity(jsonParams, ContentType.create("application/json", "utf-8")));
+			System.out.println("request parameters" + EntityUtils.toString(httpPost.getEntity()));
+			System.out.println("httpPost:" + httpPost);
+			HttpResponse response = httpClient.execute(httpPost);
+			if (response != null && response.getStatusLine().getStatusCode() == 200) {
+				String result = EntityUtils.toString(response.getEntity());
+				System.out.println("result:" + result);
+				jsonObject = JSONObject.fromObject(result);
+				return jsonObject;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != httpClient) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return jsonObject;
+		}
+	}
 	
 	/*
 		 //模拟请求

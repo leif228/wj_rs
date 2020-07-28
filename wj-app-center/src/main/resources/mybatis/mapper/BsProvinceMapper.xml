@@ -30,7 +30,7 @@
     where PROVINCE_ID = #{provinceId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.BsProvince" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into bs_province (PROVINCE_ID, PROVINCE_CODE, PROVINCE_NAME, 
@@ -45,7 +45,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.BsProvince" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into bs_province

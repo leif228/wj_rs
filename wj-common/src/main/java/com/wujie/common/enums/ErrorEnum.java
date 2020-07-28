@@ -130,6 +130,7 @@ public enum ErrorEnum {
     ERR_WX_PAY_UNIFIED_ORDER("S00161", "微信下单接口错误！"),
     ERR_ORDER_CANCEL("S00162", "只有订单为待付款状态下才能取消该订单！"),
     ERR_SEQNO_MAX("S00164", "当前生成泛在网编号内序号已经到过最大值,请明天再来试！"),
+    ERR_SEQNO_DEVICE_MAX("S02164", "当前生成泛在网编号设备段序号已经到过最大值！"),
     ERR_ADD_NODE("S00165", "节点增加失败！"),
     ERR_DSERVICE_NOT("S00166", "Dispach服务不可用！"),
     ERR_ASERVICE_NOT("S00166", "App服务不可用！"),
