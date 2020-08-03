@@ -1,9 +1,6 @@
-package com.wujie.tc.netty.server.decoder;
+package com.wujie.hc.app.framework.netty;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wujie.tc.netty.protocol.WjProtocol;
-import com.wujie.tc.netty.server.ChannelManager;
-import com.wujie.tc.netty.pojo.Device;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -105,23 +102,14 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
         String tx = "";
 
         if(FORMAT_TX.equals(wjProtocol.getFormat())){
-            if(wjProtocol.getUserdata() != null){
-
-                String dataStr = new String(wjProtocol.getUserdata());
-                tx = dataStr;
-            }
+            String dataStr = new String(wjProtocol.getUserdata());
+            tx = dataStr;
         }else if(FORMAT_JS.equals(wjProtocol.getFormat())){
-            if(wjProtocol.getUserdata() != null){
-
-                String jsonStr = new String(wjProtocol.getUserdata());
-                log.debug(jsonStr);
-                objParam = JSONObject.parseObject(jsonStr);
-            }
+            String jsonStr = new String(wjProtocol.getUserdata());
+            log.debug(jsonStr);
+            objParam = JSONObject.parseObject(jsonStr);
         }else if(FORMAT_AT.equals(wjProtocol.getFormat())){
-            if(wjProtocol.getUserdata() != null){
-
-                tx = new String(wjProtocol.getUserdata());
-            }
+            String atStr = new String(wjProtocol.getUserdata());
         }
 
         //======业务处理======
@@ -129,7 +117,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
             this.nettyLogin(ctx,objParam);
         }
         if(wjProtocol.getMaincmd() == 0 && wjProtocol.getSubcmd() == 0){//终端→服务 心跳
-            this.nettyIdle(ctx,tx);
+            this.nettyReq(ctx,tx);
         }
     }
 
@@ -151,10 +139,10 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
         ctx.channel().attr(ChannelManager.deviceInfoVoAttr).set(device);
         ChannelManager.deviceChannels.put(device.getUniqueNo(), ctx.channel());
     }
-    private void nettyIdle(ChannelHandlerContext ctx, String tx) {
+    private void nettyReq(ChannelHandlerContext ctx, String tx) {
         log.info("心跳nettyReq" + tx);
         if ("ping".equalsIgnoreCase(tx))
-            sendIdle(ctx, "pong");
+            sendReq(ctx, "pong");
     }
     /**
      * 客户端 注册
@@ -179,7 +167,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
             throws Exception {
 
         log.debug("DecoderHandler# # 客户端连接  Netty 出错...");
-        cause.printStackTrace();
+//        cause.printStackTrace();
         //关闭连接
 //        closeConnection(ctx);
     }
@@ -195,7 +183,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
             if (e.state() == IdleState.ALL_IDLE) {
                 //检测心跳
 //                checkIdle(ctx);
-                sendIdle(ctx,"ping");
+                sendReq(ctx,"ping");
                 log.debug(String.format("DecoderHandler# # client userEventTriggered... : %s", ctx.channel()));
             }
         }
@@ -203,7 +191,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
         super.userEventTriggered(ctx, evt);
     }
 
-    private void sendIdle(ChannelHandlerContext ctx, String pipo) {
+    private void sendReq(ChannelHandlerContext ctx, String pipo) {
         WjProtocol wjProtocol = new WjProtocol();
         wjProtocol.setPlat(Short.parseShort("20"));
         wjProtocol.setMaincmd(Short.parseShort("0"));

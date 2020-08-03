@@ -132,6 +132,28 @@ public class NumConvertUtil {
 
         return hexString;
     }
+    /**
+     * 十进制int转16进制字符串:16进制最大长度为2位，不够的前面补0，大于2位的返回null
+     *
+     * @return
+     */
+    public static String IntToHexStringLimit2(int num) {
+
+        String hexString = Integer.toHexString(num);
+        switch (hexString.length()) {
+            case 1:
+                hexString = "0" + hexString;
+                break;
+            case 2:
+                hexString = hexString;
+                break;
+            default:
+                hexString = null;
+                break;
+        }
+
+        return hexString;
+    }
 
 
     /**

@@ -24,7 +24,8 @@ public class WjOutBusinessHandler extends MessageToByteEncoder {
             out.writeShort(protocol.getSubcmd());
             out.writeBytes(protocol.getFormat().getBytes());
             out.writeShort(protocol.getBack());
-            out.writeBytes(protocol.getUserdata());
+            if (protocol.getUserdata() != null)
+                out.writeBytes(protocol.getUserdata());
             out.writeChar(protocol.getCheckSum());
 
             log.info("数据编码成功：" + out.readableBytes());

@@ -106,14 +106,23 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
         String tx = "";
 
         if (FORMAT_TX.equals(wjProtocol.getFormat())) {
-            String dataStr = new String(wjProtocol.getUserdata());
-            tx = dataStr;
+            if(wjProtocol.getUserdata() != null){
+
+                String dataStr = new String(wjProtocol.getUserdata());
+                tx = dataStr;
+            }
         } else if (FORMAT_JS.equals(wjProtocol.getFormat())) {
-            String jsonStr = new String(wjProtocol.getUserdata());
-            log.debug(jsonStr);
-            objParam = JSONObject.parseObject(jsonStr);
+            if(wjProtocol.getUserdata() != null){
+
+                String jsonStr = new String(wjProtocol.getUserdata());
+                log.debug(jsonStr);
+                objParam = JSONObject.parseObject(jsonStr);
+            }
         } else if (FORMAT_AT.equals(wjProtocol.getFormat())) {
-            String atStr = new String(wjProtocol.getUserdata());
+            if(wjProtocol.getUserdata() != null){
+
+                tx = new String(wjProtocol.getUserdata());
+            }
         }
 
         //======业务处理======

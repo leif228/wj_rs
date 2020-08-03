@@ -2,121 +2,132 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wujie.ac.app.business.repository.NodeStandbyMapper" >
   <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.NodeStandby" >
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="node_id" jdbcType="BIGINT" property="nodeId" />
-    <result column="device_id" jdbcType="BIGINT" property="deviceId" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="ip" jdbcType="VARCHAR" property="ip" />
-    <result column="port" jdbcType="VARCHAR" property="port" />
-    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="node_id" property="nodeId" jdbcType="BIGINT" />
+    <result column="device_id" property="deviceId" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="VARCHAR" />
+    <result column="devtype_id" property="devtypeId" jdbcType="INTEGER" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <sql id="Base_Column_List">
-    id, node_id, device_id, type, ip, port, creat_time
+  <sql id="Base_Column_List" >
+    id, node_id, device_id, type, ip, port, devtype_id, creat_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
     from node_standby
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from node_standby
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.NodeStandby">
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.NodeStandby" >
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into node_standby (id, node_id, device_id,
-    type, ip, port, creat_time
-    )
+    type, ip, port, devtype_id,
+    creat_time)
     values (#{id,jdbcType=BIGINT}, #{nodeId,jdbcType=BIGINT}, #{deviceId,jdbcType=BIGINT},
-    #{type,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP}
-    )
+    #{type,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{devtypeId,jdbcType=INTEGER},
+    #{creatTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.NodeStandby">
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.NodeStandby" >
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into node_standby
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
         id,
       </if>
-      <if test="nodeId != null">
+      <if test="nodeId != null" >
         node_id,
       </if>
-      <if test="deviceId != null">
+      <if test="deviceId != null" >
         device_id,
       </if>
-      <if test="type != null">
+      <if test="type != null" >
         type,
       </if>
-      <if test="ip != null">
+      <if test="ip != null" >
         ip,
       </if>
-      <if test="port != null">
+      <if test="port != null" >
         port,
       </if>
-      <if test="creatTime != null">
+      <if test="devtypeId != null" >
+        devtype_id,
+      </if>
+      <if test="creatTime != null" >
         creat_time,
       </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="nodeId != null">
+      <if test="nodeId != null" >
         #{nodeId,jdbcType=BIGINT},
       </if>
-      <if test="deviceId != null">
+      <if test="deviceId != null" >
         #{deviceId,jdbcType=BIGINT},
       </if>
-      <if test="type != null">
+      <if test="type != null" >
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="ip != null">
+      <if test="ip != null" >
         #{ip,jdbcType=VARCHAR},
       </if>
-      <if test="port != null">
+      <if test="port != null" >
         #{port,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null">
+      <if test="devtypeId != null" >
+        #{devtypeId,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
         #{creatTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.NodeStandby">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.NodeStandby" >
     update node_standby
-    <set>
-      <if test="nodeId != null">
+    <set >
+      <if test="nodeId != null" >
         node_id = #{nodeId,jdbcType=BIGINT},
       </if>
-      <if test="deviceId != null">
+      <if test="deviceId != null" >
         device_id = #{deviceId,jdbcType=BIGINT},
       </if>
-      <if test="type != null">
+      <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
       </if>
-      <if test="ip != null">
+      <if test="ip != null" >
         ip = #{ip,jdbcType=VARCHAR},
       </if>
-      <if test="port != null">
+      <if test="port != null" >
         port = #{port,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null">
+      <if test="devtypeId != null" >
+        devtype_id = #{devtypeId,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
         creat_time = #{creatTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.NodeStandby">
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.NodeStandby" >
     update node_standby
     set node_id = #{nodeId,jdbcType=BIGINT},
     device_id = #{deviceId,jdbcType=BIGINT},
     type = #{type,jdbcType=INTEGER},
     ip = #{ip,jdbcType=VARCHAR},
     port = #{port,jdbcType=VARCHAR},
+    devtype_id = #{devtypeId,jdbcType=INTEGER},
     creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
