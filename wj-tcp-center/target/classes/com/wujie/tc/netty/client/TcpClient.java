@@ -2,9 +2,6 @@ package com.wujie.tc.netty.client;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.app.business.util.WechatConstant;
-import com.wujie.tc.netty.client.business.InBusinessHandler;
-import com.wujie.tc.netty.client.business.WjEchoHandler;
-import com.wujie.tc.netty.client.decoder.DecoderHandler;
 import com.wujie.tc.netty.client.decoder.WjDecoderHandler;
 import com.wujie.tc.netty.client.encoder.WjEncoderHandler;
 import com.wujie.tc.netty.pojo.LoginTask;
@@ -83,7 +80,7 @@ public class TcpClient {
 
                 if (channelFuture.isSuccess()) {
                     channel = channelFuture.channel();
-                    sendData();
+                    sendLoginData();
                     log.info("连接成功:" + ip + ":" + port);
                 } else {
                     log.info("每隔5s重连....");
@@ -113,7 +110,7 @@ public class TcpClient {
     /**
      * 向服务端发送消息
      */
-    private static void sendData() {
+    private static void sendLoginData() {
         if (channel != null && channel.isActive()) {
             WjProtocol wjProtocol = new WjProtocol();
             wjProtocol.setPlat(Short.parseShort("20"));

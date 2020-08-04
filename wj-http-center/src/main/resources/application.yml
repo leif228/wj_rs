@@ -167,6 +167,7 @@ secure:
       - /tcpClientConnect
       - /getTcpClientConnectInfo
       - /getFullFzwno
+      - /owerLoginNotify
 
 
 

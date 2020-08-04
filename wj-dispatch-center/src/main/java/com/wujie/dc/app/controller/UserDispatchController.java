@@ -88,4 +88,14 @@ public class UserDispatchController {
         return userService.getAllDevType(userId);
     }
 
+    @PostMapping("/owerLoginNotify")
+    public ApiResult owerLoginNotify(@RequestParam(value = "oid") String oid,
+                                     @RequestParam(value = "serverIp") String serverIp,
+                                     @RequestParam(value = "serverPort") String serverPort,
+                                     @RequestParam(value = "serverOid") String serverOid,
+                                     @RequestParam(value = "owerServerOid") String owerServerOid
+    ) {
+        return userService.owerLoginNotify(oid, serverIp, serverPort, serverOid, owerServerOid);
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.wujie.ac.app.business.app.service.system.impl;
 
-import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.ac.app.business.entity.*;
@@ -8,21 +7,18 @@ import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.MDA;
 import com.wujie.ac.app.business.util.NumConvertUtil;
 import com.wujie.ac.app.business.util.date.DateUtil;
-import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DevtypeDto;
 import com.wujie.common.enums.ErrorEnum;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,13 +34,15 @@ public class UserServiceImpl implements UserService {
     private BaseDataService baseDataService;
     private DevtypeMapper devtypeMapper;
     private FzwnoMapper fzwnoMapper;
+    private LoginServerMapper loginServerMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
         this.fzwnoMapper = fzwnoMapper;
+        this.loginServerMapper = loginServerMapper;
         this.devtypeMapper = devtypeMapper;
         this.baseDataService = baseDataService;
         this.nodeStandbyMapper = nodeStandbyMapper;
@@ -132,10 +130,10 @@ public class UserServiceImpl implements UserService {
 
         String fzwNo = "";
         //查找归属地管理服务器
-        NodeStandby preNodeStandby = this.getParentNode2(wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
+        NodeStandby owerNodeStandby = this.getParentNode2(wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
         //各级都没有找到，直接注册到根
-        if (preNodeStandby == null)
-            preNodeStandby = this.getRoot();
+        if (owerNodeStandby == null)
+            owerNodeStandby = this.getRoot();
 
         //查看用户是否已经注册，已经注册直接返回fzwno,没有注册则生成fzwno
         Device device = deviceMapper.findByNotAdminUserId(wjuser.getId());
@@ -158,20 +156,28 @@ public class UserServiceImpl implements UserService {
 //        String fullFzwno = this.getFullFzwno(fzwNo, preNodeStandby, Integer.valueOf(deviceSelected));
 
         //判断用户或公司所在地与设备所在地是否为同一地
-        String ustr = "" + wjuser.getPSort() + wjuser.getCSort() + wjuser.getASort() + wjuser.getSSort();
-        String dstr = "" + pSort + cSort + aSort + sSort;
-        if (!ustr.equals(dstr)) {
-            //不同则连接设备所在地的管理服务器
-            preNodeStandby = this.getParentNode2(pSort, cSort, aSort, sSort);
-            //各级都没有找到，直接注册到根
-            if (preNodeStandby == null)
-                preNodeStandby = this.getRoot();
-        }
+//        String ustr = "" + wjuser.getPSort() + wjuser.getCSort() + wjuser.getASort() + wjuser.getSSort();
+//        String dstr = "" + pSort + cSort + aSort + sSort;
+//        if (!ustr.equals(dstr)) {
+        //不同则连接设备所在地的管理服务器
+        NodeStandby preNodeStandby = this.getParentNode2(pSort, cSort, aSort, sSort);
+        //各级都没有找到，直接注册到根
+        if (preNodeStandby == null)
+            preNodeStandby = this.getRoot();
+//        }
 
         deviceVo.setParentNodeId(preNodeStandby.getNodeId());
         deviceVo.setIp(preNodeStandby.getIp());
         deviceVo.setPort(preNodeStandby.getPort());
+        Device loginDevice = deviceMapper.selectByPrimaryKey(preNodeStandby.getDeviceId());
+        deviceVo.setLoginFzwno(loginDevice.getFzwno());
+
         deviceVo.setFzwno(fzwNo);
+
+        deviceVo.setOwerIp(owerNodeStandby.getIp());
+        deviceVo.setOwerPort(owerNodeStandby.getPort());
+        Device owerDevice = deviceMapper.selectByPrimaryKey(owerNodeStandby.getDeviceId());
+        deviceVo.setOwerFzwno(owerDevice.getFzwno());
 
         return deviceVo;
     }
@@ -538,7 +544,7 @@ public class UserServiceImpl implements UserService {
             device.setDeviceType(Integer.valueOf(deviceSelected));
 
             deviceMapper.insertSelective(device);
-        } else if(MDA.numEnum.TWO.ordinal() == Integer.valueOf(deviceSelected)){
+        } else if (MDA.numEnum.TWO.ordinal() == Integer.valueOf(deviceSelected)) {
             //查看用户是否已经注册，已经注册直接返回fzwno,没有注册则生成fzwno
             device = deviceMapper.findByNotAdminUserId(wjuser.getId());
             if (device == null)
@@ -672,6 +678,20 @@ public class UserServiceImpl implements UserService {
             devtypeDtos.add(devtypeDto);
         }
         return ApiResult.success("成功", devtypeDtos);
+    }
+
+    @Override
+    public ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid) {
+        LoginServer loginServer = new LoginServer();
+        loginServer.setOid(oid);
+        loginServer.setServerIp(serverIp);
+        loginServer.setServerPort(serverPort);
+        loginServer.setServerOid(serverOid);
+        loginServer.setOwerServerOid(owerServerOid);
+        loginServer.setCreatTime(DateUtil.getDate());
+
+        loginServerMapper.insertSelective(loginServer);
+        return ApiResult.success();
     }
 
 }

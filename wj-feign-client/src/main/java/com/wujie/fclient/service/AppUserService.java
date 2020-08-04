@@ -66,6 +66,14 @@ public interface AppUserService {
     @PostMapping("/getAllDevType")
     public ApiResult getAllDevType(@RequestParam(value = "userId") Long userId);
 
+    @PostMapping("/owerLoginNotify")
+    public ApiResult owerLoginNotify(@RequestParam(value = "oid") String oid,
+                                     @RequestParam(value = "serverIp") String serverIp,
+                                     @RequestParam(value = "serverPort") String serverPort,
+                                     @RequestParam(value = "serverOid") String serverOid,
+                                     @RequestParam(value = "owerServerOid") String owerServerOid
+    );
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -116,6 +124,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult getAllDevType(Long userId) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

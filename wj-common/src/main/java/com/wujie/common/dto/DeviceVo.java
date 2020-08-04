@@ -6,7 +6,11 @@ public class DeviceVo implements Serializable {
     private Long parentNodeId;
     private String ip;
     private String port;
+    private String loginFzwno;
     private String fzwno;
+    private String owerIp;
+    private String owerPort;
+    private String owerFzwno;
 
     public Long getParentNodeId() {
         return parentNodeId;
@@ -40,4 +44,35 @@ public class DeviceVo implements Serializable {
         this.fzwno = fzwno;
     }
 
+    public String getLoginFzwno() {
+        return loginFzwno;
+    }
+
+    public void setLoginFzwno(String loginFzwno) {
+        this.loginFzwno = loginFzwno;
+    }
+
+    public String getOwerIp() {
+        return owerIp;
+    }
+
+    public void setOwerIp(String owerIp) {
+        this.owerIp = owerIp;
+    }
+
+    public String getOwerPort() {
+        return owerPort;
+    }
+
+    public void setOwerPort(String owerPort) {
+        this.owerPort = owerPort;
+    }
+
+    public String getOwerFzwno() {
+        return owerFzwno;
+    }
+
+    public void setOwerFzwno(String owerFzwno) {
+        this.owerFzwno = owerFzwno;
+    }
 }
