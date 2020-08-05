@@ -11,6 +11,7 @@ import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DevtypeDto;
+import com.wujie.common.dto.wj.DriverCompDto;
 import com.wujie.common.enums.ErrorEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -35,12 +36,14 @@ public class UserServiceImpl implements UserService {
     private DevtypeMapper devtypeMapper;
     private FzwnoMapper fzwnoMapper;
     private LoginServerMapper loginServerMapper;
+    private DriverCompMapper driverCompMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(DriverCompMapper driverCompMapper,LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.driverCompMapper = driverCompMapper;
         this.fzwnoMapper = fzwnoMapper;
         this.loginServerMapper = loginServerMapper;
         this.devtypeMapper = devtypeMapper;
@@ -692,6 +695,18 @@ public class UserServiceImpl implements UserService {
 
         loginServerMapper.insertSelective(loginServer);
         return ApiResult.success();
+    }
+
+    @Override
+    public ApiResult deviceComp() {
+        List<DriverCompDto> driverCompDtos = new ArrayList<>();
+        List<DriverComp> list = driverCompMapper.findAll();
+        for(DriverComp driverComp:list){
+            DriverCompDto driverCompDto = new DriverCompDto();
+            BeanUtils.copyProperties(driverComp,driverCompDto);
+            driverCompDtos.add(driverCompDto);
+        }
+        return ApiResult.success(driverCompDtos);
     }
 
 }

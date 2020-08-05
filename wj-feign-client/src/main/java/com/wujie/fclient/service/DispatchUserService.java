@@ -74,6 +74,9 @@ public interface DispatchUserService {
                                      @RequestParam(value = "owerServerOid") String owerServerOid
     );
 
+    @PostMapping("/deviceComp")
+    public ApiResult deviceComp();
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -130,6 +133,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult deviceComp() {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

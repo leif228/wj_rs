@@ -74,6 +74,9 @@ public interface AppUserService {
                                      @RequestParam(value = "owerServerOid") String owerServerOid
     );
 
+    @PostMapping("/deviceComp")
+    public ApiResult deviceComp();
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -129,6 +132,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult deviceComp() {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

@@ -98,4 +98,8 @@ public class UserDispatchController {
         return userService.owerLoginNotify(oid, serverIp, serverPort, serverOid, owerServerOid);
     }
 
+    @PostMapping("/deviceComp")
+    public ApiResult deviceComp() {
+        return userService.deviceComp();
+    }
 }
