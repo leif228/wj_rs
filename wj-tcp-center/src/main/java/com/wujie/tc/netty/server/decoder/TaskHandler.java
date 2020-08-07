@@ -35,7 +35,7 @@ public class TaskHandler {
         }
 
         //======业务处理======
-        if(wjProtocol.byte2shortSmall(wjProtocol.getMaincmd()) == 0 && wjProtocol.byte2shortSmall(wjProtocol.getSubcmd()) == 1){//终端→服务 登录
+        if(wjProtocol.byte2shortSmall(wjProtocol.getMaincmd()) == 0 && wjProtocol.byte2shortSmall(wjProtocol.getSubcmd()) == 0x01){//终端→服务 登录
             this.nettyLogin(ctx,objParam);
         }
         if(wjProtocol.byte2shortSmall(wjProtocol.getMaincmd()) == 0 && wjProtocol.byte2shortSmall(wjProtocol.getSubcmd()) == 0){//终端→服务 心跳ping
