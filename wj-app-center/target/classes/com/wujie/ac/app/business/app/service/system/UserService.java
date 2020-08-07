@@ -17,4 +17,6 @@ public interface UserService {
     ApiResult getAllDevType(Long userId);
 
     ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid);
+
+    ApiResult deviceComp();
 }

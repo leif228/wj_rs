@@ -2,8 +2,10 @@ package com.wujie.tc.netty.server;
 
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.netty.client.TcpClient;
+import com.wujie.tc.netty.client.encoder.WjEncoderHandler;
 import com.wujie.tc.netty.server.business.OutBusinessHandler;
 import com.wujie.tc.netty.server.business.WjOutBusinessHandler;
+import com.wujie.tc.netty.server.decoder.TaskHandler;
 import com.wujie.tc.netty.server.decoder.WjDecoderHandler;
 import com.wujie.tc.netty.server.encoder.EncoderHandler;
 import com.wujie.tc.netty.utils.FileUtils;
@@ -36,10 +38,11 @@ public class TcpServer {
             bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {//绑定通道参数
 //                    ch.pipeline().addLast("logging",new LoggingHandler("DEBUG"));//设置log监听器，并且日志级别为debug，方便观察运行流程
-                    ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
+
+                    //ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
                     ch.pipeline().addLast("encode", new EncoderHandler());//编码器。发送消息时候用
-                    ch.pipeline().addLast("outHandler", new WjOutBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
-                    ch.pipeline().addLast("decode", new WjDecoderHandler());//解码器，接收消息时候用
+                    ch.pipeline().addLast("outHandler", new WjEncoderHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
+                    ch.pipeline().addLast("decode", new WjDecoderHandler(new TaskHandler()));//解码器，接收消息时候用
 //                    ch.pipeline().addLast("decode",new DecoderHandler());//解码器，接收消息时候用
 //                    ch.pipeline().addLast("inHandler",new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                 }

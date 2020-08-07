@@ -2,6 +2,7 @@ package com.wujie.tc.netty.client;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.app.business.util.WechatConstant;
+import com.wujie.tc.netty.client.decoder.TaskHandler;
 import com.wujie.tc.netty.client.decoder.WjDecoderHandler;
 import com.wujie.tc.netty.client.encoder.WjEncoderHandler;
 import com.wujie.tc.netty.pojo.LoginTask;
@@ -45,7 +46,7 @@ public class TcpClient {
                     ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
                     ch.pipeline().addLast(new WjEncoderHandler());
 //                    ch.pipeline().addLast(new WjEchoHandler());
-                    ch.pipeline().addLast(new WjDecoderHandler());//解码器，接收消息时候用
+                    ch.pipeline().addLast(new WjDecoderHandler(new TaskHandler()));//解码器，接收消息时候用
 //                    ch.pipeline().addLast(new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                 }
             });
@@ -113,11 +114,11 @@ public class TcpClient {
     private static void sendLoginData() {
         if (channel != null && channel.isActive()) {
             WjProtocol wjProtocol = new WjProtocol();
-            wjProtocol.setPlat(Short.parseShort("20"));
-            wjProtocol.setMaincmd(Short.parseShort("0"));
-            wjProtocol.setSubcmd(Short.parseShort("1"));
+            wjProtocol.setPlat(new byte[]{0x20,0x00});
+            wjProtocol.setMaincmd(new byte[]{0x00,0x00});
+            wjProtocol.setSubcmd(new byte[]{0x01,0x00});
             wjProtocol.setFormat("JS");
-            wjProtocol.setBack(Short.parseShort("0"));
+            wjProtocol.setBack(new byte[]{0x00,0x00});
 
             LoginTask loginTask = new LoginTask();
             Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
@@ -132,8 +133,8 @@ public class TcpClient {
             log.debug(jsonStr);
             byte[] objectBytes = jsonStr.getBytes();
 
-            int len = 21 + objectBytes.length;
-            wjProtocol.setLen((short) len);
+            int len = WjProtocol.MIN_DATA_LEN + objectBytes.length;
+            wjProtocol.setLen(wjProtocol.short2byte((short) len));
             wjProtocol.setUserdata(objectBytes);
 
             channel.writeAndFlush(wjProtocol);
