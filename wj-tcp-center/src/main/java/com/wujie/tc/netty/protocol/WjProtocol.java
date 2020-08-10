@@ -1,6 +1,8 @@
 package com.wujie.tc.netty.protocol;
 
+import java.lang.reflect.Array;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class WjProtocol {   //最小的数据长度：开头标准位1字节
     public static int MIN_DATA_LEN = 21;
@@ -180,7 +182,7 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
             dataLength = protocol.getUserdata().length;
         }
 
-        int cslength = 21 - 6 - 1 + dataLength;
+        int cslength = WjProtocol.MIN_DATA_LEN - WjProtocol.headerLength - WjProtocol.checkLength + dataLength;
         byte[] arr = new byte[cslength];
 
         int index = 0;
@@ -221,14 +223,21 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
     }
 
     public static void main(String[] args) {
-        String header = "$TCUB&";//6
-        byte[] bytes = header.getBytes();
-        System.out.println(bytes.length);
-        System.out.println(new String(bytes));
+//        String header = "$TCUB&";//6
+//        byte[] bytes = header.getBytes();
+//        System.out.println(bytes.length);
+//        System.out.println(new String(bytes));
 //        checkBS();
-        byte[] arr = new byte[]{0x15, 0x00, 0x01, 0x00, 0x50, 0x00, 0x12, 0x00, 0x00, 0x00, 0x54, 0x58, 0x00, 0x00};
+//        byte[] arr = new byte[]{0x15, 0x00, 0x01, 0x00, 0x50, 0x00, 0x12, 0x00, 0x00, 0x00, 0x54, 0x58, 0x00, 0x00};
 
 //        System.out.println(getXOR(arr));
-
+        byte[] arr = new byte[]{0x15, 0x00};
+        byte[] arr1 = new byte[]{0x15, 0x00};
+        byte[] arr2 = new byte[]{0x00, 0x15};
+        System.out.println(String.valueOf(arr).equals(String.valueOf(arr1)));
+        System.out.println(Arrays.toString(arr).equals(Arrays.toString(arr2)));
+        System.out.println(Arrays.toString(arr));
+        System.out.println((Arrays.toString(arr1)));
+        System.out.println((Arrays.toString(arr2)));
     }
 }

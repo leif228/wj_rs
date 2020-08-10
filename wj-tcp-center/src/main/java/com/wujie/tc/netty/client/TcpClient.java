@@ -84,12 +84,13 @@ public class TcpClient {
                     sendLoginData();
                     log.info("连接成功:" + ip + ":" + port);
                 } else {
-                    log.info("每隔5s重连....");
+
                     channelFuture.channel().eventLoop().schedule(new Runnable() {
 
                         @SneakyThrows
                         @Override
                         public void run() {
+                            log.info("每隔5s重连....");
                             doConnect();
                         }
                     }, 5, TimeUnit.SECONDS);

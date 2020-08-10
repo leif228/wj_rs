@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Arrays;
+
 public class TaskHandler {
 
     public void doProtocol(ChannelHandlerContext ctx, WjProtocol wjProtocol) {
@@ -31,7 +33,8 @@ public class TaskHandler {
         }
 
         //======业务处理======
-        if (wjProtocol.byte2shortSmall(wjProtocol.getMaincmd()) == 0 && wjProtocol.byte2shortSmall(wjProtocol.getSubcmd()) == 0) {//服务→终端 心跳pong
+        if (Arrays.toString(new Byte[]{0x00, 0x00}).equals(Arrays.toString(wjProtocol.getMaincmd()))
+                && Arrays.toString(new Byte[]{0x00, 0x00}).equals(Arrays.toString(wjProtocol.getSubcmd()))) {//服务→终端 心跳pong
             this.nettyReq(ctx);
         }
     }
