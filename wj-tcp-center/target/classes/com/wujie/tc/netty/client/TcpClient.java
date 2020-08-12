@@ -84,12 +84,13 @@ public class TcpClient {
                     sendLoginData();
                     log.info("连接成功:" + ip + ":" + port);
                 } else {
-                    log.info("每隔5s重连....");
+
                     channelFuture.channel().eventLoop().schedule(new Runnable() {
 
                         @SneakyThrows
                         @Override
                         public void run() {
+                            log.info("每隔5s重连....");
                             doConnect();
                         }
                     }, 5, TimeUnit.SECONDS);
@@ -123,9 +124,9 @@ public class TcpClient {
             LoginTask loginTask = new LoginTask();
             Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
             if (properties.getProperty("fzwno") != null)
-                loginTask.setOid(properties.getProperty("fzwno"));
+                loginTask.setOID(properties.getProperty("fzwno"));
             else
-                loginTask.setOid("0000000000");
+                loginTask.setOID("0000000000");
 
 //        byte [] objectBytes= ByteUtils.InstanceObjectMapper().writeValueAsBytes(loginTask);
 
