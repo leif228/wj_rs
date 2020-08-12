@@ -3,6 +3,7 @@ package com.wujie.tc.netty.server.decoder;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.netty.pojo.Device;
+import com.wujie.tc.netty.pojo.LoginTask;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
 import io.netty.channel.Channel;
@@ -52,9 +53,10 @@ public class TaskHandler {
             ctx.channel().close();
         }
 //        JSONObject jsonObject = JSONObject.parseObject(data.toString());
-        Object userId1 = objParam.get("oid");
+        LoginTask loginTask = JSONObject.toJavaObject(objParam, LoginTask.class);
+//        Object userId1 = objParam.get("OID");
 //        String oid = JSON.parseObject(userId1.toString(), String.class);
-        String oid = (String) userId1;
+        String oid = loginTask.getOID();
 //        UserInfoVo userInfoVo = appUserService.getUserInfoById(userId);
         Device device = new Device(oid, System.currentTimeMillis() + "");
         if (ChannelManager.deviceChannels.containsKey(device.getUniqueNo())) {

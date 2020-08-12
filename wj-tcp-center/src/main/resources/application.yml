@@ -149,10 +149,10 @@ xcxwxpay:
   projectEnv: dev
   serverDomain: https://127.0.0.1/api
 
-  #tcpClientConfigPath: /home/cconfig.properties
-  #tcpServiceConfigPath: /home/sconfig.properties
-  tcpClientConfigPath: E:\cconfig.properties
-  tcpServiceConfigPath: E:\sconfig.properties
+  tcpClientConfigPath: /home/cconfig.properties
+  tcpServiceConfigPath: /home/sconfig.properties
+  #tcpClientConfigPath: E:\cconfig.properties
+  #tcpServiceConfigPath: E:\sconfig.properties
 
 secure:
   ignored:
