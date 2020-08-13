@@ -67,11 +67,11 @@ public interface DispatchUserService {
     public ApiResult getAllDevType(@RequestParam(value = "userId") Long userId);
 
     @PostMapping("/owerLoginNotify")
-    public ApiResult owerLoginNotify(@RequestParam(value = "oid") String oid,
-                                     @RequestParam(value = "serverIp") String serverIp,
-                                     @RequestParam(value = "serverPort") String serverPort,
-                                     @RequestParam(value = "serverOid") String serverOid,
-                                     @RequestParam(value = "owerServerOid") String owerServerOid
+    public ApiResult owerLoginNotify(@RequestParam(value = "OID") String OID,
+                                     @RequestParam(value = "ServerIP") String ServerIP,
+                                     @RequestParam(value = "ServerPort") String ServerPort,
+                                     @RequestParam(value = "ServerOID") String ServerOID,
+                                     @RequestParam(value = "OwnerServerOID") String OwnerServerOID
     );
 
     @PostMapping("/deviceComp")
@@ -132,7 +132,7 @@ public interface DispatchUserService {
         }
 
         @Override
-        public ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid) {
+        public ApiResult owerLoginNotify(String OID, String ServerIP, String ServerPort, String ServerOID, String OwnerServerOID) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

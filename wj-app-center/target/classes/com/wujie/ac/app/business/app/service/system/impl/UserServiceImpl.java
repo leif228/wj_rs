@@ -594,10 +594,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResult getChildNodes(Long nodeId) {
-        Node node = nodeMapper.selectByPrimaryKey(nodeId);
-        List<Node> childs = nodeMapper.getChildNodes(node.getLft(), node.getRgt());
+//        Node node = nodeMapper.selectByPrimaryKey(nodeId);
+//        List<Node> childs = nodeMapper.getChildNodes(node.getLft(), node.getRgt());
 
-        return ApiResult.success(childs);
+        List<NodeVo> list = nodeMapper.getChildNodeVos(nodeId);
+
+        return ApiResult.success(list);
     }
 
     /**
