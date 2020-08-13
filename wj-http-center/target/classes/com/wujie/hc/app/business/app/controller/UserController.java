@@ -134,13 +134,13 @@ public class UserController {
     }
 
     @PostMapping("/owerLoginNotify")
-    public ApiResult owerLoginNotify(@RequestParam(value = "oid") String oid,
-                                     @RequestParam(value = "serverIp") String serverIp,
-                                     @RequestParam(value = "serverPort") String serverPort,
-                                     @RequestParam(value = "serverOid") String serverOid,
-                                     @RequestParam(value = "owerServerOid") String owerServerOid
+    public ApiResult owerLoginNotify(@RequestParam(value = "OID") String OID,
+                                     @RequestParam(value = "ServerIP") String ServerIP,
+                                     @RequestParam(value = "ServerPort") String ServerPort,
+                                     @RequestParam(value = "ServerOID") String ServerOID,
+                                     @RequestParam(value = "OwnerServerOID") String OwnerServerOID
     ) {
-        return dispatchUserService.owerLoginNotify(oid, serverIp, serverPort, serverOid, owerServerOid);
+        return dispatchUserService.owerLoginNotify(OID, ServerIP, ServerPort, ServerOID, OwnerServerOID);
     }
 
     @PostMapping("/deviceComp")
