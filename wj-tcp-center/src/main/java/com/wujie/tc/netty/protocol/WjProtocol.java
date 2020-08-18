@@ -233,11 +233,34 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
 //        System.out.println(getXOR(arr));
         byte[] arr = new byte[]{0x15, 0x00};
         byte[] arr1 = new byte[]{0x15, 0x00};
-        byte[] arr2 = new byte[]{0x00, 0x15};
+        byte[] arr2 = new byte[]{0x5a, 0x15};
+
+        System.out.println(String.valueOf(arr[0]));
+        byte b = arr2[0];
+        System.out.println(b);
+//        System.out.println(IntToHexStringLimit2(arr2[0]));
         System.out.println(String.valueOf(arr).equals(String.valueOf(arr1)));
-        System.out.println(Arrays.toString(arr).equals(Arrays.toString(arr2)));
+        System.out.println(Arrays.toString(arr).equals(Arrays.toString(arr1)));
         System.out.println(Arrays.toString(arr));
         System.out.println((Arrays.toString(arr1)));
         System.out.println((Arrays.toString(arr2)));
+    }
+
+    public String IntToHexStringLimit2(int num) {
+
+        String hexString = Integer.toHexString(num);
+        switch (hexString.length()) {
+            case 1:
+                hexString = "0" + hexString;
+                break;
+            case 2:
+                hexString = hexString;
+                break;
+            default:
+                hexString = null;
+                break;
+        }
+
+        return hexString;
     }
 }
