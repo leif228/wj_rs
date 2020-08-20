@@ -6,6 +6,8 @@
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="pass_word" property="passWord" jdbcType="VARCHAR" />
     <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="oid" property="oid" jdbcType="VARCHAR" />
+    <result column="ower_ip" property="owerIp" jdbcType="VARCHAR" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
     <result column="addr" property="addr" jdbcType="VARCHAR" />
     <result column="user_type" property="userType" jdbcType="INTEGER" />
@@ -16,8 +18,8 @@
     <result column="creat_time" property="creatTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_name, pass_word, idcard, phone, addr, user_type, p_sort, c_sort, a_sort,
-    s_sort, creat_time
+    id, user_name, pass_word, idcard, oid, ower_ip, phone, addr, user_type, p_sort, c_sort,
+    a_sort, s_sort, creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
@@ -34,15 +36,15 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into wjuser (id, user_name, pass_word,
-    idcard, phone, addr,
-    user_type, p_sort, c_sort,
-    a_sort, s_sort, creat_time
-    )
+    idcard, oid, ower_ip,
+    phone, addr, user_type,
+    p_sort, c_sort, a_sort,
+    s_sort, creat_time)
     values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR},
-    #{idcard,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR},
-    #{userType,jdbcType=INTEGER}, #{pSort,jdbcType=INTEGER}, #{cSort,jdbcType=INTEGER},
-    #{aSort,jdbcType=INTEGER}, #{sSort,jdbcType=INTEGER}, #{creatTime,jdbcType=DATE}
-    )
+    #{idcard,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, #{owerIp,jdbcType=VARCHAR},
+    #{phone,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER},
+    #{pSort,jdbcType=INTEGER}, #{cSort,jdbcType=INTEGER}, #{aSort,jdbcType=INTEGER},
+    #{sSort,jdbcType=INTEGER}, #{creatTime,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.Wjuser" >
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -61,6 +63,12 @@
       </if>
       <if test="idcard != null" >
         idcard,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="owerIp != null" >
+        ower_ip,
       </if>
       <if test="phone != null" >
         phone,
@@ -100,6 +108,12 @@
       <if test="idcard != null" >
         #{idcard,jdbcType=VARCHAR},
       </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="owerIp != null" >
+        #{owerIp,jdbcType=VARCHAR},
+      </if>
       <if test="phone != null" >
         #{phone,jdbcType=VARCHAR},
       </if>
@@ -138,6 +152,12 @@
       <if test="idcard != null" >
         idcard = #{idcard,jdbcType=VARCHAR},
       </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="owerIp != null" >
+        ower_ip = #{owerIp,jdbcType=VARCHAR},
+      </if>
       <if test="phone != null" >
         phone = #{phone,jdbcType=VARCHAR},
       </if>
@@ -170,6 +190,8 @@
     set user_name = #{userName,jdbcType=VARCHAR},
     pass_word = #{passWord,jdbcType=VARCHAR},
     idcard = #{idcard,jdbcType=VARCHAR},
+    oid = #{oid,jdbcType=VARCHAR},
+    ower_ip = #{owerIp,jdbcType=VARCHAR},
     phone = #{phone,jdbcType=VARCHAR},
     addr = #{addr,jdbcType=VARCHAR},
     user_type = #{userType,jdbcType=INTEGER},
@@ -181,10 +203,17 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+
   <select id="findByUserInfoName" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
     from wjuser
     where user_name = #{username}
+  </select>
+  <select id="findByIdCard" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser
+    where idcard = #{idcard}
   </select>
 </mapper>

@@ -97,7 +97,7 @@ public class UserController {
                                 @RequestParam(value = "aSort") Integer aSort,
                                 @RequestParam(value = "sSort") Integer sSort
     ) {
-        return userService.userRegist(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
+        return dispatchUserService.userRegist(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
     }
 
     @PostMapping("/userLogin")
@@ -146,6 +146,20 @@ public class UserController {
     @PostMapping("/deviceComp")
     public ApiResult deviceComp() {
         return dispatchUserService.deviceComp();
+    }
+
+    @PostMapping("/userRegistOwer")
+    public ApiResult userRegistOwer(@RequestParam(value = "username") String username,
+                                @RequestParam(value = "password") String password,
+                                @RequestParam(value = "idcard") String idcard,
+                                @RequestParam(value = "phone") String phone,
+                                @RequestParam(value = "userSelected") String userSelected,
+                                @RequestParam(value = "pSort") Integer pSort,
+                                @RequestParam(value = "cSort") Integer cSort,
+                                @RequestParam(value = "aSort") Integer aSort,
+                                @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return dispatchUserService.userRegistOwer(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
     }
 
 }

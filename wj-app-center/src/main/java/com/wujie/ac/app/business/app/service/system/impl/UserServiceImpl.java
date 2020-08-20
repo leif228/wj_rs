@@ -1,5 +1,6 @@
 package com.wujie.ac.app.business.app.service.system.impl;
 
+import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.ac.app.business.entity.*;
@@ -7,19 +8,23 @@ import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.MDA;
 import com.wujie.ac.app.business.util.NumConvertUtil;
 import com.wujie.ac.app.business.util.date.DateUtil;
+import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DevtypeDto;
 import com.wujie.common.dto.wj.DriverCompDto;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private NodeMapper nodeMapper;
     private NodeStandbyMapper nodeStandbyMapper;
     private WjuserMapper wjuserMapper;
+    private WjuserOwerMapper wjuserOwerMapper;
     private BaseDataService baseDataService;
     private DevtypeMapper devtypeMapper;
     private FzwnoMapper fzwnoMapper;
@@ -42,7 +48,8 @@ public class UserServiceImpl implements UserService {
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(DriverCompMapper driverCompMapper,LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(WjuserOwerMapper wjuserOwerMapper,DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.wjuserOwerMapper = wjuserOwerMapper;
         this.driverCompMapper = driverCompMapper;
         this.fzwnoMapper = fzwnoMapper;
         this.loginServerMapper = loginServerMapper;
@@ -115,7 +122,7 @@ public class UserServiceImpl implements UserService {
                 log.info("设备注册第一步成功" + deviceVo.getFzwno());
                 return ApiResult.success("设备注册第一步成功", deviceVo);
             }
-            //三、处理网关、手机注册
+            //三、处理网关、手机等注册
             else {
                 DeviceVo deviceVo = this.doAppService(wjuser, deviceSelected, pSort, cSort, aSort, sSort);
 
@@ -133,7 +140,7 @@ public class UserServiceImpl implements UserService {
 
         String fzwNo = "";
         //查找归属地管理服务器
-        NodeStandby owerNodeStandby = this.getParentNode2(wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
+        NodeStandby owerNodeStandby = this.getParentNode(wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
         //各级都没有找到，直接注册到根
         if (owerNodeStandby == null)
             owerNodeStandby = this.getRoot();
@@ -143,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
         if (device == null) {
             //生成泛在网编号关系段
-            fzwNo = this.doFzwno(2, wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
+            fzwNo = this.doFzwno(wjuser.getUserType(), wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
 
             device = new Device();
             device.setUserId(wjuser.getId());
@@ -163,7 +170,7 @@ public class UserServiceImpl implements UserService {
 //        String dstr = "" + pSort + cSort + aSort + sSort;
 //        if (!ustr.equals(dstr)) {
         //不同则连接设备所在地的管理服务器
-        NodeStandby preNodeStandby = this.getParentNode2(pSort, cSort, aSort, sSort);
+        NodeStandby preNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
         //各级都没有找到，直接注册到根
         if (preNodeStandby == null)
             preNodeStandby = this.getRoot();
@@ -222,7 +229,7 @@ public class UserServiceImpl implements UserService {
         NodeStandby preNodeStandby = null;
         //由下往上查找父,管理服务器只能注册到父级下，不能注册到同级,每个省、市、区、街道只能注册一个
         if (pSort != 0 && cSort != 0 && aSort != 0 && sSort != 0) {
-            preNodeStandby = this.getParentNode2(pSort, cSort, aSort, sSort);
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
             //各级都没有找到，直接注册到根
             if (preNodeStandby == null) {
                 preNodeStandby = this.getRoot();
@@ -244,7 +251,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } else if (pSort != 0 && cSort != 0 && aSort != 0 && sSort == 0) {
-            preNodeStandby = this.getParentNode2(pSort, cSort, aSort, 0);
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, 0);
             //各级都没有找到，直接注册到根
             if (preNodeStandby == null) {
                 preNodeStandby = this.getRoot();
@@ -263,7 +270,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } else if (pSort != 0 && cSort != 0 && aSort == 0 && sSort == 0) {
-            preNodeStandby = this.getParentNode2(pSort, cSort, 0, 0);
+            preNodeStandby = this.getParentNode(pSort, cSort, 0, 0);
             //各级都没有找到，直接注册到根
             if (preNodeStandby == null) {
                 preNodeStandby = this.getRoot();
@@ -279,7 +286,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } else if (pSort != 0 && cSort == 0 && aSort == 0 && sSort == 0) {
-            preNodeStandby = this.getParentNode2(pSort, 0, 0, 0);
+            preNodeStandby = this.getParentNode(pSort, 0, 0, 0);
             //各级都没有找到，直接注册到根
             if (preNodeStandby == null) {
                 preNodeStandby = this.getRoot();
@@ -442,7 +449,7 @@ public class UserServiceImpl implements UserService {
 //        return preNodeStandby;
 //    }
 
-    private NodeStandby getParentNode2(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+    private NodeStandby getParentNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
         NodeStandby preNodeStandby = null;
         //由下往上查找父
         preNodeStandby = nodeStandbyMapper.findParentByDeviceTypeAndNodeStandbyTypeAndFzwArea(MDA.numEnum.ONE.ordinal(), MDA.numEnum.ZERO.ordinal(), this.doPreFzwArea(pSort, cSort, aSort, sSort));
@@ -515,6 +522,34 @@ public class UserServiceImpl implements UserService {
             seqno = NumConvertUtil.IntToHexStringLimit4(1);
         } else {
             String limitPre = catMaxFzwno.getFzwno().substring(0, 21).substring(17);
+            int seqInt = NumConvertUtil.HexStringToInt(limitPre);
+            seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
+            if (seqno == null)
+                throw new Exception(ErrorEnum.ERR_SEQNO_MAX.getErrMsg());
+        }
+        //int userType = wjuser.getUserType();//1表示个人2团体、公司等
+
+        fzwNo = country + trade + area + timeStr + seqno + userType;
+
+        return fzwNo;
+    }
+
+    private String doFzwnoOwer(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        String fzwNo = "";
+
+        String country = COUNTRY;
+        String trade = TRADE;//通用（互联网）:0，电力：1，军队：2，政府：3
+//        String area = wjuser.getIdcard().substring(0, 5);
+
+        String area = this.doFzwArea(pSort, cSort, aSort, sSort);
+
+        String timeStr = DateUtil.getDateTime("yyyyMMdd");
+        String seqno = "";//序列号表示该国家该地区当天注册的序号，以16进制字符串的形式表现，如FFFF表示65535号
+        WjuserOwer catMaxFzwno = wjuserOwerMapper.findByFzwnoLikeCAT(country + trade + area + timeStr);
+        if (null == catMaxFzwno) {
+            seqno = NumConvertUtil.IntToHexStringLimit4(1);
+        } else {
+            String limitPre = catMaxFzwno.getOid().substring(0, 21).substring(17);
             int seqInt = NumConvertUtil.HexStringToInt(limitPre);
             seqno = NumConvertUtil.IntToHexStringLimit4(seqInt + 1);//生成当前序号
             if (seqno == null)
@@ -703,12 +738,122 @@ public class UserServiceImpl implements UserService {
     public ApiResult deviceComp() {
         List<DriverCompDto> driverCompDtos = new ArrayList<>();
         List<DriverComp> list = driverCompMapper.findAll();
-        for(DriverComp driverComp:list){
+        for (DriverComp driverComp : list) {
             DriverCompDto driverCompDto = new DriverCompDto();
-            BeanUtils.copyProperties(driverComp,driverCompDto);
+            BeanUtils.copyProperties(driverComp, driverCompDto);
             driverCompDtos.add(driverCompDto);
         }
         return ApiResult.success(driverCompDtos);
+    }
+
+    @Override
+    public ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        Wjuser wjuser = wjuserMapper.findByUserInfoName(username);
+        if (wjuser != null)
+            return ApiResult.error(ErrorEnum.PRESENCE_USER_ERR);
+        wjuser = wjuserMapper.findByIdCard(idcard);
+        if (wjuser != null)
+            return ApiResult.error(ErrorEnum.PRESENCE_USER_IDCARD_ERR);
+
+        //查找归属地管理服务器
+        NodeStandby owerNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
+        //各级都没有找到，直接注册到根
+        if (owerNodeStandby == null)
+            owerNodeStandby = this.getRoot();
+
+        String enPw = MD5.encryptpw(password);
+
+        //同步用户信息到归属地管理服务器
+        String oid = "";
+        try {
+            oid = userRegistOwer(owerNodeStandby.getIp(), username, enPw, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+
+        wjuser = new Wjuser();
+        wjuser.setUserName(username);
+        wjuser.setPassWord(enPw);
+        wjuser.setIdcard(idcard);
+        wjuser.setUserType(Integer.valueOf(userSelected));
+        wjuser.setPhone(phone);
+        wjuser.setCreatTime(DateUtil.getDate());
+//        wjuser.setPSort(pSort);
+//        wjuser.setCSort(cSort);
+//        wjuser.setASort(aSort);
+//        wjuser.setSSort(sSort);
+        wjuser.setOwerIp(owerNodeStandby.getIp());
+        wjuser.setOid(oid);
+
+        wjuserMapper.insertSelective(wjuser);
+
+        return ApiResult.success();
+    }
+
+    @Override
+    public ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        WjuserOwer wjuserOwer = wjuserOwerMapper.findByUserInfoName(username);
+        if (wjuserOwer != null)
+            return ApiResult.error(ErrorEnum.PRESENCE_USER_ERR);
+        wjuserOwer = wjuserOwerMapper.findByIdCard(idcard);
+        if (wjuserOwer != null)
+            return ApiResult.error(ErrorEnum.PRESENCE_USER_IDCARD_ERR);
+
+        String fzwno = "";
+        try {
+            fzwno = this.doFzwnoOwer(Integer.valueOf(userSelected),pSort,cSort,aSort,sSort);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+
+        wjuserOwer = new WjuserOwer();
+        wjuserOwer.setUserName(username);
+        wjuserOwer.setPassWord(password);
+        wjuserOwer.setIdcard(idcard);
+        wjuserOwer.setUserType(Integer.valueOf(userSelected));
+        wjuserOwer.setPhone(phone);
+        wjuserOwer.setCreatTime(DateUtil.getDate());
+        wjuserOwer.setpSort(pSort);
+        wjuserOwer.setcSort(cSort);
+        wjuserOwer.setaSort(aSort);
+        wjuserOwer.setsSort(sSort);
+        wjuserOwer.setOid(fzwno);
+
+        wjuserOwerMapper.insertSelective(wjuserOwer);
+
+        return ApiResult.success("成功",fzwno);
+    }
+
+    //http去管理服务器用户注册，成功返回oid关系段
+    private String userRegistOwer(String ip, String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        String url = "http://" + ip + ":" + "8888/userRegistOwer";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("username", username);
+        map.put("password", password);
+        map.put("idcard", idcard);
+        map.put("phone", phone);
+        map.put("userSelected", userSelected);
+        map.put("pSort", String.valueOf(pSort));
+        map.put("cSort", String.valueOf(cSort));
+        map.put("aSort", String.valueOf(aSort));
+        map.put("sSort", String.valueOf(sSort));
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                String data = (String) jsonObject.get(ApiResult.CONTENT);
+                log.info("++++++++++++++++请求userRegistOwer成功:" + data);
+                return data;
+            } else {
+                log.info("++++++++++++++++请求userRegistOwer失败:" + "服务端错误");
+                throw new Exception("userRegistOwer失败：服务端错误");
+            }
+        } else {
+            log.info("++++++++++++++++请求userRegistOwer失败:" + "连接错误");
+            throw new Exception("userRegistOwer失败:连接错误");
+        }
     }
 
 }

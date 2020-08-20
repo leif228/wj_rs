@@ -147,10 +147,7 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
     }
 
     public boolean checkXOR(byte[] datas, byte checkData) {
-        int result = 0;
-        for (int i = 0; i < datas.length; i++) {
-            result = result ^ byteToInt(datas[i]);
-        }
+        int result = byteToInt(getXOR(datas));
         int data = byteToInt(checkData);
         if (result == data) {
             return true;

@@ -89,4 +89,10 @@ public class Md5Utils
             return null;
         }
     }
+
+    public static void main(String[] args) {
+        System.out.println(encrypt("123456"));
+        System.out.println(encrypt("123456"));
+
+    }
 }

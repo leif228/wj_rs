@@ -19,4 +19,8 @@ public interface UserService {
     ApiResult owerLoginNotify(String oid, String serverIp, String serverPort, String serverOid, String owerServerOid);
 
     ApiResult deviceComp();
+
+    ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
+    ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 }

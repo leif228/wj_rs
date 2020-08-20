@@ -77,6 +77,30 @@ public interface AppUserService {
     @PostMapping("/deviceComp")
     public ApiResult deviceComp();
 
+    @PostMapping("/userRegist")
+    public ApiResult userRegist(@RequestParam(value = "username") String username,
+                                @RequestParam(value = "password") String password,
+                                @RequestParam(value = "idcard") String idcard,
+                                @RequestParam(value = "phone") String phone,
+                                @RequestParam(value = "userSelected") String userSelected,
+                                @RequestParam(value = "pSort") Integer pSort,
+                                @RequestParam(value = "cSort") Integer cSort,
+                                @RequestParam(value = "aSort") Integer aSort,
+                                @RequestParam(value = "sSort") Integer sSort
+    );
+
+    @PostMapping("/userRegistOwer")
+    public ApiResult userRegistOwer(@RequestParam(value = "username") String username,
+                                    @RequestParam(value = "password") String password,
+                                    @RequestParam(value = "idcard") String idcard,
+                                    @RequestParam(value = "phone") String phone,
+                                    @RequestParam(value = "userSelected") String userSelected,
+                                    @RequestParam(value = "pSort") Integer pSort,
+                                    @RequestParam(value = "cSort") Integer cSort,
+                                    @RequestParam(value = "aSort") Integer aSort,
+                                    @RequestParam(value = "sSort") Integer sSort
+    );
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -137,6 +161,16 @@ public interface AppUserService {
 
         @Override
         public ApiResult deviceComp() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

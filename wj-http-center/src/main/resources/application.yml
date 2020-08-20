@@ -168,6 +168,12 @@ secure:
       - /getTcpClientConnectInfo
       - /getFullFzwno
       - /owerLoginNotify
+      - /userRegistOwer
+      - /addrInit
+      - /deviceType
+      - /cityByP
+      - /areaByC
+      - /streetByA
 
 
 

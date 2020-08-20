@@ -5,6 +5,7 @@ import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DeviceTypeDto;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.utils.MD5;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.AuthUserService;
 import com.wujie.hc.app.business.app.service.system.UserService;
@@ -61,7 +62,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResult userLogin(String username, String password) {
         UserDetailsVo userInfoVo = (UserDetailsVo) authUserService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, userInfoVo.getPassword())) {
+//        if (!passwordEncoder.matches(password, userInfoVo.getPassword())) {
+//            return ApiResult.error(ErrorEnum.USERNAME_PASS_ERR);
+//        }
+        if (!MD5.checkpw(password, userInfoVo.getPassword())) {
             return ApiResult.error(ErrorEnum.USERNAME_PASS_ERR);
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userInfoVo, null, userInfoVo.getAuthorities());
