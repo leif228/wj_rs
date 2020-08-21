@@ -101,6 +101,27 @@ public interface DispatchUserService {
                                     @RequestParam(value = "sSort") Integer sSort
     );
 
+    @PostMapping("/deviceRegistManage")
+    public ApiResult deviceRegistManage(@RequestParam(value = "userId") Long userId,
+                                        @RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "pSort") Integer pSort,
+                                        @RequestParam(value = "cSort") Integer cSort,
+                                        @RequestParam(value = "aSort") Integer aSort,
+                                        @RequestParam(value = "sSort") Integer sSort,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port
+    );
+
+
+    @PostMapping("/searchNode")
+    public ApiResult searchNode(
+            @RequestParam(value = "pSort") Integer pSort,
+            @RequestParam(value = "cSort") Integer cSort,
+            @RequestParam(value = "aSort") Integer aSort,
+            @RequestParam(value = "sSort") Integer sSort
+    );
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -172,6 +193,16 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult deviceRegistManage(Long userId, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort, String deviceName, String ip, String port) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

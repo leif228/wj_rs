@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    ApiResult tcpClientConnect(String ip, String port, String fzwno);
+    ApiResult tcpClientConnect(String ip, String port, String fzwno,String deviceName,String selfIp,String selfPort,String deviceSelected);
 
     ApiResult getTcpClientConnectInfo();
 }

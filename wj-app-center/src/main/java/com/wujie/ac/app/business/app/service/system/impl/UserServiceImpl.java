@@ -43,12 +43,14 @@ public class UserServiceImpl implements UserService {
     private FzwnoMapper fzwnoMapper;
     private LoginServerMapper loginServerMapper;
     private DriverCompMapper driverCompMapper;
+    private NodeInfoOwerMapper nodeInfoOwerMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(WjuserOwerMapper wjuserOwerMapper,DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(NodeInfoOwerMapper nodeInfoOwerMapper,WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.nodeInfoOwerMapper = nodeInfoOwerMapper;
         this.wjuserOwerMapper = wjuserOwerMapper;
         this.driverCompMapper = driverCompMapper;
         this.fzwnoMapper = fzwnoMapper;
@@ -102,6 +104,162 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResult deviceRegistManage(Long userId, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort, String deviceName, String ip, String port) {
+        Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
+        if (wjuser == null)
+            return ApiResult.error(ErrorEnum.NOT_USER_ERR);
+
+        DeviceVo deviceVo = new DeviceVo();
+        try {
+            //生成泛在网编号关系段
+            String fzwNoRelation = this.doFzwnoRelation(2, pSort, cSort, aSort, sSort);
+
+            //生成泛在网编号设备段
+            Devtype devtype = devtypeMapper.selectByPrimaryKey(Integer.valueOf(deviceSelected));
+            if (devtype == null)
+                return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
+            String fzwNoDevice = this.getFzwnoDevice(devtype.getDevTypeNum(),"01");
+
+            String fzwnoFull = fzwNoRelation + fzwNoDevice;
+
+            //查找父级节点
+            NodeStandby preNodeStandby = getParentManageNode(pSort, cSort, aSort, sSort);
+
+            deviceVo.setParentNodeId(preNodeStandby.getNodeId());
+            deviceVo.setIp(preNodeStandby.getIp());
+            deviceVo.setPort(preNodeStandby.getPort());
+            deviceVo.setFzwno(fzwnoFull);
+
+            //增加下级节点
+            Device device = new Device();
+            device.setUserId(userId);
+            device.setDeviceName(deviceName);
+            device.setIp(ip);
+            device.setPort(port);
+            device.setFzwno(fzwnoFull);
+            device.setCreatTime(DateUtil.getDate());
+            device.setDeviceType(Integer.valueOf(deviceSelected));
+
+            deviceMapper.insertSelective(device);
+
+            Node preNode = nodeMapper.selectByPrimaryKey(preNodeStandby.getNodeId());
+
+            nodeMapper.updateRgt(preNode.getRgt());
+            nodeMapper.updateLft(preNode.getRgt());
+
+            Node currNode = new Node();
+            currNode.setName(deviceName);
+            currNode.setLft(preNode.getRgt());
+            currNode.setRgt(preNode.getRgt() + 1);
+            currNode.setCreatTime(DateUtil.getDate());
+            nodeMapper.insertSelective(currNode);
+
+            NodeStandby nodeStandby = new NodeStandby();
+            nodeStandby.setNodeId(currNode.getId());
+            nodeStandby.setDeviceId(device.getId());
+            nodeStandby.setIp(ip);
+            nodeStandby.setPort(port);
+            nodeStandby.setType(MDA.numEnum.ZERO.ordinal());//默认设置为当前节点的主服务器
+            nodeStandby.setCreatTime(DateUtil.getDate());
+            nodeStandby.setDevtypeId(Integer.valueOf(deviceSelected));
+            nodeStandbyMapper.insertSelective(nodeStandby);
+
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+        return ApiResult.success("设备注册成功", deviceVo);
+    }
+
+    @Override
+    public ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno){
+        NodeInfoOwer nodeInfoOwer = new NodeInfoOwer();
+        nodeInfoOwer.setDeviceType(Integer.valueOf(deviceSelected));
+        nodeInfoOwer.setDeviceName(deviceName);
+        nodeInfoOwer.setIp(ip);
+        nodeInfoOwer.setPort(port);
+        nodeInfoOwer.setFzwno(fzwno);
+        nodeInfoOwer.setCreatTime(DateUtil.getDate());
+
+        nodeInfoOwerMapper.insertSelective(nodeInfoOwer);
+
+        return ApiResult.success();
+    }
+
+    private NodeStandby getParentManageNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        NodeStandby preNodeStandby = null;
+        //由下往上查找父,管理服务器只能注册到父级下，不能注册到同级,每个省、市、区、街道只能注册一个
+        if (pSort != 0 && cSort != 0 && aSort != 0 && sSort != 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
+            //各级都没有找到，直接注册到根
+            if (preNodeStandby == null) {
+                preNodeStandby = this.getRoot();
+//                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            } else {//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index) {
+                    case -1:
+                        throw new Exception("当前街道管理服务器已经存在了！不能重复注册！");
+                    case 7:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, sSort);
+                        break;
+                    case 6:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, 0);
+                        break;
+                    case 5:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort != 0 && aSort != 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, aSort, 0);
+            //各级都没有找到，直接注册到根
+            if (preNodeStandby == null) {
+                preNodeStandby = this.getRoot();
+//                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            } else {//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index) {
+                    case 7:
+                        throw new Exception("当前区管理服务器已经存在了！不能重复注册！");
+                    case 6:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, aSort, 0);
+                        break;
+                    case 5:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort != 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, cSort, 0, 0);
+            //各级都没有找到，直接注册到根
+            if (preNodeStandby == null) {
+                preNodeStandby = this.getRoot();
+//                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            } else {//找到就确定父级是那一级，然后在父级的下一级注册
+                int index = this.manageServiceAddInLayer(preNodeStandby);
+                switch (index) {
+                    case 6:
+                        throw new Exception("当前市管理服务器已经存在了！不能重复注册！");
+                    case 5:
+//                        fzwNo = this.doFzwno(2, pSort, cSort, 0, 0);
+                        break;
+                }
+            }
+        } else if (pSort != 0 && cSort == 0 && aSort == 0 && sSort == 0) {
+            preNodeStandby = this.getParentNode(pSort, 0, 0, 0);
+            //各级都没有找到，直接注册到根
+            if (preNodeStandby == null) {
+                preNodeStandby = this.getRoot();
+//                fzwNo = this.doFzwno(2, pSort, 0, 0, 0);
+            } else {//找到就确定父级是那一级，然后在父级的下一级注册
+                throw new Exception("当前省级管理服务器已经存在了！不能重复注册！");
+            }
+        }
+        return preNodeStandby;
+    }
+
+    @Override
 //    @Transactional(rollbackFor = Exception.class)
     public ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
         Wjuser wjuser = wjuserMapper.selectByPrimaryKey(userId);
@@ -133,6 +291,56 @@ public class UserServiceImpl implements UserService {
             return ApiResult.error(e.getMessage());
         }
     }
+    @Override
+    public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort){
+        NodeStandby nodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
+        //各级都没有找到，直接注册到根
+        if (nodeStandby == null)
+            nodeStandby = this.getRoot();
+
+        DeviceVo deviceVo = new DeviceVo();
+        deviceVo.setIp(nodeStandby.getIp());
+        deviceVo.setPort(nodeStandby.getPort());
+        Device loginDevice = deviceMapper.selectByPrimaryKey(nodeStandby.getDeviceId());
+        deviceVo.setLoginFzwno(loginDevice.getFzwno());
+
+        return ApiResult.success(deviceVo);
+    }
+
+    public ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort){
+        WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idCard);
+        if(wjuserOwer == null)
+            return ApiResult.error("注册失败！没有用户信息！");
+
+        DeviceVo deviceVo = new DeviceVo();
+
+        //查归属服务器
+        NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
+        deviceVo.setOwerIp(nodeInfoOwer.getIp());
+        deviceVo.setOwerPort(nodeInfoOwer.getPort());
+        deviceVo.setOwerFzwno(nodeInfoOwer.getFzwno());
+
+        DeviceVo preDeviceVo = null;
+        //查区域服务器
+        try {
+            preDeviceVo = this.searchNodeHttp(rootIp,pSort,cSort,aSort,sSort);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+//        deviceVo.setParentNodeId(preNodeStandby.getNodeId());
+        deviceVo.setIp(preDeviceVo.getIp());
+        deviceVo.setPort(preDeviceVo.getPort());
+        deviceVo.setLoginFzwno(preDeviceVo.getLoginFzwno());
+
+        //生成fzwno设备段
+        ApiResult apiResult = this.getFullFzwno(wjuserOwer.getOid(),Integer.valueOf(deviceSelected));
+        if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
+            return apiResult;
+
+        deviceVo.setFzwno((String) apiResult.get(ApiResult.CONTENT));
+
+        return ApiResult.success("注册成功！",deviceVo);
+    }
 
     @Transactional(rollbackFor = Exception.class)
     private DeviceVo doAppService(Wjuser wjuser, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
@@ -150,7 +358,7 @@ public class UserServiceImpl implements UserService {
 
         if (device == null) {
             //生成泛在网编号关系段
-            fzwNo = this.doFzwno(wjuser.getUserType(), wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
+            fzwNo = this.doFzwnoRelation(wjuser.getUserType(), wjuser.getPSort(), wjuser.getCSort(), wjuser.getASort(), wjuser.getSSort());
 
             device = new Device();
             device.setUserId(wjuser.getId());
@@ -225,7 +433,7 @@ public class UserServiceImpl implements UserService {
         DeviceVo deviceVo = new DeviceVo();
 
         //生成泛在网编号
-        String fzwNo = this.doFzwno(2, pSort, cSort, aSort, sSort);
+        String fzwNo = this.doFzwnoRelation(2, pSort, cSort, aSort, sSort);
         NodeStandby preNodeStandby = null;
         //由下往上查找父,管理服务器只能注册到父级下，不能注册到同级,每个省、市、区、街道只能注册一个
         if (pSort != 0 && cSort != 0 && aSort != 0 && sSort != 0) {
@@ -506,7 +714,7 @@ public class UserServiceImpl implements UserService {
         return area;
     }
 
-    private String doFzwno(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+    private String doFzwnoRelation(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
         String fzwNo = "";
 
         String country = COUNTRY;
@@ -534,7 +742,7 @@ public class UserServiceImpl implements UserService {
         return fzwNo;
     }
 
-    private String doFzwnoOwer(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+    private String doFzwnoOwerRelaion(int userType, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
         String fzwNo = "";
 
         String country = COUNTRY;
@@ -643,10 +851,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResult getFullFzwno(String fzwno, Integer deviceType) {
         Devtype devtype = devtypeMapper.selectByPrimaryKey(deviceType);
-        if (deviceType == null)
+        if (devtype == null)
             return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
 
-        String relation = "";
+        String deviceno = "";
         //取得最大值
         Fzwno fzwnoMax = fzwnoMapper.findMax(fzwno, devtype.getId());
         if (fzwnoMax != null) {
@@ -660,43 +868,59 @@ public class UserServiceImpl implements UserService {
 
             fzwnoMax = new Fzwno();
 
-            String net = "0";//1
-            String stay = "00000000";//8
-            String dtype = devtype.getDevTypeNum();//4
-            String space = "01";//2
-            String seq = seqno;//2
-
-            relation = net + stay + dtype + space + seq;
+//            String net = "0";//1
+//            String stay = "00000000";//8
+//            String dtype = devtype.getDevTypeNum();//4
+//            String space = "01";//2
+//            String seq = seqno;//2
+//
+//            deviceno = net + stay + dtype + space + seq;
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(),seqno);
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
-            fzwnoMax.setFzwDevice(fzwno);
-            fzwnoMax.setFzwRelation(relation);
+            fzwnoMax.setFzwDevice(deviceno);
+            fzwnoMax.setFzwRelation(fzwno);
 
             fzwnoMapper.insertSelective(fzwnoMax);
 
         } else {
             fzwnoMax = new Fzwno();
 
-            String net = "0";//1
-            String stay = "00000000";//8
-            String dtype = devtype.getDevTypeNum();//4
-            String space = "01";//2
-            String seq = "01";//2
-
-            relation = net + stay + dtype + space + seq;
+//            String net = "0";//1
+//            String stay = "00000000";//8
+//            String dtype = devtype.getDevTypeNum();//4
+//            String space = "01";//2
+//            String seq = "01";//2
+//
+//            deviceno = net + stay + dtype + space + seq;
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(),"01");
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
-            fzwnoMax.setFzwDevice(fzwno);
-            fzwnoMax.setFzwRelation(relation);
+            fzwnoMax.setFzwDevice(deviceno);
+            fzwnoMax.setFzwRelation(fzwno);
 
             fzwnoMapper.insertSelective(fzwnoMax);
         }
 
-        String full = fzwno + relation;
+        String full = fzwno + deviceno;
 
         return ApiResult.success("成功", full);
+    }
+
+    private String getFzwnoDevice(String dtype, String seq){
+        String deviceno = "";
+
+        String net = "0";//1
+        String stay = "00000000";//8
+//        String dtype = devtype.getDevTypeNum();//4
+        String space = "01";//2
+//        String seq = "01";//2
+
+        deviceno = net + stay + dtype + space + seq;
+
+        return deviceno;
     }
 
     @Override
@@ -766,7 +990,7 @@ public class UserServiceImpl implements UserService {
         //同步用户信息到归属地管理服务器
         String oid = "";
         try {
-            oid = userRegistOwer(owerNodeStandby.getIp(), username, enPw, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
+            oid = userRegistOwerHttp(owerNodeStandby.getIp(), username, enPw, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -801,7 +1025,7 @@ public class UserServiceImpl implements UserService {
 
         String fzwno = "";
         try {
-            fzwno = this.doFzwnoOwer(Integer.valueOf(userSelected),pSort,cSort,aSort,sSort);
+            fzwno = this.doFzwnoOwerRelaion(Integer.valueOf(userSelected), pSort, cSort, aSort, sSort);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -821,11 +1045,11 @@ public class UserServiceImpl implements UserService {
 
         wjuserOwerMapper.insertSelective(wjuserOwer);
 
-        return ApiResult.success("成功",fzwno);
+        return ApiResult.success("成功", fzwno);
     }
 
     //http去管理服务器用户注册，成功返回oid关系段
-    private String userRegistOwer(String ip, String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+    private String userRegistOwerHttp(String ip, String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
         String url = "http://" + ip + ":" + "8888/userRegistOwer";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -853,6 +1077,37 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("++++++++++++++++请求userRegistOwer失败:" + "连接错误");
             throw new Exception("userRegistOwer失败:连接错误");
+        }
+    }
+
+    //http去管理服务器用户注册，成功返回oid关系段
+    private DeviceVo searchNodeHttp(String ip, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        String url = "http://" + ip + ":" + "8888/userRegistOwer";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("pSort", String.valueOf(pSort));
+        map.put("cSort", String.valueOf(cSort));
+        map.put("aSort", String.valueOf(aSort));
+        map.put("sSort", String.valueOf(sSort));
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+                DeviceVo deviceVo = new DeviceVo();
+                deviceVo.setLoginFzwno(data.getString("loginFzwno"));
+                deviceVo.setIp(data.getString("ip"));
+                deviceVo.setPort(data.getString("port"));
+                log.info("++++++++++++++++请求searchNodeHttpr成功:" + data.toString());
+                return deviceVo;
+            } else {
+                log.info("++++++++++++++++请求searchNodeHttp失败:" + "服务端错误");
+                throw new Exception("searchNodeHttp失败：服务端错误");
+            }
+        } else {
+            log.info("++++++++++++++++请求searchNodeHttp失败:" + "连接错误");
+            throw new Exception("searchNodeHttpr失败:连接错误");
         }
     }
 

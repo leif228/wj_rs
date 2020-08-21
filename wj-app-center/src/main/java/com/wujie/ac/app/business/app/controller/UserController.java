@@ -60,6 +60,20 @@ public class UserController {
         return userService.preDeviceRegist(userId, deviceSelected, nodeId, pSort, cSort, aSort, sSort);
     }
 
+    @PostMapping("/deviceRegistManage")
+    public ApiResult deviceRegistManage(@RequestParam(value = "userId") Long userId,
+                                        @RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "pSort") Integer pSort,
+                                        @RequestParam(value = "cSort") Integer cSort,
+                                        @RequestParam(value = "aSort") Integer aSort,
+                                        @RequestParam(value = "sSort") Integer sSort,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port
+    ) {
+        return userService.deviceRegistManage(userId, deviceSelected, pSort, cSort, aSort, sSort, deviceName, ip, port);
+    }
+
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
         return userService.getChildNodes(nodeId);
@@ -137,5 +151,25 @@ public class UserController {
                                     @RequestParam(value = "sSort") Integer sSort
     ) {
         return userService.userRegistOwer(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
+    }
+
+    @PostMapping("/recodeOwerNodeInfo")
+    public ApiResult recodeOwerNodeInfo(@RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port,
+                                        @RequestParam(value = "fzwno") String fzwno
+    ) {
+        return userService.recodeOwerNodeInfo(deviceSelected, deviceName, ip, port, fzwno);
+    }
+
+    @PostMapping("/searchNode")
+    public ApiResult searchNode(
+            @RequestParam(value = "pSort") Integer pSort,
+            @RequestParam(value = "cSort") Integer cSort,
+            @RequestParam(value = "aSort") Integer aSort,
+            @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return userService.searchNode(pSort, cSort, aSort, sSort);
     }
 }

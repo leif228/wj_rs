@@ -101,6 +101,34 @@ public interface AppUserService {
                                     @RequestParam(value = "sSort") Integer sSort
     );
 
+    @PostMapping("/deviceRegistManage")
+    public ApiResult deviceRegistManage(@RequestParam(value = "userId") Long userId,
+                                        @RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "pSort") Integer pSort,
+                                        @RequestParam(value = "cSort") Integer cSort,
+                                        @RequestParam(value = "aSort") Integer aSort,
+                                        @RequestParam(value = "sSort") Integer sSort,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port
+    );
+
+    @PostMapping("/recodeOwerNodeInfo")
+    public ApiResult recodeOwerNodeInfo(@RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port,
+                                        @RequestParam(value = "fzwno") String fzwno
+    );
+
+    @PostMapping("/searchNode")
+    public ApiResult searchNode(
+            @RequestParam(value = "pSort") Integer pSort,
+            @RequestParam(value = "cSort") Integer cSort,
+            @RequestParam(value = "aSort") Integer aSort,
+            @RequestParam(value = "sSort") Integer sSort
+    );
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -171,6 +199,21 @@ public interface AppUserService {
 
         @Override
         public ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult deviceRegistManage(Long userId, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort, String deviceName, String ip, String port) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

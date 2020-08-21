@@ -203,7 +203,9 @@ public class BaseRestfulUtil {
 				setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
 				.setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
 		httpPost.setConfig(requestConfig);
-		httpPost.setHeader("Content-Type", "application/json");
+		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+//		httpPost.setHeader("Content-Type", "application/form-data");
+//		httpPost.setHeader("Content-Type", "application/json");
 		try {
 			//设置参数
 			List<BasicNameValuePair> list = new ArrayList<>();

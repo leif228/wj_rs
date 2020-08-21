@@ -130,4 +130,28 @@ public class UserDispatchController {
     ) {
         return userService.userRegistOwer(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
     }
+
+    @PostMapping("/deviceRegistManage")
+    public ApiResult deviceRegistManage(@RequestParam(value = "userId") Long userId,
+                                        @RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "pSort") Integer pSort,
+                                        @RequestParam(value = "cSort") Integer cSort,
+                                        @RequestParam(value = "aSort") Integer aSort,
+                                        @RequestParam(value = "sSort") Integer sSort,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port
+    ) {
+        return userService.deviceRegistManage(userId, deviceSelected, pSort, cSort, aSort, sSort, deviceName, ip, port);
+    }
+
+    @PostMapping("/searchNode")
+    public ApiResult searchNode(
+            @RequestParam(value = "pSort") Integer pSort,
+            @RequestParam(value = "cSort") Integer cSort,
+            @RequestParam(value = "aSort") Integer aSort,
+            @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return userService.searchNode(pSort, cSort, aSort, sSort);
+    }
 }

@@ -32,6 +32,12 @@ public class Wjuser implements Serializable {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "ower_ip")
+    private String owerIp;
+
+    @Column(name = "oid")
+    private String oid;
+
     //
     @Column(name = "addr")
     private String addr;
