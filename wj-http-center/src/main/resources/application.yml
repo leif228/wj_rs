@@ -175,6 +175,7 @@ secure:
       - /areaByC
       - /streetByA
       - /searchNode
+      - /deviceRegistElse
 
 
 

@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(NodeInfoOwerMapper nodeInfoOwerMapper,WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
         this.wjuserOwerMapper = wjuserOwerMapper;
         this.driverCompMapper = driverCompMapper;
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
             Devtype devtype = devtypeMapper.selectByPrimaryKey(Integer.valueOf(deviceSelected));
             if (devtype == null)
                 return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
-            String fzwNoDevice = this.getFzwnoDevice(devtype.getDevTypeNum(),"01");
+            String fzwNoDevice = this.getFzwnoDevice(devtype.getDevTypeNum(), "01");
 
             String fzwnoFull = fzwNoRelation + fzwNoDevice;
 
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno){
+    public ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno) {
         NodeInfoOwer nodeInfoOwer = new NodeInfoOwer();
         nodeInfoOwer.setDeviceType(Integer.valueOf(deviceSelected));
         nodeInfoOwer.setDeviceName(deviceName);
@@ -291,8 +291,9 @@ public class UserServiceImpl implements UserService {
             return ApiResult.error(e.getMessage());
         }
     }
+
     @Override
-    public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort){
+    public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
         NodeStandby nodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
         //各级都没有找到，直接注册到根
         if (nodeStandby == null)
@@ -307,9 +308,10 @@ public class UserServiceImpl implements UserService {
         return ApiResult.success(deviceVo);
     }
 
-    public ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort){
+    @Override
+    public ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
         WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idCard);
-        if(wjuserOwer == null)
+        if (wjuserOwer == null)
             return ApiResult.error("注册失败！没有用户信息！");
 
         DeviceVo deviceVo = new DeviceVo();
@@ -323,7 +325,7 @@ public class UserServiceImpl implements UserService {
         DeviceVo preDeviceVo = null;
         //查区域服务器
         try {
-            preDeviceVo = this.searchNodeHttp(rootIp,pSort,cSort,aSort,sSort);
+            preDeviceVo = this.searchNodeHttp(rootIp, pSort, cSort, aSort, sSort);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -332,14 +334,13 @@ public class UserServiceImpl implements UserService {
         deviceVo.setPort(preDeviceVo.getPort());
         deviceVo.setLoginFzwno(preDeviceVo.getLoginFzwno());
 
-        //生成fzwno设备段
-        ApiResult apiResult = this.getFullFzwno(wjuserOwer.getOid(),Integer.valueOf(deviceSelected));
-        if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
+        ApiResult apiResult = this.genAndSaveFullFzwno(wjuserOwer.getOid(), Integer.valueOf(deviceSelected), deviceName);
+        if (!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
             return apiResult;
 
         deviceVo.setFzwno((String) apiResult.get(ApiResult.CONTENT));
 
-        return ApiResult.success("注册成功！",deviceVo);
+        return ApiResult.success("注册成功！", deviceVo);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -846,10 +847,10 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 注册保存fzwno设备端
+     * 管理服务器上生成fzwno设备端，并保存注册的设备信息，返回fullFzwno.
      */
     @Override
-    public ApiResult getFullFzwno(String fzwno, Integer deviceType) {
+    public ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName) {
         Devtype devtype = devtypeMapper.selectByPrimaryKey(deviceType);
         if (devtype == null)
             return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
@@ -858,8 +859,8 @@ public class UserServiceImpl implements UserService {
         //取得最大值
         Fzwno fzwnoMax = fzwnoMapper.findMax(fzwno, devtype.getId());
         if (fzwnoMax != null) {
-            String maxRalation = fzwnoMax.getFzwRelation();
-            String maxSeq = maxRalation.substring(15);
+            String maxDevice = fzwnoMax.getFzwDevice();
+            String maxSeq = maxDevice.substring(15);
 
             int seqInt = NumConvertUtil.HexStringToInt(maxSeq);
             String seqno = NumConvertUtil.IntToHexStringLimit2(seqInt + 1);//生成当前序号
@@ -875,12 +876,13 @@ public class UserServiceImpl implements UserService {
 //            String seq = seqno;//2
 //
 //            deviceno = net + stay + dtype + space + seq;
-            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(),seqno);
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), seqno);
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
             fzwnoMax.setFzwDevice(deviceno);
             fzwnoMax.setFzwRelation(fzwno);
+            fzwnoMax.setDeviceName(deviceName);
 
             fzwnoMapper.insertSelective(fzwnoMax);
 
@@ -894,12 +896,13 @@ public class UserServiceImpl implements UserService {
 //            String seq = "01";//2
 //
 //            deviceno = net + stay + dtype + space + seq;
-            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(),"01");
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), "01");
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
             fzwnoMax.setFzwDevice(deviceno);
             fzwnoMax.setFzwRelation(fzwno);
+            fzwnoMax.setDeviceName(deviceName);
 
             fzwnoMapper.insertSelective(fzwnoMax);
         }
@@ -909,7 +912,7 @@ public class UserServiceImpl implements UserService {
         return ApiResult.success("成功", full);
     }
 
-    private String getFzwnoDevice(String dtype, String seq){
+    private String getFzwnoDevice(String dtype, String seq) {
         String deviceno = "";
 
         String net = "0";//1
@@ -1081,8 +1084,8 @@ public class UserServiceImpl implements UserService {
     }
 
     //http去管理服务器用户注册，成功返回oid关系段
-    private DeviceVo searchNodeHttp(String ip, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
-        String url = "http://" + ip + ":" + "8888/userRegistOwer";
+    private DeviceVo searchNodeHttp(String rootIp, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
+        String url = "http://" + rootIp + ":" + "8888/searchNode";
         String params = "";
         Map<String, String> map = new HashMap<>();
         map.put("pSort", String.valueOf(pSort));

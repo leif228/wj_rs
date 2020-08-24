@@ -44,8 +44,9 @@ public interface DispatchUserService {
                                      @RequestParam(value = "cSort") Integer cSort,
                                      @RequestParam(value = "aSort") Integer aSort,
                                      @RequestParam(value = "sSort") Integer sSort);
+
     @PostMapping("/getChildNodes")
-    public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) ;
+    public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId);
 
     @PostMapping("/addrInit")
     public ApiResult addrInit();
@@ -120,6 +121,17 @@ public interface DispatchUserService {
             @RequestParam(value = "cSort") Integer cSort,
             @RequestParam(value = "aSort") Integer aSort,
             @RequestParam(value = "sSort") Integer sSort
+    );
+
+    @PostMapping("/deviceRegistElse")
+    public ApiResult deviceRegistElse(@RequestParam(value = "rootIp") String rootIp,
+                                      @RequestParam(value = "idcard") String idcard,
+                                      @RequestParam(value = "deviceSelected") String deviceSelected,
+                                      @RequestParam(value = "deviceName") String deviceName,
+                                      @RequestParam(value = "pSort") Integer pSort,
+                                      @RequestParam(value = "cSort") Integer cSort,
+                                      @RequestParam(value = "aSort") Integer aSort,
+                                      @RequestParam(value = "sSort") Integer sSort
     );
 
     @Component
@@ -203,6 +215,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult deviceRegistElse(String rootIp, String idcard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

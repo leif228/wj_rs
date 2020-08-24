@@ -14,11 +14,13 @@ public interface UserService {
 
     ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
+    ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);
 
     ApiResult getChildNodes(Long nodeId);
 
-    ApiResult getFullFzwno(String fzwno, Integer deviceType);
+    ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName);
 
     ApiResult getAllDevType(Long userId);
 

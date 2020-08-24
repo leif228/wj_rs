@@ -110,10 +110,14 @@ public class UserController {
     @PostMapping("/tcpClientConnect")
     public ApiResult tcpClientConnect(@RequestParam(value = "ip") String ip,
                                       @RequestParam(value = "port") String port,
-                                      @RequestParam(value = "fzwno") String fzwno
+                                      @RequestParam(value = "fzwno") String fzwno,
+                                      @RequestParam(value = "deviceName") String deviceName,
+                                      @RequestParam(value = "selfIp") String selfIp,
+                                      @RequestParam(value = "selfPort") String selfPort,
+                                      @RequestParam(value = "deviceSelected") String deviceSelected
 
     ) {
-        return tcpUserService.tcpClientConnect(ip, port, fzwno);
+        return tcpUserService.tcpClientConnect(ip, port, fzwno, deviceName, selfIp, selfPort, deviceSelected);
     }
 
     @PostMapping("/getTcpClientConnectInfo")
@@ -184,5 +188,19 @@ public class UserController {
             @RequestParam(value = "sSort") Integer sSort
     ) {
         return dispatchUserService.searchNode(pSort, cSort, aSort, sSort);
+    }
+
+
+    @PostMapping("/deviceRegistElse")
+    public ApiResult deviceRegistElse(@RequestParam(value = "rootIp") String rootIp,
+                                      @RequestParam(value = "idcard") String idcard,
+                                      @RequestParam(value = "deviceSelected") String deviceSelected,
+                                      @RequestParam(value = "deviceName") String deviceName,
+                                      @RequestParam(value = "pSort") Integer pSort,
+                                      @RequestParam(value = "cSort") Integer cSort,
+                                      @RequestParam(value = "aSort") Integer aSort,
+                                      @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return dispatchUserService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort);
     }
 }

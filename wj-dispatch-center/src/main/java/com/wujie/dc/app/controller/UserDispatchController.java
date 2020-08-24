@@ -154,4 +154,17 @@ public class UserDispatchController {
     ) {
         return userService.searchNode(pSort, cSort, aSort, sSort);
     }
+
+    @PostMapping("/deviceRegistElse")
+    public ApiResult deviceRegistElse(@RequestParam(value = "rootIp") String rootIp,
+                                      @RequestParam(value = "idcard") String idcard,
+                                      @RequestParam(value = "deviceSelected") String deviceSelected,
+                                      @RequestParam(value = "deviceName") String deviceName,
+                                      @RequestParam(value = "pSort") Integer pSort,
+                                      @RequestParam(value = "cSort") Integer cSort,
+                                      @RequestParam(value = "aSort") Integer aSort,
+                                      @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return userService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort);
+    }
 }

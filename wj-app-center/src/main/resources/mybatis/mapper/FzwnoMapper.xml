@@ -2,38 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wujie.ac.app.business.repository.FzwnoMapper" >
   <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.Fzwno" >
-    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="id" property="id" jdbcType="BIGINT" />
     <result column="fzw_relation" property="fzwRelation" jdbcType="VARCHAR" />
     <result column="fzw_device" property="fzwDevice" jdbcType="VARCHAR" />
     <result column="devtype_id" property="devtypeId" jdbcType="INTEGER" />
+    <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, fzw_relation, fzw_device, devtype_id, creat_time
+    id, fzw_relation, fzw_device, devtype_id, device_name, creat_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
     <include refid="Base_Column_List" />
     from fzwno
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from fzwno
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.Fzwno" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into fzwno (id, fzw_relation, fzw_device, 
-      devtype_id, creat_time)
-    values (#{id,jdbcType=INTEGER}, #{fzwRelation,jdbcType=VARCHAR}, #{fzwDevice,jdbcType=VARCHAR}, 
-      #{devtypeId,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP})
+    insert into fzwno (id, fzw_relation, fzw_device,
+    devtype_id, device_name, creat_time
+    )
+    values (#{id,jdbcType=BIGINT}, #{fzwRelation,jdbcType=VARCHAR}, #{fzwDevice,jdbcType=VARCHAR},
+    #{devtypeId,jdbcType=INTEGER}, #{deviceName,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.Fzwno" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into fzwno
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -48,13 +45,16 @@
       <if test="devtypeId != null" >
         devtype_id,
       </if>
+      <if test="deviceName != null" >
+        device_name,
+      </if>
       <if test="creatTime != null" >
         creat_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="fzwRelation != null" >
         #{fzwRelation,jdbcType=VARCHAR},
@@ -64,6 +64,9 @@
       </if>
       <if test="devtypeId != null" >
         #{devtypeId,jdbcType=INTEGER},
+      </if>
+      <if test="deviceName != null" >
+        #{deviceName,jdbcType=VARCHAR},
       </if>
       <if test="creatTime != null" >
         #{creatTime,jdbcType=TIMESTAMP},
@@ -82,23 +85,27 @@
       <if test="devtypeId != null" >
         devtype_id = #{devtypeId,jdbcType=INTEGER},
       </if>
+      <if test="deviceName != null" >
+        device_name = #{deviceName,jdbcType=VARCHAR},
+      </if>
       <if test="creatTime != null" >
         creat_time = #{creatTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.Fzwno" >
     update fzwno
     set fzw_relation = #{fzwRelation,jdbcType=VARCHAR},
-      fzw_device = #{fzwDevice,jdbcType=VARCHAR},
-      devtype_id = #{devtypeId,jdbcType=INTEGER},
-      creat_time = #{creatTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    fzw_device = #{fzwDevice,jdbcType=VARCHAR},
+    devtype_id = #{devtypeId,jdbcType=INTEGER},
+    device_name = #{deviceName,jdbcType=VARCHAR},
+    creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 
   <select id="findMax" resultMap="BaseResultMap"  >
     select * from fzwno  where id=(
-    select MAX(id) from fzwno where fzw_device=#{fzwno} and devtype_id=#{devtypeId})
+    select MAX(id) from fzwno where fzw_relation=#{fzwno} and devtype_id=#{devtypeId})
   </select>
 </mapper>
