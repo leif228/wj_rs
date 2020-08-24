@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResult tcpClientConnect(String ip, String port, String fzwno, String deviceName, String selfIp, String selfPort, String deviceSelected) {
-        ApiResult apiResult = appUserService.recodeOwerNodeInfo(deviceSelected,deviceName,ip,port,fzwno);
+        ApiResult apiResult = appUserService.recodeOwerNodeInfo(deviceSelected,deviceName,selfIp,selfPort,fzwno);
         if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
             return apiResult;
 
