@@ -4,6 +4,7 @@ import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.app.service.system.UserService;
 import com.wujie.tc.app.business.entity.Device;
 import com.wujie.tc.app.business.entity.Node;
@@ -42,9 +43,11 @@ public class UserServiceImpl implements UserService {
     private WjuserMapper wjuserMapper;
     private WechatConstant wechatConstant;
     private ChannelManager channelManager;
+    private AppUserService appUserService;
 
     @Autowired
-    public UserServiceImpl(ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(AppUserService appUserService, ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.appUserService = appUserService;
         this.channelManager = channelManager;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.wechatConstant = wechatConstant;
@@ -54,7 +57,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
+    public ApiResult tcpClientConnect(String ip, String port, String fzwno, String deviceName, String selfIp, String selfPort, String deviceSelected) {
+        ApiResult apiResult = appUserService.recodeOwerNodeInfo(deviceSelected,deviceName,ip,port,fzwno);
+        if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
+            return apiResult;
+
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put("ip", ip);
         keyValueMap.put("port", port);

@@ -3,6 +3,7 @@ package com.wujie.hc.app.business.vo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -33,6 +34,10 @@ public class UserDetailsVo extends User implements Serializable {
     //
     private String idcard;
 
+    private String owerIp;
+
+    private String oid;
+
     //
     private String phone;
 
@@ -44,6 +49,22 @@ public class UserDetailsVo extends User implements Serializable {
 
     //
     private Date creatTime;
+
+    public String getOwerIp() {
+        return owerIp;
+    }
+
+    public void setOwerIp(String owerIp) {
+        this.owerIp = owerIp;
+    }
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
 
     public Long getId() {
         return id;

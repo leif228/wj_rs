@@ -6,13 +6,21 @@ public interface UserService {
 
     ApiResult getTreeData(Long nodeId);
 
+    ApiResult deviceRegistManage(Long userId, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort, String deviceName, String ip, String port);
+
+    ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno);
+
     ApiResult preDeviceRegist(Long userId, String deviceSelected, Long nodeId, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
+    ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
+    ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);
 
     ApiResult getChildNodes(Long nodeId);
 
-    ApiResult getFullFzwno(String fzwno, Integer deviceType);
+    ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName);
 
     ApiResult getAllDevType(Long userId);
 

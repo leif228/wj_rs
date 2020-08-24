@@ -2,16 +2,10 @@ package com.wujie.ac.app.business.app.controller;
 
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
-import com.wujie.ac.app.business.entity.Node;
-import com.wujie.ac.app.business.vo.NodeVo;
 import com.wujie.common.base.ApiResult;
-import com.wujie.common.dto.ResultVo;
-import com.wujie.common.enums.ErrorEnum;
 import com.wujie.fclient.service.HttpUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @ClassName: UserController
@@ -60,6 +54,20 @@ public class UserController {
         return userService.preDeviceRegist(userId, deviceSelected, nodeId, pSort, cSort, aSort, sSort);
     }
 
+    @PostMapping("/deviceRegistManage")
+    public ApiResult deviceRegistManage(@RequestParam(value = "userId") Long userId,
+                                        @RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "pSort") Integer pSort,
+                                        @RequestParam(value = "cSort") Integer cSort,
+                                        @RequestParam(value = "aSort") Integer aSort,
+                                        @RequestParam(value = "sSort") Integer sSort,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port
+    ) {
+        return userService.deviceRegistManage(userId, deviceSelected, pSort, cSort, aSort, sSort, deviceName, ip, port);
+    }
+
     @PostMapping("/getChildNodes")
     public ApiResult getChildNodes(@RequestParam(value = "nodeId") Long nodeId) {
         return userService.getChildNodes(nodeId);
@@ -88,7 +96,7 @@ public class UserController {
     @PostMapping("/getFullFzwno")
     public ApiResult getFullFzwno(@RequestParam(value = "fzwno") String fzwno,
                                   @RequestParam(value = "deviceType") Integer deviceType) {
-        return userService.getFullFzwno(fzwno, deviceType);
+        return userService.genAndSaveFullFzwno(fzwno, deviceType, "");
     }
 
     @PostMapping("/getAllDevType")
@@ -137,5 +145,38 @@ public class UserController {
                                     @RequestParam(value = "sSort") Integer sSort
     ) {
         return userService.userRegistOwer(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
+    }
+
+    @PostMapping("/recodeOwerNodeInfo")
+    public ApiResult recodeOwerNodeInfo(@RequestParam(value = "deviceSelected") String deviceSelected,
+                                        @RequestParam(value = "deviceName") String deviceName,
+                                        @RequestParam(value = "ip") String ip,
+                                        @RequestParam(value = "port") String port,
+                                        @RequestParam(value = "fzwno") String fzwno
+    ) {
+        return userService.recodeOwerNodeInfo(deviceSelected, deviceName, ip, port, fzwno);
+    }
+
+    @PostMapping("/searchNode")
+    public ApiResult searchNode(
+            @RequestParam(value = "pSort") Integer pSort,
+            @RequestParam(value = "cSort") Integer cSort,
+            @RequestParam(value = "aSort") Integer aSort,
+            @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return userService.searchNode(pSort, cSort, aSort, sSort);
+    }
+
+    @PostMapping("/deviceRegistElse")
+    public ApiResult deviceRegistElse(@RequestParam(value = "rootIp") String rootIp,
+                                      @RequestParam(value = "idcard") String idcard,
+                                      @RequestParam(value = "deviceSelected") String deviceSelected,
+                                      @RequestParam(value = "deviceName") String deviceName,
+                                      @RequestParam(value = "pSort") Integer pSort,
+                                      @RequestParam(value = "cSort") Integer cSort,
+                                      @RequestParam(value = "aSort") Integer aSort,
+                                      @RequestParam(value = "sSort") Integer sSort
+    ) {
+        return userService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort);
     }
 }
