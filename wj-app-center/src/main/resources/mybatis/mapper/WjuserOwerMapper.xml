@@ -249,4 +249,11 @@
     select * from wjuser_ower  where id=(
     select MAX(id) from wjuser_ower where oid like concat(#{cat},'%'))
   </select>
+
+  <select id="findByOid" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where oid = #{targetOid}
+  </select>
 </mapper>

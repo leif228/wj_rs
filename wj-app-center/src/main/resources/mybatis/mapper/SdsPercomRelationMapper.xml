@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.SdsPercomRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsPercomRelation" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="self_oid" property="selfOid" jdbcType="VARCHAR" />
+    <result column="target_oid" property="targetOid" jdbcType="VARCHAR" />
+    <result column="relation_type_info_id" property="relationTypeInfoId" jdbcType="BIGINT" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, self_oid, target_oid, relation_type_info_id, weight, nickname
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sds_percom_relation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sds_percom_relation
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsPercomRelation" >
+    insert into sds_percom_relation (id, self_oid, target_oid, 
+      relation_type_info_id, weight, nickname
+      )
+    values (#{id,jdbcType=BIGINT}, #{selfOid,jdbcType=VARCHAR}, #{targetOid,jdbcType=VARCHAR}, 
+      #{relationTypeInfoId,jdbcType=BIGINT}, #{weight,jdbcType=INTEGER}, #{nickname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsPercomRelation" >
+    insert into sds_percom_relation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="selfOid != null" >
+        self_oid,
+      </if>
+      <if test="targetOid != null" >
+        target_oid,
+      </if>
+      <if test="relationTypeInfoId != null" >
+        relation_type_info_id,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="selfOid != null" >
+        #{selfOid,jdbcType=VARCHAR},
+      </if>
+      <if test="targetOid != null" >
+        #{targetOid,jdbcType=VARCHAR},
+      </if>
+      <if test="relationTypeInfoId != null" >
+        #{relationTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsPercomRelation" >
+    update sds_percom_relation
+    <set >
+      <if test="selfOid != null" >
+        self_oid = #{selfOid,jdbcType=VARCHAR},
+      </if>
+      <if test="targetOid != null" >
+        target_oid = #{targetOid,jdbcType=VARCHAR},
+      </if>
+      <if test="relationTypeInfoId != null" >
+        relation_type_info_id = #{relationTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsPercomRelation" >
+    update sds_percom_relation
+    set self_oid = #{selfOid,jdbcType=VARCHAR},
+      target_oid = #{targetOid,jdbcType=VARCHAR},
+      relation_type_info_id = #{relationTypeInfoId,jdbcType=BIGINT},
+      weight = #{weight,jdbcType=INTEGER},
+      nickname = #{nickname,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findBySelfOidAndWeight" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from sds_percom_relation
+    where self_oid = #{selfOid} and weight &gt;= #{eventRelationLevel}
+  </select>
+</mapper>

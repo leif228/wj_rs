@@ -1,74 +1,71 @@
 package com.wujie.ac.app.business.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Date;
 
-@Table(name="sds_relation_type_info")
-public class SdsRelationTypeInfo implements Serializable,Cloneable{
-    /** id;id */
-    @Id
-    @GeneratedValue
-    private Long id ;
-    /** 类型;类型：1、夫妻2、父母3、兄弟姐妹4、亲戚5、朋友6、员工... */
-    private Integer type ;
-    /** 关系名称;如：夫妻 */
-    private String relationName ;
-    /** 关系权重（0~100）;关系的优先级，数字越大，越优先 */
-    private Integer weight ;
-    /** 更新人;关系更新人 */
-    private Long updatedBy ;
-    /** 更新时间;关系更新时间 */
-    private Date updateTime ;
+public class SdsRelationTypeInfo {
+    // id id
+    private Long id;
 
-    /** id;id */
-    public Long getId(){
-        return this.id;
+    // 类型 类型：1、夫妻2、父母3、兄弟姐妹4、亲戚5、朋友6、员工...
+    private Integer type;
+
+    // 关系名称 如：夫妻
+    private String relationName;
+
+    // 关系权重（0~100） 关系的优先级，数字越大，越优先
+    private Integer weight;
+
+    // 更新人 关系更新人
+    private Long updatedBy;
+
+    // 更新时间 关系更新时间
+    private Date updateTime;
+
+    public Long getId() {
+        return id;
     }
-    /** id;id */
-    public void setId(Long id){
+
+    public void setId(Long id) {
         this.id = id;
     }
-    /** 类型;类型：1、夫妻2、父母3、兄弟姐妹4、亲戚5、朋友6、员工... */
-    public Integer getType(){
-        return this.type;
+
+    public Integer getType() {
+        return type;
     }
-    /** 类型;类型：1、夫妻2、父母3、兄弟姐妹4、亲戚5、朋友6、员工... */
-    public void setType(Integer type){
+
+    public void setType(Integer type) {
         this.type = type;
     }
-    /** 关系名称;如：夫妻 */
-    public String getRelationName(){
-        return this.relationName;
+
+    public String getRelationName() {
+        return relationName;
     }
-    /** 关系名称;如：夫妻 */
-    public void setRelationName(String relationName){
-        this.relationName = relationName;
+
+    public void setRelationName(String relationName) {
+        this.relationName = relationName == null ? null : relationName.trim();
     }
-    /** 关系权重（0~100）;关系的优先级，数字越大，越优先 */
-    public Integer getWeight(){
-        return this.weight;
+
+    public Integer getWeight() {
+        return weight;
     }
-    /** 关系权重（0~100）;关系的优先级，数字越大，越优先 */
-    public void setWeight(Integer weight){
+
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
-    /** 更新人;关系更新人 */
-    public Long getUpdatedBy(){
-        return this.updatedBy;
+
+    public Long getUpdatedBy() {
+        return updatedBy;
     }
-    /** 更新人;关系更新人 */
-    public void setUpdatedBy(Long updatedBy){
+
+    public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
     }
-    /** 更新时间;关系更新时间 */
-    public Date getUpdateTime(){
-        return this.updateTime;
+
+    public Date getUpdateTime() {
+        return updateTime;
     }
-    /** 更新时间;关系更新时间 */
-    public void setUpdateTime(Date updateTime){
+
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 }

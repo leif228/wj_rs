@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.SdsEventPersonRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="event_no" property="eventNo" jdbcType="VARCHAR" />
+    <result column="oid" property="oid" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, event_no, oid, status, creat_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sds_event_person_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sds_event_person_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+    insert into sds_event_person_record (id, event_no, oid, 
+      status, creat_time)
+    values (#{id,jdbcType=BIGINT}, #{eventNo,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+    insert into sds_event_person_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eventNo != null" >
+        event_no,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="eventNo != null" >
+        #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+    update sds_event_person_record
+    <set >
+      <if test="eventNo != null" >
+        event_no = #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+    update sds_event_person_record
+    set event_no = #{eventNo,jdbcType=VARCHAR},
+      oid = #{oid,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+  <select id="findByEventNoAndOid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sds_event_person_record
+    where event_no = #{eventNo} and oid = #{oid}
+  </select>
+
+  <select id="findByOid" resultType="com.wujie.common.dto.wj.SdsEventListDto">
+    select c.status status,b.event_name eventName,a.creat_time creatTime
+    from sds_event_person_record a, sds_event_type_info b,
+    (select * from sds_event_info  where id=(
+    select MAX(id) from sds_event_info where event_no=(
+    select event_no from sds_event_person_record where oid = #{oid})
+    )) c
+    where a.event_no = c.event_no and c.event_type_info_id = b.id
+  </select>
+</mapper>

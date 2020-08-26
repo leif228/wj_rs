@@ -1,73 +1,69 @@
 package com.wujie.ac.app.business.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
+public class SdsPercomRelation {
+    // id
+    private Long id;
 
-@Table(name="sds_percom_relation")
-public class SdsPercomRelation implements Serializable,Cloneable{
-    /** id */
-    @Id
-    @GeneratedValue
-    private Long id ;
-    /** 自己oid */
-    private String selfOid ;
-    /** 目标oid */
-    private String targetOid ;
-    /** 关系类型表id */
-    private Long relationTypeInfoId ;
-    /** 联系度（0~10000动态变化） */
-    private Integer weight ;
-    /** 昵称 */
-    private String nickname ;
+    // 自己oid
+    private String selfOid;
 
-    /** id */
-    public Long getId(){
-        return this.id;
+    // 目标oid
+    private String targetOid;
+
+    // 关系类型表id
+    private Long relationTypeInfoId;
+
+    // 联系度（0~10000动态变化）
+    private Integer weight;
+
+    // 昵称
+    private String nickname;
+
+    public Long getId() {
+        return id;
     }
-    /** id */
-    public void setId(Long id){
+
+    public void setId(Long id) {
         this.id = id;
     }
-    /** 自己oid */
-    public String getSelfOid(){
-        return this.selfOid;
+
+    public String getSelfOid() {
+        return selfOid;
     }
-    /** 自己oid */
-    public void setSelfOid(String selfOid){
-        this.selfOid = selfOid;
+
+    public void setSelfOid(String selfOid) {
+        this.selfOid = selfOid == null ? null : selfOid.trim();
     }
-    /** 目标oid */
-    public String getTargetOid(){
-        return this.targetOid;
+
+    public String getTargetOid() {
+        return targetOid;
     }
-    /** 目标oid */
-    public void setTargetOid(String targetOid){
-        this.targetOid = targetOid;
+
+    public void setTargetOid(String targetOid) {
+        this.targetOid = targetOid == null ? null : targetOid.trim();
     }
-    /** 关系类型表id */
-    public Long getRelationTypeInfoId(){
-        return this.relationTypeInfoId;
+
+    public Long getRelationTypeInfoId() {
+        return relationTypeInfoId;
     }
-    /** 关系类型表id */
-    public void setRelationTypeInfoId(Long relationTypeInfoId){
+
+    public void setRelationTypeInfoId(Long relationTypeInfoId) {
         this.relationTypeInfoId = relationTypeInfoId;
     }
-    /** 联系度（0~10000动态变化） */
-    public Integer getWeight(){
-        return this.weight;
+
+    public Integer getWeight() {
+        return weight;
     }
-    /** 联系度（0~10000动态变化） */
-    public void setWeight(Integer weight){
+
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
-    /** 昵称 */
-    public String getNickname(){
-        return this.nickname;
+
+    public String getNickname() {
+        return nickname;
     }
-    /** 昵称 */
-    public void setNickname(String nickname){
-        this.nickname = nickname;
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname == null ? null : nickname.trim();
     }
 }

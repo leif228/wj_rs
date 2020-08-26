@@ -1,8 +1,9 @@
 package com.wujie.ac.app.business.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class WjuserOwer {
+public class WjuserOwer implements Serializable {
     //
     private Long id;
 

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.SdsEventRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventRelation" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="event_no" property="eventNo" jdbcType="VARCHAR" />
+    <result column="event_relation_json" property="eventRelationJson" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, event_no, event_relation_json, status, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sds_event_relation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sds_event_relation
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventRelation" >
+    insert into sds_event_relation (id, event_no, event_relation_json, 
+      status, update_time)
+    values (#{id,jdbcType=BIGINT}, #{eventNo,jdbcType=VARCHAR}, #{eventRelationJson,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventRelation" >
+    insert into sds_event_relation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eventNo != null" >
+        event_no,
+      </if>
+      <if test="eventRelationJson != null" >
+        event_relation_json,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="eventNo != null" >
+        #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventRelationJson != null" >
+        #{eventRelationJson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventRelation" >
+    update sds_event_relation
+    <set >
+      <if test="eventNo != null" >
+        event_no = #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventRelationJson != null" >
+        event_relation_json = #{eventRelationJson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventRelation" >
+    update sds_event_relation
+    set event_no = #{eventNo,jdbcType=VARCHAR},
+      event_relation_json = #{eventRelationJson,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.SdsEventInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="event_no" property="eventNo" jdbcType="VARCHAR" />
+    <result column="event_type_info_id" property="eventTypeInfoId" jdbcType="BIGINT" />
+    <result column="oid" property="oid" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, event_no, event_type_info_id, oid, content, status, creat_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sds_event_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sds_event_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventInfo" >
+    insert into sds_event_info (id, event_no, event_type_info_id, 
+      oid, content, status, 
+      creat_time)
+    values (#{id,jdbcType=BIGINT}, #{eventNo,jdbcType=VARCHAR}, #{eventTypeInfoId,jdbcType=BIGINT}, 
+      #{oid,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{creatTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventInfo" >
+    insert into sds_event_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eventNo != null" >
+        event_no,
+      </if>
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="eventNo != null" >
+        #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null" >
+        #{eventTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventInfo" >
+    update sds_event_info
+    <set >
+      <if test="eventNo != null" >
+        event_no = #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventInfo" >
+    update sds_event_info
+    set event_no = #{eventNo,jdbcType=VARCHAR},
+      event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
+      oid = #{oid,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="findByEventNo" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from sds_event_info
+    where event_no = #{eventNo}
+  </select>
+</mapper>
