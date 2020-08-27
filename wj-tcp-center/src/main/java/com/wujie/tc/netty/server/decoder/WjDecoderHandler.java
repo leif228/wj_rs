@@ -13,6 +13,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +33,9 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
             //标记读操作的指针
             in.markReaderIndex();
             byte[] headerbyte = new byte[6];//##6
+
             in.readBytes(headerbyte);
+            log.debug("数据解码的headerbyte===headerbyte[6]：" + Arrays.toString(headerbyte));
             String headerStr = new String(headerbyte);
             wjProtocol.setHeader(headerStr);
 
@@ -42,6 +45,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
 //                short lenShort = in.readShort();//##2
                 byte[] lenShortbyte = new byte[2];//##2
                 in.readBytes(lenShortbyte);
+                log.debug("数据解码的lenShortbyte===byte[2]：" + Arrays.toString(lenShortbyte));
                 wjProtocol.setLen(lenShortbyte);
 
                 int len = wjProtocol.byte2shortSmall(lenShortbyte);
@@ -60,43 +64,52 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
                     return;
                 }
                 byte verChar = in.readByte();//##1
+                log.debug("数据解码的verChar===byte[1]：" + verChar);
                 wjProtocol.setVer(verChar);
                 byte encryptChar = in.readByte();//##1
+                log.debug("数据解码的encryptChar===byte[1]：" + encryptChar);
                 wjProtocol.setEncrypt(encryptChar);
 
 //                short platShort = in.readShort();//##2
                 byte[] platShortbyte = new byte[2];//##2
                 in.readBytes(platShortbyte);
+                log.debug("数据解码的platShortbyte===byte[2]：" + Arrays.toString(platShortbyte));
                 wjProtocol.setPlat(platShortbyte);
 
 //                short maincmdShort = in.readShort();//##2
                 byte[] maincmdShortbyte = new byte[2];//##2
                 in.readBytes(maincmdShortbyte);
+                log.debug("数据解码的maincmdShortbyte===byte[2]：" + Arrays.toString(maincmdShortbyte));
                 wjProtocol.setMaincmd(maincmdShortbyte);
 
 //                short subcmdShort = in.readShort();//##2
                 byte[] subcmdShortbyte = new byte[2];//##2
                 in.readBytes(subcmdShortbyte);
+                log.debug("数据解码的subcmdShortbyte===byte[2]：" + Arrays.toString(subcmdShortbyte));
                 wjProtocol.setSubcmd(subcmdShortbyte);
 
                 byte[] formatbyte = new byte[2];//##2
                 in.readBytes(formatbyte);
+                log.debug("数据解码的formatbyte===byte[2]：" + Arrays.toString(formatbyte));
                 String format = new String(formatbyte);
                 wjProtocol.setFormat(format);
 
 //                short backShort = in.readShort();//##2
                 byte[] backShortbyte = new byte[2];//##2
                 in.readBytes(backShortbyte);
+                log.debug("数据解码的backShortbyte===byte[2]：" + Arrays.toString(backShortbyte));
                 wjProtocol.setBack(backShortbyte);
 
                 int dataLen = len - WjProtocol.MIN_DATA_LEN;
                 if (dataLen > 0) {
                     byte[] data = new byte[dataLen];
                     in.readBytes(data);//读取核心的数据##n
+                    log.debug("数据解码的data===byte["+dataLen+"]：" + Arrays.toString(data));
                     wjProtocol.setUserdata(data);
                 }
 
                 byte checkSumChar = in.readByte();//##1
+                log.debug("数据解码的checkSumChar===byte[1]：" + checkSumChar);
                 wjProtocol.setCheckSum(checkSumChar);
 
                 boolean check = wjProtocol.checkXOR(wjProtocol.getCheckSumArray(wjProtocol),checkSumChar);

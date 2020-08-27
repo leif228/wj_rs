@@ -140,6 +140,23 @@ public interface AppUserService {
                                       @RequestParam(value = "sSort") Integer sSort
     );
 
+    @PostMapping("/genEvent")
+    public ApiResult genEvent(@RequestParam(value = "oid") String oid,
+                              @RequestParam(value = "eventType") String eventType,
+                              @RequestParam(value = "content") String content);
+
+    @PostMapping("/doEvent")
+    public ApiResult doEvent(@RequestParam(value = "oid") String oid,
+                             @RequestParam(value = "eventType") String eventType,
+                             @RequestParam(value = "content") String content,
+                             @RequestParam(value = "eventNo") String eventNo);
+
+    @PostMapping("/myEventList")
+    public ApiResult myEventList(@RequestParam(value = "oid") String oid);
+
+    @PostMapping("/events")
+    public ApiResult events(@RequestParam(value = "eventNo") String eventNo);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -230,6 +247,26 @@ public interface AppUserService {
 
         @Override
         public ApiResult deviceRegistElse(String rootIp, String idcard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult genEvent(String oid, String eventType, String content) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult doEvent(String oid, String eventType, String content, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult myEventList(String oid) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult events(String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

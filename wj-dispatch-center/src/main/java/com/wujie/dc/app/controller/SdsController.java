@@ -1,7 +1,7 @@
-package com.wujie.ac.app.business.app.controller;
+package com.wujie.dc.app.controller;
 
-import com.wujie.ac.app.business.app.service.system.SdsService;
 import com.wujie.common.base.ApiResult;
+import com.wujie.fclient.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SdsController {
 
-    private SdsService sdsService;
+    private AppUserService sdsService;
 
     @Autowired
-    public SdsController(SdsService sdsService) {
+    public SdsController(AppUserService sdsService) {
         this.sdsService = sdsService;
     }
 

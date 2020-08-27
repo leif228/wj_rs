@@ -11,14 +11,18 @@ import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 
 /**
  * 终端→服务 登录
  */
+
+@Slf4j
 public class Rec_0000_0100 implements Rec_task_i {
     @Override
     public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam) {
+        log.error( "===============Rec_0000_0100收到的objParam==========" + objParam.toJSONString());
         if (ObjectUtils.isEmpty(objParam)) {
             ctx.channel().close();
         }
@@ -29,7 +33,11 @@ public class Rec_0000_0100 implements Rec_task_i {
         String oid = loginTask.getOID();
 //        UserInfoVo userInfoVo = appUserService.getUserInfoById(userId);
         Device device = new Device(oid, System.currentTimeMillis() + "");
+        log.error( "===============Rec_0000_0100.ChannelManager.deviceChannels数量：==========" + ChannelManager.deviceChannels.size());
+        log.error( "===============Rec_0000_0100.收到的oid：==========" + oid);
         if (ChannelManager.deviceChannels.containsKey(device.getUniqueNo())) {
+
+            log.error( "===============Rec_0000_0100.ChannelManager.deviceChannels.containsKey==========" + device.getUniqueNo());
             Channel channel = ChannelManager.deviceChannels.get(device.getUniqueNo());
             // TODO 需要定义返回的JSON格式，通知用户被挤下去了
             channel.close();
