@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SdsEventListDto implements Serializable {
+    private String eventNo;
     private String status;
 
     //
@@ -11,6 +12,14 @@ public class SdsEventListDto implements Serializable {
 
     //
     private Date creatTime;
+
+    public String getEventNo() {
+        return eventNo;
+    }
+
+    public void setEventNo(String eventNo) {
+        this.eventNo = eventNo;
+    }
 
     public String getStatus() {
         return status;

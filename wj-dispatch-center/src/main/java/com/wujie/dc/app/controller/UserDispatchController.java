@@ -4,8 +4,11 @@ import com.wujie.common.base.ApiResult;
 import com.wujie.fclient.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @ClassName: UserController
@@ -96,6 +99,12 @@ public class UserDispatchController {
                                      @RequestParam(value = "OwnerServerOID") String OwnerServerOID
     ) {
         return userService.owerLoginNotify(OID, ServerIP, ServerPort, ServerOID, OwnerServerOID);
+    }
+
+    @PostMapping("/wjhttp")
+    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    ) {
+        userService.wjhttp(data,response);
     }
 
     @PostMapping("/deviceComp")

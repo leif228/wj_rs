@@ -7,6 +7,8 @@ import com.wujie.fclient.service.HttpUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName: UserController
  * @Description: 用户控制层
@@ -112,6 +114,12 @@ public class UserController {
                                      @RequestParam(value = "OwnerServerOID") String OwnerServerOID
     ) {
         return userService.owerLoginNotify(OID, ServerIP, ServerPort, ServerOID, OwnerServerOID);
+    }
+
+    @PostMapping("/wjhttp")
+    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    ) {
+        userService.wjhttp(data,response);
     }
 
     @PostMapping("/deviceComp")

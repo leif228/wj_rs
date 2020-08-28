@@ -9,8 +9,11 @@ import com.wujie.hc.app.business.vo.UserDetailsVo;
 import com.wujie.hc.app.framework.auth.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @ClassName: UserController
@@ -145,6 +148,12 @@ public class UserController {
                                      @RequestParam(value = "OwnerServerOID") String OwnerServerOID
     ) {
         return dispatchUserService.owerLoginNotify(OID, ServerIP, ServerPort, ServerOID, OwnerServerOID);
+    }
+
+    @PostMapping("/wjhttp")
+    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    ) {
+        dispatchUserService.wjhttp(data,response);
     }
 
     @PostMapping("/deviceComp")

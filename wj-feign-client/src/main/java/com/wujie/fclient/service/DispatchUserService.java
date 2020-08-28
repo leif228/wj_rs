@@ -7,7 +7,11 @@ import com.wujie.common.enums.ErrorEnum;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 用户服务接口
@@ -73,6 +77,11 @@ public interface DispatchUserService {
                                      @RequestParam(value = "ServerPort") String ServerPort,
                                      @RequestParam(value = "ServerOID") String ServerOID,
                                      @RequestParam(value = "OwnerServerOID") String OwnerServerOID
+    );
+
+
+    @PostMapping("/wjhttp")
+    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
     );
 
     @PostMapping("/deviceComp")
@@ -208,6 +217,15 @@ public interface DispatchUserService {
         @Override
         public ApiResult owerLoginNotify(String OID, String ServerIP, String ServerPort, String ServerOID, String OwnerServerOID) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public void wjhttp(byte[] data, HttpServletResponse response) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,ErrorEnum.ERR_DSERVICE_NOT.getErrMsg());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

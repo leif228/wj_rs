@@ -2,6 +2,8 @@ package com.wujie.ac.app.business.app.service.system;
 
 import com.wujie.common.base.ApiResult;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface UserService {
 
     ApiResult getTreeData(Long nodeId);
@@ -31,4 +33,6 @@ public interface UserService {
     ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
     ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
+    void wjhttp(byte[] data, HttpServletResponse response);
 }
