@@ -81,7 +81,7 @@ public interface DispatchUserService {
 
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    public void wjhttp(@RequestBody byte[] data
     );
 
     @PostMapping("/deviceComp")
@@ -220,12 +220,12 @@ public interface DispatchUserService {
         }
 
         @Override
-        public void wjhttp(byte[] data, HttpServletResponse response) {
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,ErrorEnum.ERR_DSERVICE_NOT.getErrMsg());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        public void wjhttp(byte[] data) {
+//            try {
+//                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,ErrorEnum.ERR_DSERVICE_NOT.getErrMsg());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
 
         @Override

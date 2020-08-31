@@ -102,9 +102,9 @@ public class UserDispatchController {
     }
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    public void wjhttp(@RequestBody byte[] data
     ) {
-        userService.wjhttp(data,response);
+        userService.wjhttp(data);
     }
 
     @PostMapping("/deviceComp")
