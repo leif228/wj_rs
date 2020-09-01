@@ -5,6 +5,7 @@ import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.ResultVo;
 import com.wujie.common.enums.ErrorEnum;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,7 +82,7 @@ public interface DispatchUserService {
 
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data
+    public ResponseEntity wjhttp(@RequestBody byte[] data
     );
 
     @PostMapping("/deviceComp")
@@ -220,12 +221,8 @@ public interface DispatchUserService {
         }
 
         @Override
-        public void wjhttp(byte[] data) {
-//            try {
-//                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,ErrorEnum.ERR_DSERVICE_NOT.getErrMsg());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+        public ResponseEntity wjhttp(byte[] data) {
+            return ResponseEntity.ok().body(ErrorEnum.ERR_DSERVICE_NOT.getErrMsg());
         }
 
         @Override

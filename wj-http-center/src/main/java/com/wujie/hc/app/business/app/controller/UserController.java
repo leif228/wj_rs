@@ -8,6 +8,7 @@ import com.wujie.hc.app.business.app.service.system.UserService;
 import com.wujie.hc.app.business.vo.UserDetailsVo;
 import com.wujie.hc.app.framework.auth.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -151,9 +152,9 @@ public class UserController {
     }
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data
+    public ResponseEntity wjhttp(@RequestBody byte[] data
     ) {
-        dispatchUserService.wjhttp(data);
+        return dispatchUserService.wjhttp(data);
     }
 
     @PostMapping("/deviceComp")

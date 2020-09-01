@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: 9999
 logging:
   config: classpath:logback-spring.xml
 
@@ -170,11 +170,11 @@ secure:
       - /owerLoginNotify
       - /wjhttp
       - /userRegistOwer
-      - /addrInit
-      - /deviceType
-      - /cityByP
-      - /areaByC
-      - /streetByA
+      #- /addrInit
+      #- /deviceType
+      #- /cityByP
+      #- /areaByC
+      #- /streetByA
       - /searchNode
       - /deviceRegistElse
 

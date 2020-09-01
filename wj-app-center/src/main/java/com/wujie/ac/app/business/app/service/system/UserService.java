@@ -1,6 +1,7 @@
 package com.wujie.ac.app.business.app.service.system;
 
 import com.wujie.common.base.ApiResult;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,5 +35,5 @@ public interface UserService {
 
     ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
-    void wjhttp(byte[] data, HttpServletResponse response);
+    ResponseEntity wjhttp(byte[] data, HttpServletResponse response);
 }

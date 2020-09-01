@@ -1,5 +1,5 @@
 server:
-  port: 8584
+  port: 8888
 logging:
   config: classpath:logback-spring.xml
 

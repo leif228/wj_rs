@@ -5,7 +5,10 @@ import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.common.base.ApiResult;
 import com.wujie.fclient.service.HttpUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -117,9 +120,10 @@ public class UserController {
     }
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data, HttpServletResponse response
+    public ResponseEntity wjhttp(@RequestBody byte[] data
     ) {
-        userService.wjhttp(data,response);
+        HttpServletResponse response =((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        return userService.wjhttp(data,response);
     }
 
     @PostMapping("/deviceComp")

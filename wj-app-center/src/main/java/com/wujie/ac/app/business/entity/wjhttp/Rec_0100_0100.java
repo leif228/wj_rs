@@ -16,6 +16,7 @@ import java.util.Arrays;
 @Slf4j
 public class Rec_0100_0100 implements Rec_task_i {
     private BaseTask baseTask;
+    private byte[] bytes;
     @Override
     public void doTask(HttpServletResponse response, String tx, JSONObject objParam) {
         try {
@@ -32,6 +33,11 @@ public class Rec_0100_0100 implements Rec_task_i {
     @Override
     public BaseTask backUserData() {
         return baseTask;
+    }
+
+    @Override
+    public byte[] backSendData() {
+        return bytes;
     }
 
     private void sendIdle(HttpServletResponse response) throws IOException {
@@ -52,12 +58,14 @@ public class Rec_0100_0100 implements Rec_task_i {
         wjProtocol.setCheckSum(wjProtocol.getCheckSum(wjProtocol));
 
         byte[] bytes = wjProtocol.getAllByteArray();
+        this.bytes = bytes;
         log.debug("getAllByteArray.length========"+bytes.length);
         log.debug("getAllByteArray.bytes========"+ Arrays.toString(bytes));
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        ServletOutputStream servletOutputStream = response.getOutputStream();
-        servletOutputStream.write(bytes);
-        servletOutputStream.flush();
+//        response.setContentType("application/octet-stream; charset=UTF-8");
+//        response.setStatus(HttpServletResponse.SC_OK);
+//        ServletOutputStream servletOutputStream = response.getOutputStream();
+//        servletOutputStream.write(bytes);
+//        servletOutputStream.flush();
 
     }
 }

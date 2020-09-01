@@ -8,4 +8,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface Rec_task_i {
     public void doTask(HttpServletResponse response, String tx, JSONObject objParam);
     public BaseTask backUserData();
+    public byte[] backSendData();
 }

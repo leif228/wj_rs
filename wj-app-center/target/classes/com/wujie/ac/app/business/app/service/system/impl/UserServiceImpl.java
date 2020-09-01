@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.ac.app.business.entity.*;
-import com.wujie.ac.app.business.entity.wjhttp.OwerLogin;
-import com.wujie.ac.app.business.entity.wjhttp.Rec_0100_0100;
-import com.wujie.ac.app.business.entity.wjhttp.Rec_task_i;
-import com.wujie.ac.app.business.entity.wjhttp.WjProtocol;
+import com.wujie.ac.app.business.entity.wjhttp.*;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.MDA;
 import com.wujie.ac.app.business.util.NumConvertUtil;
@@ -24,9 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -407,7 +408,7 @@ public class UserServiceImpl implements UserService {
 
     //  httpclient去归属地管理服务器生成fzwno设备段
 //    private String getFullFzwno(String fzwNo, NodeStandby preNodeStandby, Integer deviceType) throws Exception {
-//        String url = "http://" + preNodeStandby.getIp() + ":" + "8888/getFullFzwno";
+//        String url = "http://" + preNodeStandby.getIp() + ":" + "9999/getFullFzwno";
 //        String params = "";
 //        Map<String, String> map = new HashMap<>();
 //        map.put("fzwno", fzwNo);
@@ -1056,31 +1057,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void wjhttp(byte[] data, HttpServletResponse response) {
+    public ResponseEntity wjhttp(byte[] data, HttpServletResponse response) {
         log.debug("=====收到wjhttp的长度：" + data.length);
         log.debug("=====收到wjhttp的data：" + Arrays.toString(data));
 
         ByteBuffer buf = ByteBuffer.wrap(data);
         try {
             WjProtocol wjProtocol = this.decode(buf);
-            this.doTask(wjProtocol,response);
+            return this.doTask(wjProtocol,response);
+
         } catch (Exception e) {
             log.debug( "wjhttp===error:" + e.getMessage());
-            this.doError(response,e.getMessage());
+            return this.doError(response,e.getMessage());
         }
 
     }
 
-    private void doError(HttpServletResponse response, String msg) {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        try {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private ResponseEntity doError(HttpServletResponse response, String msg) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+//            headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        headers.add("Last-Modified", new Date().toString());
+        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+        return ResponseEntity.ok().headers(headers).body(msg);
     }
 
-    private void doTask(WjProtocol wjProtocol, HttpServletResponse response) throws Exception{
+    private ResponseEntity doTask(WjProtocol wjProtocol, HttpServletResponse response) throws Exception{
         com.alibaba.fastjson.JSONObject objParam = null;
         String tx = null;
         if (WjProtocol.FORMAT_TX.equals(wjProtocol.getFormat())) {
@@ -1124,6 +1128,15 @@ public class UserServiceImpl implements UserService {
 
                 loginServerMapper.insertSelective(loginServer);
             }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+//            headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+            headers.add("Pragma", "no-cache");
+            headers.add("Expires", "0");
+            headers.add("Last-Modified", new Date().toString());
+            headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/octet-stream")).contentLength(rec_task_i.backSendData().length).body(rec_task_i.backSendData());
         } catch (Exception e) {
             log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());
             throw new Exception( "TaskHandler.doProtocol_报错了:" + e.getMessage());
@@ -1244,7 +1257,7 @@ public class UserServiceImpl implements UserService {
 
     //http去管理服务器用户注册，成功返回oid关系段
     private String userRegistOwerHttp(String ip, String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
-        String url = "http://" + ip + ":" + "8888/userRegistOwer";
+        String url = "http://" + ip + ":" + "9999/userRegistOwer";
         String params = "";
         Map<String, String> map = new HashMap<>();
         map.put("username", username);
@@ -1276,7 +1289,7 @@ public class UserServiceImpl implements UserService {
 
     //http去管理服务器用户注册，成功返回oid关系段
     private DeviceVo searchNodeHttp(String rootIp, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
-        String url = "http://" + rootIp + ":" + "8888/searchNode";
+        String url = "http://" + rootIp + ":" + "9999/searchNode";
         String params = "";
         Map<String, String> map = new HashMap<>();
         map.put("pSort", String.valueOf(pSort));

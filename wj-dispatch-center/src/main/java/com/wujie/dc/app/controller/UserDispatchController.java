@@ -3,6 +3,7 @@ package com.wujie.dc.app.controller;
 import com.wujie.common.base.ApiResult;
 import com.wujie.fclient.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -102,9 +103,9 @@ public class UserDispatchController {
     }
 
     @PostMapping("/wjhttp")
-    public void wjhttp(@RequestBody byte[] data
+    public ResponseEntity wjhttp(@RequestBody byte[] data
     ) {
-        userService.wjhttp(data);
+        return userService.wjhttp(data);
     }
 
     @PostMapping("/deviceComp")
