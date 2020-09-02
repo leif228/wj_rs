@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class SdsEventListDto implements Serializable {
     private String eventNo;
+    private Long eventType;
     private String status;
 
     //
@@ -12,6 +13,14 @@ public class SdsEventListDto implements Serializable {
 
     //
     private Date creatTime;
+
+    public Long getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(Long eventType) {
+        this.eventType = eventType;
+    }
 
     public String getEventNo() {
         return eventNo;

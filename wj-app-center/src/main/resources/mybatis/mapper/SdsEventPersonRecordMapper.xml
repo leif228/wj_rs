@@ -101,7 +101,7 @@
   </select>
 
   <select id="findByOid" resultType="com.wujie.common.dto.wj.SdsEventListDto">
-    select c.event_no eventNo,c.status status,b.event_name eventName,a.creat_time creatTime
+    select c.event_no eventNo,c.event_type_info_id eventType,c.status status,b.event_name eventName,a.creat_time creatTime
     from sds_event_person_record a, sds_event_type_info b,
     (select * from sds_event_info  where id=(
     select MAX(id) from sds_event_info where event_no=(

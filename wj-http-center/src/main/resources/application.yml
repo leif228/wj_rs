@@ -177,6 +177,10 @@ secure:
       - /streetByA
       - /searchNode
       - /deviceRegistElse
+      - /myEventList
+      - /events
+      - /doEvent
+      - /genEvent
 
 
 
