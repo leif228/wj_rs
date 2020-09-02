@@ -170,11 +170,11 @@ secure:
       - /owerLoginNotify
       - /wjhttp
       - /userRegistOwer
-      #- /addrInit
-      #- /deviceType
-      #- /cityByP
-      #- /areaByC
-      #- /streetByA
+      - /addrInit
+      - /deviceType
+      - /cityByP
+      - /areaByC
+      - /streetByA
       - /searchNode
       - /deviceRegistElse
 

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Configuration
+//@Configuration
 public class CorsFilter extends OncePerRequestFilter {
     public CorsFilter() {
 //        log.info("SimpleCORSFilter init");
@@ -38,7 +38,7 @@ public class CorsFilter extends OncePerRequestFilter {
 
         // Access-Control-Allow-Methods: 授权请求的方法（GET, POST, PUT, DELETE，OPTIONS等)
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-
+        response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Access-Control-Allow-Headers", "*");
 
 //        response.addHeader("Access-Control-Max-Age", "1800");//30 min
