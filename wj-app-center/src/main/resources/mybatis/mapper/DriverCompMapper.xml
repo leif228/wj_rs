@@ -2,76 +2,87 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wujie.ac.app.business.repository.DriverCompMapper" >
   <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.DriverComp" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="comp_cn" property="compCn" jdbcType="VARCHAR" />
-    <result column="comp_en" property="compEn" jdbcType="VARCHAR" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="comp_cn" jdbcType="VARCHAR" property="compCn" />
+    <result column="comp_en" jdbcType="VARCHAR" property="compEn" />
+    <result column="file" jdbcType="VARCHAR" property="file" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, comp_cn, comp_en
+  <sql id="Base_Column_List">
+    id, comp_cn, comp_en, file
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from driver_comp
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from driver_comp
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.DriverComp" >
-    insert into driver_comp (id, comp_cn, comp_en
-      )
-    values (#{id,jdbcType=BIGINT}, #{compCn,jdbcType=VARCHAR}, #{compEn,jdbcType=VARCHAR}
-      )
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.DriverComp">
+    insert into driver_comp (id, comp_cn, comp_en,
+    file)
+    values (#{id,jdbcType=BIGINT}, #{compCn,jdbcType=VARCHAR}, #{compEn,jdbcType=VARCHAR},
+    #{file,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.DriverComp" >
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.DriverComp">
     insert into driver_comp
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="compCn != null" >
+      <if test="compCn != null">
         comp_cn,
       </if>
-      <if test="compEn != null" >
+      <if test="compEn != null">
         comp_en,
       </if>
+      <if test="file != null">
+        file,
+      </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="compCn != null" >
+      <if test="compCn != null">
         #{compCn,jdbcType=VARCHAR},
       </if>
-      <if test="compEn != null" >
+      <if test="compEn != null">
         #{compEn,jdbcType=VARCHAR},
+      </if>
+      <if test="file != null">
+        #{file,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.DriverComp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.DriverComp">
     update driver_comp
-    <set >
-      <if test="compCn != null" >
+    <set>
+      <if test="compCn != null">
         comp_cn = #{compCn,jdbcType=VARCHAR},
       </if>
-      <if test="compEn != null" >
+      <if test="compEn != null">
         comp_en = #{compEn,jdbcType=VARCHAR},
+      </if>
+      <if test="file != null">
+        file = #{file,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.DriverComp" >
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.DriverComp">
     update driver_comp
     set comp_cn = #{compCn,jdbcType=VARCHAR},
-      comp_en = #{compEn,jdbcType=VARCHAR}
+    comp_en = #{compEn,jdbcType=VARCHAR},
+    file = #{file,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
 
 
-  <select id="findAll" resultMap="BaseResultMap"  >
+  <select id="findAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from driver_comp

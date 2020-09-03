@@ -10,6 +10,17 @@ public class DriverComp {
     //
     private String compEn;
 
+
+    private String file;
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
     public Long getId() {
         return id;
     }
