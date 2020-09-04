@@ -14,4 +14,6 @@ public interface BaseDataService {
     ApiResult streetByA(Integer id);
 
     AreaChangSeq fzwaddrBySort(Integer sort);
+
+    AreaChangSeq sortByFzwaddr(String fzw_str);
 }

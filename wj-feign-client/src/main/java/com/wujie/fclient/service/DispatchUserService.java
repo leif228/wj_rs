@@ -161,6 +161,10 @@ public interface DispatchUserService {
     @PostMapping("/events")
     public ApiResult events(@RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/seachOwerService")
+    public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
+    );
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -272,6 +276,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult events(String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult seachOwerService(String oid) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

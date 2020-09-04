@@ -9,6 +9,8 @@ public interface UserService {
 
     ApiResult getTreeData(Long nodeId);
 
+    ApiResult seachOwerService(String oid);
+
     ApiResult deviceRegistManage(Long userId, String deviceSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort, String deviceName, String ip, String port);
 
     ApiResult recodeOwerNodeInfo(String deviceSelected, String deviceName, String ip, String port, String fzwno);

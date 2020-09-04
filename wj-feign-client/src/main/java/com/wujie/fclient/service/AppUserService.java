@@ -166,6 +166,10 @@ public interface AppUserService {
     @PostMapping("/events")
     public ApiResult events(@RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/seachOwerService")
+    public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
+    );
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -281,6 +285,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult events(String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult seachOwerService(String oid) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

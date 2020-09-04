@@ -15,4 +15,6 @@ public interface AreaChangSeqMapper {
     int updateByPrimaryKeySelective(AreaChangSeq record);
 
     int updateByPrimaryKey(AreaChangSeq record);
+
+    AreaChangSeq sortByFzwaddr(String fzwStr);
 }

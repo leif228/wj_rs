@@ -177,4 +177,10 @@ public class UserDispatchController {
     ) {
         return userService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort);
     }
+
+    @PostMapping("/seachOwerService")
+    public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
+    ) {
+        return userService.seachOwerService(oid);
+    }
 }

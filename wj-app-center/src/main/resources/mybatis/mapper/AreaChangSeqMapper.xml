@@ -74,4 +74,12 @@
       fzw_str = #{fzwStr,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="sortByFzwaddr" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from area_chang_seq
+    where fzw_str = #{fzwStr}
+  </select>
 </mapper>

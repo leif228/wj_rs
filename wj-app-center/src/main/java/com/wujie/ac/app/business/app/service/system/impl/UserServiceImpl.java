@@ -15,6 +15,7 @@ import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DevtypeDto;
 import com.wujie.common.dto.wj.DriverCompDto;
+import com.wujie.common.dto.wj.OwerServiceDto;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
@@ -106,6 +107,59 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(nodeVo);
+    }
+
+    @Override
+    public ApiResult seachOwerService(String oid) {
+        if (oid == null || "".equals(oid))
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        if (oid.length() < 9)
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        OwerServiceDto owerServiceDto = null;
+
+        //root的fzwno为chn0!!!!0000000000000；没有选择时fzw地址信息暂用“!”表示
+        String addSorts = oid.substring(4, 8);
+        String p_acs = String.valueOf(addSorts.charAt(0));
+        String c_acs = String.valueOf(addSorts.charAt(1));
+        String a_acs = String.valueOf(addSorts.charAt(2));
+        String s_acs = String.valueOf(addSorts.charAt(3));
+
+        //归属服务器为根
+        if (p_acs.equals(SPA_STR)) {
+            NodeStandby owerNodeStandby = this.getRoot();
+
+            owerServiceDto = new OwerServiceDto();
+            owerServiceDto.setIp(owerNodeStandby.getIp());
+            owerServiceDto.setPort(owerNodeStandby.getPort());
+        } else {
+            Integer pSort=0,  cSort=0,  aSort=0,  sSort=0;
+            AreaChangSeq pd = baseDataService.sortByFzwaddr(p_acs);
+            if(pd != null)
+                pSort = pd.getId();
+            AreaChangSeq cd = baseDataService.sortByFzwaddr(c_acs);
+            if(cd != null)
+                cSort = cd.getId();
+            AreaChangSeq ad = baseDataService.sortByFzwaddr(a_acs);
+            if(ad != null)
+                aSort = ad.getId();
+            AreaChangSeq sd = baseDataService.sortByFzwaddr(s_acs);
+            if(sd != null)
+                sSort = sd.getId();
+
+            //查找归属地管理服务器
+            NodeStandby owerNodeStandby = this.getParentNode(pSort, cSort, aSort, sSort);
+            //各级都没有找到，直接注册到根
+            if (owerNodeStandby == null)
+                owerNodeStandby = this.getRoot();
+
+            owerServiceDto = new OwerServiceDto();
+            owerServiceDto.setIp(owerNodeStandby.getIp());
+            owerServiceDto.setPort(owerNodeStandby.getPort());
+        }
+
+        return ApiResult.success(owerServiceDto);
     }
 
     @Override
@@ -1064,11 +1118,11 @@ public class UserServiceImpl implements UserService {
         ByteBuffer buf = ByteBuffer.wrap(data);
         try {
             WjProtocol wjProtocol = this.decode(buf);
-            return this.doTask(wjProtocol,response);
+            return this.doTask(wjProtocol, response);
 
         } catch (Exception e) {
-            log.debug( "wjhttp===error:" + e.getMessage());
-            return this.doError(response,e.getMessage());
+            log.debug("wjhttp===error:" + e.getMessage());
+            return this.doError(response, e.getMessage());
         }
 
     }
@@ -1084,7 +1138,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok().headers(headers).body(msg);
     }
 
-    private ResponseEntity doTask(WjProtocol wjProtocol, HttpServletResponse response) throws Exception{
+    private ResponseEntity doTask(WjProtocol wjProtocol, HttpServletResponse response) throws Exception {
         com.alibaba.fastjson.JSONObject objParam = null;
         String tx = null;
         if (WjProtocol.FORMAT_TX.equals(wjProtocol.getFormat())) {
@@ -1111,11 +1165,11 @@ public class UserServiceImpl implements UserService {
             String className = "Rec_" + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[1]) + "_"
                     + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[1]);
             className = classPath + "." + className;
-            log.debug( "className:" + className);
+            log.debug("className:" + className);
             Class genClass = Class.forName(className);
             Rec_task_i rec_task_i = (Rec_task_i) genClass.newInstance();
             rec_task_i.doTask(response, tx, objParam);
-            if(rec_task_i instanceof Rec_0100_0100){
+            if (rec_task_i instanceof Rec_0100_0100) {
                 OwerLogin owerLogin = (OwerLogin) rec_task_i.backUserData();
 
                 LoginServer loginServer = new LoginServer();
@@ -1138,8 +1192,8 @@ public class UserServiceImpl implements UserService {
             headers.add("ETag", String.valueOf(System.currentTimeMillis()));
             return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/octet-stream")).contentLength(rec_task_i.backSendData().length).body(rec_task_i.backSendData());
         } catch (Exception e) {
-            log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());
-            throw new Exception( "TaskHandler.doProtocol_报错了:" + e.getMessage());
+            log.debug("TaskHandler.doProtocol_报错了:" + e.getMessage());
+            throw new Exception("TaskHandler.doProtocol_报错了:" + e.getMessage());
         }
     }
 

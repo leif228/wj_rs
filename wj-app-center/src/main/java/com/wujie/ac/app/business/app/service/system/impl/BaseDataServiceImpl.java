@@ -225,4 +225,13 @@ public class BaseDataServiceImpl implements BaseDataService {
         else
             return areaChangSeq;
     }
+
+    @Override
+    public AreaChangSeq sortByFzwaddr(String fzw_str) {
+        AreaChangSeq areaChangSeq = areaChangSeqMapper.sortByFzwaddr(fzw_str);
+        if (areaChangSeq == null)
+            return null;
+        else
+            return areaChangSeq;
+    }
 }
