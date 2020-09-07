@@ -221,7 +221,7 @@ public class SdsServiceImpl implements SdsService {
 
             //self管理服务器添加关系表
             SdsRelationTypeInfo sdsRelationTypeInfo = sdsRelationTypeInfoMapper.selectByPrimaryKey(Long.valueOf(relationId));
-            if (sdsPercomRelation == null)
+            if (sdsRelationTypeInfo == null)
                 return ApiResult.error("关系类型基础数据错误！relationId=" + relationId);
 
             sdsPercomRelation = new SdsPercomRelation();
