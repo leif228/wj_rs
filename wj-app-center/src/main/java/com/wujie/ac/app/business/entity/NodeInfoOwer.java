@@ -10,6 +10,9 @@ public class NodeInfoOwer {
     private String ip;
 
     //
+    private String rootIp;
+
+    //
     private String port;
 
     //
@@ -38,6 +41,14 @@ public class NodeInfoOwer {
 
     public void setIp(String ip) {
         this.ip = ip == null ? null : ip.trim();
+    }
+
+    public String getRootIp() {
+        return rootIp;
+    }
+
+    public void setRootIp(String rootIp) {
+        this.rootIp = rootIp == null ? null : rootIp.trim();
     }
 
     public String getPort() {

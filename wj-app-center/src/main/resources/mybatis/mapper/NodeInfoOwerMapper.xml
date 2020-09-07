@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.NodeInfoOwer" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="root_ip" property="rootIp" jdbcType="VARCHAR" />
     <result column="port" property="port" jdbcType="VARCHAR" />
     <result column="fzwno" property="fzwno" jdbcType="VARCHAR" />
     <result column="device_type" property="deviceType" jdbcType="INTEGER" />
@@ -11,10 +12,10 @@
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, ip, port, fzwno, device_type, device_name, creat_time
+    id, ip, root_ip, port, fzwno, device_type, device_name, creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from node_info_ower
     where id = #{id,jdbcType=BIGINT}
@@ -24,12 +25,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.NodeInfoOwer" >
-    insert into node_info_ower (id, ip, port, 
-      fzwno, device_type, device_name, 
-      creat_time)
-    values (#{id,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
-      #{fzwno,jdbcType=VARCHAR}, #{deviceType,jdbcType=INTEGER}, #{deviceName,jdbcType=VARCHAR}, 
-      #{creatTime,jdbcType=TIMESTAMP})
+    insert into node_info_ower (id, ip, root_ip,
+    port, fzwno, device_type,
+    device_name, creat_time)
+    values (#{id,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{rootIp,jdbcType=VARCHAR},
+    #{port,jdbcType=VARCHAR}, #{fzwno,jdbcType=VARCHAR}, #{deviceType,jdbcType=INTEGER},
+    #{deviceName,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.NodeInfoOwer" >
     insert into node_info_ower
@@ -39,6 +40,9 @@
       </if>
       <if test="ip != null" >
         ip,
+      </if>
+      <if test="rootIp != null" >
+        root_ip,
       </if>
       <if test="port != null" >
         port,
@@ -63,6 +67,9 @@
       <if test="ip != null" >
         #{ip,jdbcType=VARCHAR},
       </if>
+      <if test="rootIp != null" >
+        #{rootIp,jdbcType=VARCHAR},
+      </if>
       <if test="port != null" >
         #{port,jdbcType=VARCHAR},
       </if>
@@ -86,6 +93,9 @@
       <if test="ip != null" >
         ip = #{ip,jdbcType=VARCHAR},
       </if>
+      <if test="rootIp != null" >
+        root_ip = #{rootIp,jdbcType=VARCHAR},
+      </if>
       <if test="port != null" >
         port = #{port,jdbcType=VARCHAR},
       </if>
@@ -107,11 +117,12 @@
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.NodeInfoOwer" >
     update node_info_ower
     set ip = #{ip,jdbcType=VARCHAR},
-      port = #{port,jdbcType=VARCHAR},
-      fzwno = #{fzwno,jdbcType=VARCHAR},
-      device_type = #{deviceType,jdbcType=INTEGER},
-      device_name = #{deviceName,jdbcType=VARCHAR},
-      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    root_ip = #{rootIp,jdbcType=VARCHAR},
+    port = #{port,jdbcType=VARCHAR},
+    fzwno = #{fzwno,jdbcType=VARCHAR},
+    device_type = #{deviceType,jdbcType=INTEGER},
+    device_name = #{deviceName,jdbcType=VARCHAR},
+    creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

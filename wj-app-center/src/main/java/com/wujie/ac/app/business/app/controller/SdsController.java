@@ -46,4 +46,22 @@ public class SdsController {
     public ApiResult events(@RequestParam(value = "eventNo") String eventNo) {
         return sdsService.events(eventNo);
     }
+
+    @PostMapping("/addUser")
+    public ApiResult addUser(@RequestParam(value = "oid") String oid,
+                             @RequestParam(value = "relationId") String relationId,
+                             @RequestParam(value = "tooid") String tooid) {
+        return sdsService.addUser(oid, relationId, tooid);
+    }
+
+    @PostMapping("/myUserList")
+    public ApiResult myUserList(@RequestParam(value = "oid") String oid) {
+        return sdsService.myUserList(oid);
+    }
+
+    @PostMapping("/getRelationTypes")
+    public ApiResult getRelationTypes() {
+        return sdsService.getRelationTypes();
+    }
+
 }

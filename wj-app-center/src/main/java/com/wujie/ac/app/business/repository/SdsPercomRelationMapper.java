@@ -19,4 +19,8 @@ public interface SdsPercomRelationMapper {
     int updateByPrimaryKey(SdsPercomRelation record);
 
     List<SdsPercomRelation> findBySelfOidAndWeight(String selfOid, Integer eventRelationLevel);
+
+    SdsPercomRelation findByOidAndTargetOid(String oid, String tooid);
+
+    List<SdsPercomRelation> findBySelfOid(String oid);
 }

@@ -219,4 +219,10 @@ public class UserController {
     ) {
         return dispatchUserService.seachOwerService(oid);
     }
+
+    @PostMapping("/seachOwerUser")
+    public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
+    ) {
+        return dispatchUserService.seachOwerUser(oid);
+    }
 }

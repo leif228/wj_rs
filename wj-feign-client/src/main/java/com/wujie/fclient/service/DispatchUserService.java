@@ -165,6 +165,21 @@ public interface DispatchUserService {
     public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
     );
 
+    @PostMapping("/seachOwerUser")
+    public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
+    );
+
+    @PostMapping("/addUser")
+    public ApiResult addUser(@RequestParam(value = "oid") String oid,
+                             @RequestParam(value = "relationId") String relationId,
+                             @RequestParam(value = "tooid") String tooid);
+
+    @PostMapping("/myUserList")
+    public ApiResult myUserList(@RequestParam(value = "oid") String oid);
+
+    @PostMapping("/getRelationTypes")
+    public ApiResult getRelationTypes();
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -281,6 +296,26 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult seachOwerService(String oid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult seachOwerUser(String oid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult addUser(String oid, String relationId, String tooid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult myUserList(String oid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getRelationTypes() {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

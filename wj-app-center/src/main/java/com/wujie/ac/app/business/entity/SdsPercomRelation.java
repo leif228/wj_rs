@@ -10,6 +10,9 @@ public class SdsPercomRelation {
     // 目标oid
     private String targetOid;
 
+    // 目标oid管理服务器ip
+    private String targetOwerIp;
+
     // 关系类型表id
     private Long relationTypeInfoId;
 
@@ -41,6 +44,14 @@ public class SdsPercomRelation {
 
     public void setTargetOid(String targetOid) {
         this.targetOid = targetOid == null ? null : targetOid.trim();
+    }
+
+    public String getTargetOwerIp() {
+        return targetOwerIp;
+    }
+
+    public void setTargetOwerIp(String targetOwerIp) {
+        this.targetOwerIp = targetOwerIp == null ? null : targetOwerIp.trim();
     }
 
     public Long getRelationTypeInfoId() {

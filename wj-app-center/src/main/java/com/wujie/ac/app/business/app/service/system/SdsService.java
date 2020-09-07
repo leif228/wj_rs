@@ -9,7 +9,14 @@ public interface SdsService {
     @Transactional(rollbackFor = Exception.class)
     ApiResult doEvent(String oid, String eventType, String content, String eventNo);
 
+    ApiResult getRelationTypes();
+
+    //    @Transactional(rollbackFor = Exception.class)
+    ApiResult addUser(String oid, String relationId, String tooid);
+
     ApiResult myEventList(String oid);
 
     ApiResult events(String eventNo);
+
+    ApiResult myUserList(String oid);
 }

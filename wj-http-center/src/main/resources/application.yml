@@ -181,6 +181,10 @@ secure:
       - /events
       - /doEvent
       - /genEvent
+      - /seachOwerService
+      - /seachOwerUser
+      - /addUser
+      - /myUserList
 
 
 
