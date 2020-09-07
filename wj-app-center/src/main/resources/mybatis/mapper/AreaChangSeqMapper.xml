@@ -80,6 +80,6 @@
     select
     <include refid="Base_Column_List" />
     from area_chang_seq
-    where fzw_str = #{fzwStr}
+    where BINARY fzw_str = #{fzwStr}
   </select>
 </mapper>

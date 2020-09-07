@@ -16,6 +16,7 @@ import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DevtypeDto;
 import com.wujie.common.dto.wj.DriverCompDto;
 import com.wujie.common.dto.wj.OwerServiceDto;
+import com.wujie.common.dto.wj.WjuserOwerDto;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
@@ -160,6 +161,21 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(owerServiceDto);
+    }
+
+    @Override
+    public ApiResult seachOwerUser(String oid) {
+        if (oid == null || "".equals(oid))
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        WjuserOwer wjuserOwer = wjuserOwerMapper.findByOid(oid);
+        if(wjuserOwer == null)
+            return ApiResult.error("找不到用户数据！oid=" + oid);
+
+        WjuserOwerDto wjuserOwerDto = new WjuserOwerDto();
+        BeanUtils.copyProperties(wjuserOwer,wjuserOwerDto);
+
+        return ApiResult.success(wjuserOwerDto);
     }
 
     @Override
@@ -1332,8 +1348,8 @@ public class UserServiceImpl implements UserService {
                 log.info("++++++++++++++++请求userRegistOwer成功:" + data);
                 return data;
             } else {
-                log.info("++++++++++++++++请求userRegistOwer失败:" + "服务端错误");
-                throw new Exception("userRegistOwer失败：服务端错误");
+                log.info("++++++++++++++++请求userRegistOwer失败:" + "服务端错误："+jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("userRegistOwer失败：服务端错误："+jsonObject.get(ApiResult.MESSAGE));
             }
         } else {
             log.info("++++++++++++++++请求userRegistOwer失败:" + "连接错误");
@@ -1356,15 +1372,12 @@ public class UserServiceImpl implements UserService {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
                 JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
-                DeviceVo deviceVo = new DeviceVo();
-                deviceVo.setLoginFzwno(data.getString("loginFzwno"));
-                deviceVo.setIp(data.getString("ip"));
-                deviceVo.setPort(data.getString("port"));
+                DeviceVo deviceVo = (DeviceVo) JSONObject.toBean(data, DeviceVo.class);
                 log.info("++++++++++++++++请求searchNodeHttpr成功:" + data.toString());
                 return deviceVo;
             } else {
-                log.info("++++++++++++++++请求searchNodeHttp失败:" + "服务端错误");
-                throw new Exception("searchNodeHttp失败：服务端错误");
+                log.info("++++++++++++++++请求searchNodeHttp失败:" + "服务端错误："+jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchNodeHttp失败：服务端错误："+jsonObject.get(ApiResult.MESSAGE));
             }
         } else {
             log.info("++++++++++++++++请求searchNodeHttp失败:" + "连接错误");
