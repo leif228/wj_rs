@@ -7,12 +7,21 @@ public class SdsEventListDto implements Serializable {
     private String eventNo;
     private Long eventType;
     private String status;
+    private String genOid;
 
     //
     private String eventName;
 
     //
     private Date creatTime;
+
+    public String getGenOid() {
+        return genOid;
+    }
+
+    public void setGenOid(String genOid) {
+        this.genOid = genOid;
+    }
 
     public Long getEventType() {
         return eventType;

@@ -153,13 +153,30 @@ public interface DispatchUserService {
     public ApiResult doEvent(@RequestParam(value = "oid") String oid,
                              @RequestParam(value = "eventType") String eventType,
                              @RequestParam(value = "content") String content,
+                             @RequestParam(value = "genOid") String genOid,
                              @RequestParam(value = "eventNo") String eventNo);
+
+    @PostMapping("/doEventWrite")
+    public ApiResult doEventWrite(@RequestParam(value = "oid") String oid,
+                                  @RequestParam(value = "eventType") String eventType,
+                                  @RequestParam(value = "content") String content,
+                                  @RequestParam(value = "eventNo") String eventNo);
+
+    @PostMapping("/pushEvent")
+    public ApiResult pushEvent(@RequestParam(value = "oid") String oid,
+                               @RequestParam(value = "eventType") String eventType,
+                               @RequestParam(value = "content") String content,
+                               @RequestParam(value = "targetOid") String targetOid,
+                               @RequestParam(value = "eventNo") String eventNo);
 
     @PostMapping("/myEventList")
     public ApiResult myEventList(@RequestParam(value = "oid") String oid);
 
     @PostMapping("/events")
-    public ApiResult events(@RequestParam(value = "eventNo") String eventNo);
+    public ApiResult events(@RequestParam(value = "oid") String oid, @RequestParam(value = "eventNo") String eventNo);
+
+    @PostMapping("/searchEvents")
+    public ApiResult searchEvents(@RequestParam(value = "eventNo") String eventNo);
 
     @PostMapping("/seachOwerService")
     public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
@@ -280,7 +297,17 @@ public interface DispatchUserService {
         }
 
         @Override
-        public ApiResult doEvent(String oid, String eventType, String content, String eventNo) {
+        public ApiResult doEvent(String oid, String eventType, String content, String genOid, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult pushEvent(String oid, String eventType, String content, String targetOid, String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
@@ -290,7 +317,12 @@ public interface DispatchUserService {
         }
 
         @Override
-        public ApiResult events(String eventNo) {
+        public ApiResult events(String oid, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchEvents(String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

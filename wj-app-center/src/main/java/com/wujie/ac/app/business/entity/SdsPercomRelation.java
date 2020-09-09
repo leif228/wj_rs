@@ -77,4 +77,17 @@ public class SdsPercomRelation {
     public void setNickname(String nickname) {
         this.nickname = nickname == null ? null : nickname.trim();
     }
+
+    @Override
+    public String toString() {
+        return "SdsPercomRelation{" +
+                "id=" + id +
+                ", selfOid='" + selfOid + '\'' +
+                ", targetOid='" + targetOid + '\'' +
+                ", targetOwerIp='" + targetOwerIp + '\'' +
+                ", relationTypeInfoId=" + relationTypeInfoId +
+                ", weight=" + weight +
+                ", nickname='" + nickname + '\'' +
+                '}';
+    }
 }

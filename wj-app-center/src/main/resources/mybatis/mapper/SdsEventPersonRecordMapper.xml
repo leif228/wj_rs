@@ -3,16 +3,18 @@
 <mapper namespace="com.wujie.ac.app.business.repository.SdsEventPersonRecordMapper" >
   <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="gen_oid" property="genOid" jdbcType="VARCHAR" />
     <result column="event_no" property="eventNo" jdbcType="VARCHAR" />
+    <result column="event_type_info_id" property="eventTypeInfoId" jdbcType="BIGINT" />
     <result column="oid" property="oid" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, event_no, oid, status, creat_time
+    id, gen_oid, event_no, event_type_info_id, oid, status, creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from sds_event_person_record
     where id = #{id,jdbcType=BIGINT}
@@ -22,10 +24,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
-    insert into sds_event_person_record (id, event_no, oid, 
-      status, creat_time)
-    values (#{id,jdbcType=BIGINT}, #{eventNo,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, 
-      #{status,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
+    insert into sds_event_person_record (id, gen_oid, event_no,
+    event_type_info_id, oid, status,
+    creat_time)
+    values (#{id,jdbcType=BIGINT}, #{genOid,jdbcType=VARCHAR}, #{eventNo,jdbcType=VARCHAR},
+    #{eventTypeInfoId,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+    #{creatTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
     insert into sds_event_person_record
@@ -33,8 +37,14 @@
       <if test="id != null" >
         id,
       </if>
+      <if test="genOid != null" >
+        gen_oid,
+      </if>
       <if test="eventNo != null" >
         event_no,
+      </if>
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id,
       </if>
       <if test="oid != null" >
         oid,
@@ -50,8 +60,14 @@
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="genOid != null" >
+        #{genOid,jdbcType=VARCHAR},
+      </if>
       <if test="eventNo != null" >
         #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null" >
+        #{eventTypeInfoId,jdbcType=BIGINT},
       </if>
       <if test="oid != null" >
         #{oid,jdbcType=VARCHAR},
@@ -67,8 +83,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
     update sds_event_person_record
     <set >
+      <if test="genOid != null" >
+        gen_oid = #{genOid,jdbcType=VARCHAR},
+      </if>
       <if test="eventNo != null" >
         event_no = #{eventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
       </if>
       <if test="oid != null" >
         oid = #{oid,jdbcType=VARCHAR},
@@ -84,10 +106,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
     update sds_event_person_record
-    set event_no = #{eventNo,jdbcType=VARCHAR},
-      oid = #{oid,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
-      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    set gen_oid = #{genOid,jdbcType=VARCHAR},
+    event_no = #{eventNo,jdbcType=VARCHAR},
+    event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
+    oid = #{oid,jdbcType=VARCHAR},
+    status = #{status,jdbcType=VARCHAR},
+    creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
@@ -97,16 +121,18 @@
     select
     <include refid="Base_Column_List" />
     from sds_event_person_record
-    where event_no = #{eventNo} and oid = #{oid}
+    where event_no = #{eventNo} and oid = #{oidFull}
   </select>
 
   <select id="findByOid" resultType="com.wujie.common.dto.wj.SdsEventListDto">
-    select c.event_no eventNo,c.event_type_info_id eventType,c.status status,b.event_name eventName,a.creat_time creatTime
-    from sds_event_person_record a, sds_event_type_info b,
-    (select * from sds_event_info  where id=(
-    select MAX(id) from sds_event_info where event_no=(
-    select event_no from sds_event_person_record where oid = #{oid})
-    )) c
-    where a.event_no = c.event_no and c.event_type_info_id = b.id
+    select a.event_no eventNo,
+    a.event_type_info_id eventType,
+    a.status status,
+    b.event_name eventName,
+    a.creat_time creatTime,
+    a.gen_oid genOid
+    from
+    (select * from sds_event_person_record where oid = #{oid}) a,sds_event_type_info b
+    WHERE a.event_type_info_id = b.id
   </select>
 </mapper>

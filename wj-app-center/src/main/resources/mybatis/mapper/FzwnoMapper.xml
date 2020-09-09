@@ -108,4 +108,7 @@
     select * from fzwno  where id=(
     select MAX(id) from fzwno where fzw_relation=#{fzwno} and devtype_id=#{devtypeId})
   </select>
+  <select id="findByRelation" resultMap="BaseResultMap"  >
+    select * from fzwno  where fzw_relation = #{targetOid}
+  </select>
 </mapper>

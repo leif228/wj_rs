@@ -7,7 +7,13 @@ public class SdsEventPersonRecord {
     private Long id;
 
     //
+    private String genOid;
+
+    //
     private String eventNo;
+
+    //
+    private Long eventTypeInfoId;
 
     //
     private String oid;
@@ -26,12 +32,28 @@ public class SdsEventPersonRecord {
         this.id = id;
     }
 
+    public String getGenOid() {
+        return genOid;
+    }
+
+    public void setGenOid(String genOid) {
+        this.genOid = genOid == null ? null : genOid.trim();
+    }
+
     public String getEventNo() {
         return eventNo;
     }
 
     public void setEventNo(String eventNo) {
         this.eventNo = eventNo == null ? null : eventNo.trim();
+    }
+
+    public Long getEventTypeInfoId() {
+        return eventTypeInfoId;
+    }
+
+    public void setEventTypeInfoId(Long eventTypeInfoId) {
+        this.eventTypeInfoId = eventTypeInfoId;
     }
 
     public String getOid() {

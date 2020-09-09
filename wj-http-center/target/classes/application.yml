@@ -185,6 +185,9 @@ secure:
       - /seachOwerUser
       - /addUser
       - /myUserList
+      - /pushEvent
+      - /doEventWrite
+      - /searchEvents
 
 
 

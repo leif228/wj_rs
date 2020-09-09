@@ -26,15 +26,33 @@ public class SdsController {
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
                               @RequestParam(value = "content") String content) {
-        return sdsService.genEvent(oid,eventType,content);
+        return sdsService.genEvent(oid, eventType, content);
     }
 
     @PostMapping("/doEvent")
     public ApiResult doEvent(@RequestParam(value = "oid") String oid,
-                              @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content,
+                             @RequestParam(value = "eventType") String eventType,
+                             @RequestParam(value = "content") String content,
+                             @RequestParam(value = "genOid") String genOid,
                              @RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.doEvent(oid,eventType,content,eventNo);
+        return sdsService.doEvent(oid, eventType, content, eventNo, genOid);
+    }
+
+    @PostMapping("/doEventWrite")
+    public ApiResult doEventWrite(@RequestParam(value = "oid") String oid,
+                                  @RequestParam(value = "eventType") String eventType,
+                                  @RequestParam(value = "content") String content,
+                                  @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.doEventWrite(oid, eventType, content, eventNo);
+    }
+
+    @PostMapping("/pushEvent")
+    public ApiResult pushEvent(@RequestParam(value = "oid") String oid,
+                               @RequestParam(value = "eventType") String eventType,
+                               @RequestParam(value = "content") String content,
+                               @RequestParam(value = "targetOid") String targetOid,
+                               @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid);
     }
 
     @PostMapping("/myEventList")
@@ -43,8 +61,13 @@ public class SdsController {
     }
 
     @PostMapping("/events")
-    public ApiResult events(@RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.events(eventNo);
+    public ApiResult events(@RequestParam(value = "oid") String oid, @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.events(oid,eventNo);
+    }
+
+    @PostMapping("/searchEvents")
+    public ApiResult searchEvents(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.searchEvents(eventNo);
     }
 
     @PostMapping("/addUser")

@@ -19,7 +19,7 @@ public interface SdsEventPersonRecordMapper {
 
     int updateByPrimaryKey(SdsEventPersonRecord record);
 
-    SdsEventPersonRecord findByEventNoAndOid(String eventNo, String oid);
+    SdsEventPersonRecord findByEventNoAndOid(String eventNo,String oidFull);
 
     List<SdsEventListDto> findByOid(String oid);
 
