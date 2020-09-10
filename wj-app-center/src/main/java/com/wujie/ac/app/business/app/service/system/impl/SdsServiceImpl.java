@@ -10,6 +10,7 @@ import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.wj.*;
+import com.wujie.common.utils.CalendarUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -428,7 +429,9 @@ public class SdsServiceImpl implements SdsService {
                 List<SdsEventInfoDto> sdsEventInfoDtos = new ArrayList<>();
                 JSONArray datas = (JSONArray) jsonObject.get(ApiResult.CONTENT);
                 for(int i=0;i<datas.size();i++){
-                    SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean((JSONObject) datas.get(i), SdsEventInfoDto.class);
+                    JSONObject jsonObject_i = (JSONObject) datas.get(i);
+                    SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
+                    deviceVo.setCreatTime(CalendarUtil.parseYYYY_MM_DD_HH_MM_SS((String) jsonObject_i.get("creatTime")).getTime());
                     sdsEventInfoDtos.add(deviceVo);
                 }
 
