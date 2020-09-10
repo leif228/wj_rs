@@ -18,6 +18,8 @@ public interface SdsService {
 
     ApiResult searchEvents(String eventNo);
 
+    ApiResult searchOwerUserInfo(String oid);
+
     ApiResult events(String oid, String eventNo);
 
     @Transactional(rollbackFor = Exception.class)

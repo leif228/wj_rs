@@ -23,4 +23,6 @@ public interface WjuserOwerMapper {
     WjuserOwer findByFzwnoLikeCAT(String s);
 
     WjuserOwer findByOid(String targetOid);
+
+    WjuserOwer findByRelationLikeOid(String oid);
 }

@@ -1,5 +1,8 @@
 package com.wujie.common.dto.wj;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,7 +25,8 @@ public class SdsEventInfoDto implements Serializable {
     //
     private String status;
 
-    //
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creatTime;
 
     private String userName;

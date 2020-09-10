@@ -256,4 +256,11 @@
     from wjuser_ower
     where oid = #{targetOid}
   </select>
+
+  <select id="findByRelationLikeOid" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where #{oid} like concat(oid,'%')
+  </select>
 </mapper>

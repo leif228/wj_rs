@@ -60,6 +60,11 @@ public class SdsController {
         return sdsService.myEventList(oid);
     }
 
+    @PostMapping("/searchOwerUserInfo")
+    public ApiResult searchOwerUserInfo(@RequestParam(value = "oid") String oid) {
+        return sdsService.searchOwerUserInfo(oid);
+    }
+
     @PostMapping("/events")
     public ApiResult events(@RequestParam(value = "oid") String oid, @RequestParam(value = "eventNo") String eventNo) {
         return sdsService.events(oid,eventNo);

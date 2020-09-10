@@ -444,6 +444,31 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
+    private WjuserOwerDto searchOwerUserInfoHttp(String ip, String oid) throws Exception {
+        String url = "http://" + ip + ":" + "9999/searchOwerUserInfo";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("oid", oid);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+
+                WjuserOwerDto deviceVo = (WjuserOwerDto) JSONObject.toBean(data, WjuserOwerDto.class);
+                log.info("++++++++++++++++请求searchOwerUserInfo成功:" + data.toString());
+                return deviceVo;
+            } else {
+                log.info("++++++++++++++++请求searchOwerUserInfo失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchOwerUserInfo失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求searchOwerUserInfo失败:" + "连接错误");
+            throw new Exception("searchOwerUserInfo失败:连接错误");
+        }
+    }
+
     /**
      * 我的事件列表
      */
@@ -472,13 +497,31 @@ public class SdsServiceImpl implements SdsService {
                 SdsEventInfoDto sdsEventInfoDto = new SdsEventInfoDto();
                 BeanUtils.copyProperties(sdsEventInfo, sdsEventInfoDto);
 
-//                WjuserOwer wjuserOwer = wjuserOwerMapper.findByOid(sdsEventInfo.getOid());
-//                sdsEventInfoDto.setUserName(wjuserOwer.getUserName());
+                //TODO 取得用户信息
+                OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventInfo.getOid());
+                WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(),sdsEventInfo.getOid());
+                if(wjuserOwerDto != null)
+                    sdsEventInfoDto.setUserName(wjuserOwerDto.getUserName());
 
                 sdsEventInfoDtos.add(sdsEventInfoDto);
             }
 
             return ApiResult.success(sdsEventInfoDtos);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+    /**
+     * 根据oid查找用户信息
+     */
+    @Override
+    public ApiResult searchOwerUserInfo(String oid) {
+        try {
+            WjuserOwer wjuserOwer = wjuserOwerMapper.findByRelationLikeOid(oid);
+            WjuserOwerDto wjuserOwerDto = new WjuserOwerDto();
+            BeanUtils.copyProperties(wjuserOwer,wjuserOwerDto);
+
+            return ApiResult.success(wjuserOwerDto);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }

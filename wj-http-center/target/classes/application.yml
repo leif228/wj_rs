@@ -188,6 +188,7 @@ secure:
       - /pushEvent
       - /doEventWrite
       - /searchEvents
+      - /searchOwerUserInfo
 
 
 

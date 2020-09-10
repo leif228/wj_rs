@@ -181,6 +181,9 @@ public interface AppUserService {
     @PostMapping("/events")
     public ApiResult events(@RequestParam(value = "oid") String oid, @RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/searchOwerUserInfo")
+    public ApiResult searchOwerUserInfo(@RequestParam(value = "oid") String oid);
+
     @PostMapping("/searchEvents")
     public ApiResult searchEvents(@RequestParam(value = "eventNo") String eventNo);
 
@@ -328,6 +331,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult events(String oid, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchOwerUserInfo(String oid) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
