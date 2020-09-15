@@ -1,5 +1,6 @@
 package com.wujie.tc.app.framework.bootstrap;
 
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.app.business.util.jdbc.impl.SHCommonDaoImpl;
 import com.wujie.tc.app.framework.util.base.impl.BaseServiceImpl;
@@ -32,10 +33,12 @@ import java.util.function.Supplier;
 @Order(value = 1)
 public class BootstrapReadData extends BaseServiceImpl implements CommandLineRunner {
 
-//    @Autowired
+    //    @Autowired
 //    private SHCommonDaoImpl shCommonDaoImpl;
     @Autowired
     private WechatConstant wechatConstant;
+    @Autowired
+    private AppUserService appUserService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -68,7 +71,7 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //		thread.start();
 
         Thread thread = new Thread(() -> {
-            TcpServer.StartTcpServer(wechatConstant);
+            TcpServer.StartTcpServer(wechatConstant,appUserService);
         });
         thread.start();
     }

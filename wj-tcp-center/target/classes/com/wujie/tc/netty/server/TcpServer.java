@@ -1,5 +1,6 @@
 package com.wujie.tc.netty.server;
 
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.client.encoder.WjEncoderHandler;
@@ -26,6 +27,7 @@ public class TcpServer {
     private int port;
 
     private static WechatConstant wechatConstant;
+    private static AppUserService appUserService;
 
     private void init() {
         log.info("正在启动tcp服务器……");
@@ -42,7 +44,7 @@ public class TcpServer {
                     //ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
                     ch.pipeline().addLast("encode", new EncoderHandler());//编码器。发送消息时候用
                     ch.pipeline().addLast("outHandler", new WjEncoderHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
-                    ch.pipeline().addLast("decode", new WjDecoderHandler(new TaskHandler()));//解码器，接收消息时候用
+                    ch.pipeline().addLast("decode", new WjDecoderHandler(new TaskHandler(appUserService)));//解码器，接收消息时候用
 //                    ch.pipeline().addLast("decode",new DecoderHandler());//解码器，接收消息时候用
 //                    ch.pipeline().addLast("inHandler",new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                 }
@@ -71,8 +73,9 @@ public class TcpServer {
         this.port = port;
     }
 
-    public static boolean StartTcpServer(WechatConstant wechatConstant) {
+    public static boolean StartTcpServer(WechatConstant wechatConstant, AppUserService appUserService) {
         TcpServer.wechatConstant = wechatConstant;
+        TcpServer.appUserService = appUserService;
         try {
             Properties properties = FileUtils.readFile(wechatConstant.getTcpServiceConfigPath());
             if (properties.getProperty("port") != null)

@@ -2,12 +2,17 @@ package com.wujie.tc.netty.server.decoder;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.netty.pojo.Rec_task_i;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TaskHandler {
+    AppUserService appUserService;
+    public TaskHandler(AppUserService appUserService){
+        this.appUserService = appUserService;
+    }
 
     public void doProtocol(ChannelHandlerContext ctx, WjProtocol wjProtocol) {
         JSONObject objParam = null;
@@ -51,6 +56,7 @@ public class TaskHandler {
             log.debug( "className:" + className);
             Class genClass = Class.forName(className);
             Rec_task_i rec_task_i = (Rec_task_i) genClass.newInstance();
+            rec_task_i.setService(appUserService);
             rec_task_i.doTask(ctx, tx, objParam);
         } catch (Exception e) {
             log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());

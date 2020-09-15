@@ -2,6 +2,7 @@ package com.wujie.tc.netty.server.receive;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.netty.pojo.Device;
 import com.wujie.tc.netty.pojo.LoginTask;
 import com.wujie.tc.netty.pojo.Rec_task_i;
@@ -46,6 +47,11 @@ public class Rec_0000_0100 implements Rec_task_i {
         ChannelManager.deviceChannels.put(device.getUniqueNo(), ctx.channel());
 
         sendLoginBack(ctx);
+    }
+
+    @Override
+    public void setService(AppUserService appUserService) {
+
     }
 
     private void sendLoginBack(ChannelHandlerContext ctx) {

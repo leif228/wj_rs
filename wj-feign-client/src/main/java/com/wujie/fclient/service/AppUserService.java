@@ -206,6 +206,9 @@ public interface AppUserService {
     @PostMapping("/getRelationTypes")
     public ApiResult getRelationTypes();
 
+    @PostMapping("/doAtTask")
+    public ApiResult doAtTask(@RequestParam(value = "tx") String tx);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -366,6 +369,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult getRelationTypes() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult doAtTask(String tx) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
