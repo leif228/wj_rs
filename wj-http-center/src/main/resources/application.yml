@@ -180,6 +180,7 @@ secure:
       - /myEventList
       - /events
       - /doEvent
+      - /doGenEvent
       - /genEvent
       - /seachOwerService
       - /seachOwerUser
@@ -189,6 +190,7 @@ secure:
       - /doEventWrite
       - /searchEvents
       - /searchOwerUserInfo
+      - /atTask
 
 
 

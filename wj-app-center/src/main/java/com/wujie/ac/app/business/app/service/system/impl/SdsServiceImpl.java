@@ -91,6 +91,20 @@ public class SdsServiceImpl implements SdsService {
      * 产生新事件
      */
     @Override
+    public ApiResult doGenEvent(String oid, String eventType, String content) {
+        try {
+            //查找oid归属服务器
+            OwerServiceDto owerServiceDto = this.getOwerInfo(oid);
+
+            this.genEventHttp(owerServiceDto.getIp(),oid,eventType,content);
+
+            return ApiResult.success("成功");
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public ApiResult genEvent(String oid, String eventType, String content) {
         try {
@@ -143,7 +157,7 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
-            return ApiResult.success();
+            return ApiResult.success("成功");
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -267,7 +281,7 @@ public class SdsServiceImpl implements SdsService {
     }
 
     //根上查找tooid管理服务器信息
-    private OwerServiceDto getOwerInfo(String oid) throws Exception {
+    public OwerServiceDto getOwerInfo(String oid) throws Exception {
         NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
         String rootIp = nodeInfoOwer.getRootIp();
         //根上查找tooid管理服务器信息
@@ -469,6 +483,33 @@ public class SdsServiceImpl implements SdsService {
         } else {
             log.info("++++++++++++++++请求searchOwerUserInfo失败:" + "连接错误");
             throw new Exception("searchOwerUserInfo失败:连接错误");
+        }
+    }
+
+    private void genEventHttp(String ip, String oid, String eventType, String content) throws Exception {
+        String url = "http://" + ip + ":" + "9999/genEvent";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("oid", oid);
+        map.put("eventType", eventType);
+        map.put("content", content);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+//                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+
+//                WjuserOwerDto deviceVo = (WjuserOwerDto) JSONObject.toBean(data, WjuserOwerDto.class);
+                log.info("++++++++++++++++请求genEvent成功:" );
+//                return deviceVo;
+            } else {
+                log.info("++++++++++++++++请求genEvent失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("genEvent失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求genEvent失败:" + "连接错误");
+            throw new Exception("genEvent失败:连接错误");
         }
     }
 

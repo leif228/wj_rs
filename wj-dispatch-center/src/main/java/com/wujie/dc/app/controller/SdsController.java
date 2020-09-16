@@ -22,6 +22,13 @@ public class SdsController {
         this.sdsService = sdsService;
     }
 
+    @PostMapping("/doGenEvent")
+    public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
+                                @RequestParam(value = "eventType") String eventType,
+                                @RequestParam(value = "content") String content) {
+        return sdsService.doGenEvent(oid, eventType, content);
+    }
+
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
@@ -90,5 +97,16 @@ public class SdsController {
     @PostMapping("/getRelationTypes")
     public ApiResult getRelationTypes() {
         return sdsService.getRelationTypes();
+    }
+
+    @PostMapping("/atTask")
+    public ApiResult atTask(@RequestParam(value = "flag") String flag,
+                            @RequestParam(value = "oid") String oid,
+                            @RequestParam(value = "pri") String pri,
+                            @RequestParam(value = "buss") String buss,
+                            @RequestParam(value = "port") String port,
+                            @RequestParam(value = "cmd") String cmd,
+                            @RequestParam(value = "param") String param) {
+        return sdsService.atTask( flag,  oid,  pri,  buss,  port,  cmd,  param);
     }
 }

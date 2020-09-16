@@ -144,6 +144,11 @@ public interface DispatchUserService {
                                       @RequestParam(value = "sSort") Integer sSort
     );
 
+    @PostMapping("/doGenEvent")
+    public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
+                                @RequestParam(value = "eventType") String eventType,
+                                @RequestParam(value = "content") String content);
+
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
@@ -199,6 +204,15 @@ public interface DispatchUserService {
 
     @PostMapping("/getRelationTypes")
     public ApiResult getRelationTypes();
+
+    @PostMapping("/atTask")
+    public ApiResult atTask(@RequestParam(value = "flag") String flag,
+                            @RequestParam(value = "oid") String oid,
+                            @RequestParam(value = "pri") String pri,
+                            @RequestParam(value = "buss") String buss,
+                            @RequestParam(value = "port") String port,
+                            @RequestParam(value = "cmd") String cmd,
+                            @RequestParam(value = "param") String param);
 
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
@@ -295,6 +309,11 @@ public interface DispatchUserService {
         }
 
         @Override
+        public ApiResult doGenEvent(String oid, String eventType, String content) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
         public ApiResult genEvent(String oid, String eventType, String content) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
@@ -356,6 +375,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult getRelationTypes() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

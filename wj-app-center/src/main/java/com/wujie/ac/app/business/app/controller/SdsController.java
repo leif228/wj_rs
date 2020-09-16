@@ -22,6 +22,13 @@ public class SdsController {
         this.sdsService = sdsService;
     }
 
+    @PostMapping("/doGenEvent")
+    public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
+                              @RequestParam(value = "eventType") String eventType,
+                              @RequestParam(value = "content") String content) {
+        return sdsService.doGenEvent(oid, eventType, content);
+    }
+
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,

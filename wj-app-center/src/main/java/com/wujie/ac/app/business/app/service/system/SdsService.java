@@ -4,6 +4,8 @@ import com.wujie.common.base.ApiResult;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface SdsService {
+    ApiResult doGenEvent(String oid, String eventType, String content);
+
     ApiResult genEvent(String oid, String eventType, String content);
 
     @Transactional(rollbackFor = Exception.class)

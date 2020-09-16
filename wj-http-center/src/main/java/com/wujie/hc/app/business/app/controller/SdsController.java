@@ -23,20 +23,27 @@ public class SdsController {
         this.sdsService = sdsService;
     }
 
+    @PostMapping("/doGenEvent")
+    public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
+                                @RequestParam(value = "eventType") String eventType,
+                                @RequestParam(value = "content") String content) {
+        return sdsService.doGenEvent(oid, eventType, content);
+    }
+
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
                               @RequestParam(value = "content") String content) {
-        return sdsService.genEvent(oid,eventType,content);
+        return sdsService.genEvent(oid, eventType, content);
     }
 
     @PostMapping("/doEvent")
     public ApiResult doEvent(@RequestParam(value = "oid") String oid,
-                              @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content,
+                             @RequestParam(value = "eventType") String eventType,
+                             @RequestParam(value = "content") String content,
                              @RequestParam(value = "genOid") String genOid,
                              @RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.doEvent(oid,eventType,content,eventNo,genOid);
+        return sdsService.doEvent(oid, eventType, content, eventNo, genOid);
     }
 
     @PostMapping("/doEventWrite")
@@ -44,16 +51,16 @@ public class SdsController {
                                   @RequestParam(value = "eventType") String eventType,
                                   @RequestParam(value = "content") String content,
                                   @RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.doEventWrite(oid,eventType,content,eventNo);
+        return sdsService.doEventWrite(oid, eventType, content, eventNo);
     }
 
     @PostMapping("/pushEvent")
     public ApiResult pushEvent(@RequestParam(value = "oid") String oid,
-                              @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content,
-                             @RequestParam(value = "targetOid") String targetOid,
-                             @RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.pushEvent(oid,eventType,content,eventNo,targetOid);
+                               @RequestParam(value = "eventType") String eventType,
+                               @RequestParam(value = "content") String content,
+                               @RequestParam(value = "targetOid") String targetOid,
+                               @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid);
     }
 
     @PostMapping("/myEventList")
@@ -63,7 +70,7 @@ public class SdsController {
 
     @PostMapping("/events")
     public ApiResult events(@RequestParam(value = "oid") String oid, @RequestParam(value = "eventNo") String eventNo) {
-        return sdsService.events(oid,eventNo);
+        return sdsService.events(oid, eventNo);
     }
 
     @PostMapping("/searchOwerUserInfo")
@@ -91,5 +98,16 @@ public class SdsController {
     @PostMapping("/getRelationTypes")
     public ApiResult getRelationTypes() {
         return sdsService.getRelationTypes();
+    }
+
+    @PostMapping("/atTask")
+    public ApiResult atTask(@RequestParam(value = "flag") String flag,
+                            @RequestParam(value = "oid") String oid,
+                            @RequestParam(value = "pri") String pri,
+                            @RequestParam(value = "buss") String buss,
+                            @RequestParam(value = "port") String port,
+                            @RequestParam(value = "cmd") String cmd,
+                            @RequestParam(value = "param") String param) {
+        return sdsService.atTask(flag, oid, pri, buss, port, cmd, param);
     }
 }

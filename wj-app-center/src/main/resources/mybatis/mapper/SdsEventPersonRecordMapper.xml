@@ -135,4 +135,12 @@
     (select * from sds_event_person_record where oid = #{oid}) a,sds_event_type_info b
     WHERE a.event_type_info_id = b.id
   </select>
+
+  <select id="findMaxByGenOidAndEventTypeId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sds_event_person_record
+    where gen_oid = #{genOid} and event_type_info_id = #{eventTypeInfoId}
+    order by id desc limit 0,1
+  </select>
 </mapper>

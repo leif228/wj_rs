@@ -28,4 +28,15 @@ public class AtController {
         return atService.doAtTask(tx);
     }
 
+    @PostMapping("/atTask")
+    public ApiResult atTask(@RequestParam(value = "flag") String flag,
+                            @RequestParam(value = "oid") String oid,
+                            @RequestParam(value = "pri") String pri,
+                            @RequestParam(value = "buss") String buss,
+                            @RequestParam(value = "port") String port,
+                            @RequestParam(value = "cmd") String cmd,
+                            @RequestParam(value = "param") String param) {
+        return atService.atTask( flag,  oid,  pri,  buss,  port,  cmd,  param);
+    }
+
 }
