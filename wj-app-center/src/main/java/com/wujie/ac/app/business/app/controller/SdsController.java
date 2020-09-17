@@ -62,6 +62,15 @@ public class SdsController {
         return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid);
     }
 
+    @PostMapping("/pushTask")
+    public ApiResult pushTask(@RequestParam(value = "oid") String oid,
+                               @RequestParam(value = "eventType") String eventType,
+                               @RequestParam(value = "content") String content,
+                               @RequestParam(value = "targetOid") String targetOid,
+                               @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.pushTask(oid, eventType, content, eventNo, targetOid);
+    }
+
     @PostMapping("/myEventList")
     public ApiResult myEventList(@RequestParam(value = "oid") String oid) {
         return sdsService.myEventList(oid);

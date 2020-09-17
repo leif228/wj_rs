@@ -96,7 +96,7 @@ public class SdsServiceImpl implements SdsService {
             //查找oid归属服务器
             OwerServiceDto owerServiceDto = this.getOwerInfo(oid);
 
-            this.genEventHttp(owerServiceDto.getIp(),oid,eventType,content);
+            this.genEventHttp(owerServiceDto.getIp(), oid, eventType, content);
 
             return ApiResult.success("成功");
         } catch (Exception e) {
@@ -178,7 +178,6 @@ public class SdsServiceImpl implements SdsService {
                 //根据SdsEventPersonRecord的genOid取得产生事件的管理服务器，然后去添加事件流程记录
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventPersonRecord.getGenOid());
                 this.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo);
-
             }
 
             return ApiResult.success();
@@ -204,9 +203,56 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
+            try {
+                //在事件产生管理服务器上查找关系,然后推送到相关管理服务器上
+                List<SdsPercomRelation> list = this.genEventRelation(oid, eventType);
+                if (list != null && list.size() > 0) {
+                    for (SdsPercomRelation sdsPercomRelation : list) {
+                        try {
+                            OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
+                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid());
+                        } catch (Exception e) {
+                            //不处理， continue;
+                            log.error("事件推送失败：" + sdsPercomRelation.toString());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                //不处理
+                log.error("在事件产生管理服务器上查找关系,然后推送到相关管理服务器上，出现错误！");
+            }
+
             return ApiResult.success();
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+//    @Transactional(rollbackFor = Exception.class)
+    public ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid) {
+        try {
+            //根据targetOid查找oidFull
+            List<Fzwno> fzwnos = fzwnoMapper.findByRelation(targetOid);
+            for (Fzwno fzwno : fzwnos) {
+                String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
+
+                //查找区域服务器然后发送at
+                this.searchAreaServiceAndSend(oidFull,eventType,content,eventNo,targetOid);
+            }
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    //TODO  查找区域服务器然后发送at
+    private void searchAreaServiceAndSend(String oidFull, String eventType, String content, String eventNo, String targetOid) {
+        try{
+
+        }catch (Exception e){
+            log.error("查找区域服务器然后发送at,出错了！"+ e.getMessage());
         }
     }
 
@@ -234,6 +280,9 @@ public class SdsServiceImpl implements SdsService {
                     sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(eventType));
 
                     sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
+
+                    //查找区域服务器然后发送at
+                    this.searchAreaServiceAndSend(oidFull,eventType,content,eventNo,targetOid);
                 }
             }
 
@@ -343,7 +392,7 @@ public class SdsServiceImpl implements SdsService {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
 
-                log.info("++++++++++++++++请求doEventWrite成功:" );
+                log.info("++++++++++++++++请求doEventWrite成功:");
             } else {
                 log.info("++++++++++++++++请求doEventWrite失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("doEventWrite失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
@@ -404,6 +453,32 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
+    private void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid)  throws Exception {
+        String url = "http://" + ip + ":" + "9999/pushTask";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("oid", oid);
+        map.put("eventType", eventType);
+        map.put("content", content);
+        map.put("eventNo", eventNo);
+        map.put("targetOid", targetOid);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+
+                log.info("++++++++++++++++请求pushTask成功:");
+            } else {
+                log.info("++++++++++++++++请求pushTask失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("pushTask失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求pushTask失败:" + "连接错误");
+            throw new Exception("pushTask失败:连接错误");
+        }
+    }
+
     private void pushEventHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushEvent";
         String params = "";
@@ -442,7 +517,7 @@ public class SdsServiceImpl implements SdsService {
             if (ApiResult.SUCCESS.equals(code)) {
                 List<SdsEventInfoDto> sdsEventInfoDtos = new ArrayList<>();
                 JSONArray datas = (JSONArray) jsonObject.get(ApiResult.CONTENT);
-                for(int i=0;i<datas.size();i++){
+                for (int i = 0; i < datas.size(); i++) {
                     JSONObject jsonObject_i = (JSONObject) datas.get(i);
                     SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
                     deviceVo.setCreatTime(CalendarUtil.parseYYYY_MM_DD_HH_MM_SS((String) jsonObject_i.get("creatTime")).getTime());
@@ -501,7 +576,7 @@ public class SdsServiceImpl implements SdsService {
 //                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
 
 //                WjuserOwerDto deviceVo = (WjuserOwerDto) JSONObject.toBean(data, WjuserOwerDto.class);
-                log.info("++++++++++++++++请求genEvent成功:" );
+                log.info("++++++++++++++++请求genEvent成功:");
 //                return deviceVo;
             } else {
                 log.info("++++++++++++++++请求genEvent失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
@@ -543,8 +618,8 @@ public class SdsServiceImpl implements SdsService {
 
                 //TODO 取得用户信息
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventInfo.getOid());
-                WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(),sdsEventInfo.getOid());
-                if(wjuserOwerDto != null)
+                WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(), sdsEventInfo.getOid());
+                if (wjuserOwerDto != null)
                     sdsEventInfoDto.setUserName(wjuserOwerDto.getUserName());
 
                 sdsEventInfoDtos.add(sdsEventInfoDto);
@@ -555,6 +630,7 @@ public class SdsServiceImpl implements SdsService {
             return ApiResult.error(e.getMessage());
         }
     }
+
     /**
      * 根据oid查找用户信息
      */
@@ -563,7 +639,7 @@ public class SdsServiceImpl implements SdsService {
         try {
             WjuserOwer wjuserOwer = wjuserOwerMapper.findByRelationLikeOid(oid);
             WjuserOwerDto wjuserOwerDto = new WjuserOwerDto();
-            BeanUtils.copyProperties(wjuserOwer,wjuserOwerDto);
+            BeanUtils.copyProperties(wjuserOwer, wjuserOwerDto);
 
             return ApiResult.success(wjuserOwerDto);
         } catch (Exception e) {
@@ -575,13 +651,13 @@ public class SdsServiceImpl implements SdsService {
      * 事件处理详情
      */
     @Override
-    public ApiResult events(String oid,String eventNo) {
+    public ApiResult events(String oid, String eventNo) {
         try {
             //根据genoid查找事件发生地服务器
-            SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findByEventNoAndOid(eventNo,oid);
+            SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findByEventNoAndOid(eventNo, oid);
             OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventPersonRecord.getGenOid());
             //取出事件
-            List<SdsEventInfoDto> sdsEventInfoDtos = this.searchEventsHttp(owerServiceDto.getIp(),eventNo);
+            List<SdsEventInfoDto> sdsEventInfoDtos = this.searchEventsHttp(owerServiceDto.getIp(), eventNo);
 
             return ApiResult.success(sdsEventInfoDtos);
         } catch (Exception e) {

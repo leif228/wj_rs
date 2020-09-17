@@ -15,7 +15,7 @@ public class Sen_0000_0100 implements Sen_i {
         wjProtocol.setPlat(new byte[]{0x20, 0x00});
         wjProtocol.setMaincmd(main);
         wjProtocol.setSubcmd(sub);
-        wjProtocol.setFormat("JS");
+        wjProtocol.setFormat(WjProtocol.FORMAT_JS);
         wjProtocol.setBack(new byte[]{0x01, 0x00});
 
         int len = 0;

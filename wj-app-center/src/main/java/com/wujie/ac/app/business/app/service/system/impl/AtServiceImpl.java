@@ -2,18 +2,23 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.AtService;
-import com.wujie.ac.app.business.entity.*;
+import com.wujie.ac.app.business.entity.BussInfo;
+import com.wujie.ac.app.business.entity.EventtypeBussMdInfo;
+import com.wujie.ac.app.business.entity.SdsEventPersonRecord;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.NumConvertUtil;
 import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.common.base.ApiResult;
-import com.wujie.common.dto.wj.*;
+import com.wujie.common.dto.wj.OwerServiceDto;
+import com.wujie.fclient.service.TcpUserService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,14 +36,16 @@ public class AtServiceImpl implements AtService {
     private BussInfoMapper bussInfoMapper;
     private EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper;
     private SdsServiceImpl sdsService;
+    private TcpUserService tcpUserService;
 
     public static final String HEARD = "AT@";
     public static final String END = "#*";
 
     @Autowired
-    public AtServiceImpl(SdsServiceImpl sdsService,EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper,BussInfoMapper bussInfoMapper,FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
+    public AtServiceImpl(TcpUserService tcpUserService,SdsServiceImpl sdsService,EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper,BussInfoMapper bussInfoMapper,FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
                          SdsEventTypeInfoMapper sdsEventTypeInfoMapper, SdsPercomRelationMapper sdsPercomRelationMapper, SdsRelationTypeInfoMapper sdsRelationTypeInfoMapper,
                          WjuserOwerMapper wjuserOwerMapper) {
+        this.tcpUserService = tcpUserService;
         this.sdsService = sdsService;
         this.eventtypeBussMdInfoMapper = eventtypeBussMdInfoMapper;
         this.bussInfoMapper = bussInfoMapper;
@@ -57,7 +64,7 @@ public class AtServiceImpl implements AtService {
     @Override
     public ApiResult doAtTask(String tx) {
         try {
-            log.debug("doAtTask事件:tx=" + tx);
+            log.debug("接收到的at为:" + tx);
             if (tx == null || "".equals(tx))
                 return ApiResult.error("传输的数据错误！数据为：" + tx);
 
@@ -72,21 +79,27 @@ public class AtServiceImpl implements AtService {
                 String flag = tx.substring(index, index + 1);
                 index += flag.length();
                 String oid = tx.substring(index, index + 39);
+                log.debug("解码后的oid为：" + oid);
                 index += oid.length();
                 String pri = tx.substring(index, index + 4);
                 index += pri.length();
                 String buss = tx.substring(index, index + 4);
+                log.debug("解码后的buss为：" + buss);
                 index += buss.length();
                 String port = tx.substring(index, index + 4);
+                log.debug("解码后的port为：" + port);
                 index += port.length();
                 String cmd = tx.substring(index, index + 4);
+                log.debug("解码后的cmd为：" + cmd);
                 index += cmd.length();
                 String paramLen = tx.substring(index, index + 4);
+                log.debug("解码后的paramLen为：" + paramLen);
                 int len = NumConvertUtil.HexStringToInt(paramLen);
+                log.debug("len：" + len);
                 index += paramLen.length();
                 String param = tx.substring(index, index + len);
 
-                log.debug("param=" + param);
+                log.debug("解码后的param为：" + param);
                 index += param.length();
                 String strend = tx.substring(index, index + END.length());//取出帧尾
 
@@ -139,6 +152,25 @@ public class AtServiceImpl implements AtService {
         OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
 
         this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+    }
+
+    private String genAt(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
+        //AT@Nchn0L0a002020091100011000000000E00200010500A001000100010027chn0L0a00202009110001100000000011110102#*
+
+        String paramLen = NumConvertUtil.IntToHexStringLimit4(param.length());
+        String at = HEARD + flag + oid + pri + buss + port + cmd + paramLen + param + END;//取出帧头
+        log.debug("编码后的at为：" + at);
+
+        return at;
+    }
+
+    public ApiResult sendAt(String flag, String senOid, String pri, String buss, String port, String cmd, String param, String recOid) {
+        try {
+            String at = this.genAt(flag, senOid, pri, buss, port, cmd, param);
+            return tcpUserService.sendAtTask(recOid, at);
+        }catch (Exception e){
+            return ApiResult.error("at发送失败！原因："+ e.getMessage());
+        }
     }
 
     private void atTaskHttp(String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {

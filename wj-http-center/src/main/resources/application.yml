@@ -187,6 +187,7 @@ secure:
       - /addUser
       - /myUserList
       - /pushEvent
+      - /pushTask
       - /doEventWrite
       - /searchEvents
       - /searchOwerUserInfo

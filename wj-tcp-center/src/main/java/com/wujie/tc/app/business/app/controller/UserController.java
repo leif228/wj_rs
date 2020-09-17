@@ -44,4 +44,10 @@ public class UserController {
         return userService.getTcpClientConnectInfo();
     }
 
+    @PostMapping("/sendAtTask")
+    public ApiResult sendAtTask(@RequestParam(value = "oid") String oid,
+                                @RequestParam(value = "at") String at) {
+        return userService.sendAtTask(oid,at);
+    }
+
 }

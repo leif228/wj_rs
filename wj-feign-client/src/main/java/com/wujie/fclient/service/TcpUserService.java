@@ -35,6 +35,10 @@ public interface TcpUserService {
     @PostMapping("/getTcpClientConnectInfo")
     ApiResult getTcpClientConnectInfo();
 
+    @PostMapping("/sendAtTask")
+    public ApiResult sendAtTask(@RequestParam(value = "oid") String oid,
+                                @RequestParam(value = "at") String at);
+
     @Component
     class TcpUserServiceFallBack implements TcpUserService {
 
@@ -46,6 +50,11 @@ public interface TcpUserService {
 
         @Override
         public ApiResult getTcpClientConnectInfo() {
+            return ApiResult.error(ErrorEnum.ERR_TSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult sendAtTask(String oid, String at) {
             return ApiResult.error(ErrorEnum.ERR_TSERVICE_NOT);
         }
 

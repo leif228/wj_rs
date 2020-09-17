@@ -28,6 +28,9 @@ public interface SdsService {
     ApiResult doEventWrite(String oid, String eventType, String content, String eventNo);
 
     //    @Transactional(rollbackFor = Exception.class)
+    ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid);
+
+    //    @Transactional(rollbackFor = Exception.class)
     ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid);
 
     ApiResult myUserList(String oid);
