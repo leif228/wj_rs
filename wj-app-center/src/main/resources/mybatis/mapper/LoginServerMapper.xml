@@ -120,4 +120,13 @@
       creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <select id="findByOid" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from login_server
+    where oid = #{toOid}
+    order by id desc limit 0,1
+  </select>
 </mapper>

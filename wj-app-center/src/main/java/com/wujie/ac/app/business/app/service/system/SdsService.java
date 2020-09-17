@@ -30,6 +30,8 @@ public interface SdsService {
     //    @Transactional(rollbackFor = Exception.class)
     ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid);
 
+    ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid);
+
     //    @Transactional(rollbackFor = Exception.class)
     ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid);
 

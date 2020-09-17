@@ -35,6 +35,8 @@ public class SdsServiceImpl implements SdsService {
     private WjuserOwerMapper wjuserOwerMapper;
     private NodeInfoOwerMapper nodeInfoOwerMapper;
     private FzwnoMapper fzwnoMapper;
+    private LoginServerMapper loginServerMapper;
+    private AtServiceImpl atService;
 
     private static String ststus1 = "产生事件";
     private static String ststus2 = "事件进行中";
@@ -42,9 +44,11 @@ public class SdsServiceImpl implements SdsService {
     private final static int oid_relation_length = 22;
 
     @Autowired
-    public SdsServiceImpl(FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
+    public SdsServiceImpl(AtServiceImpl atService, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
                           SdsEventTypeInfoMapper sdsEventTypeInfoMapper, SdsPercomRelationMapper sdsPercomRelationMapper, SdsRelationTypeInfoMapper sdsRelationTypeInfoMapper,
                           WjuserOwerMapper wjuserOwerMapper) {
+        this.atService = atService;
+        this.loginServerMapper = loginServerMapper;
         this.fzwnoMapper = fzwnoMapper;
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
         this.sdsEventInfoMapper = sdsEventInfoMapper;
@@ -204,8 +208,10 @@ public class SdsServiceImpl implements SdsService {
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
             try {
-                //在事件产生管理服务器上查找关系,然后推送到相关管理服务器上
-                List<SdsPercomRelation> list = this.genEventRelation(oid, eventType);
+                //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
+                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findByEventNo(eventNo);
+
+                List<SdsPercomRelation> list = this.genEventRelation(sdsEventPersonRecord.getGenOid(), eventType);
                 if (list != null && list.size() > 0) {
                     for (SdsPercomRelation sdsPercomRelation : list) {
                         try {
@@ -238,7 +244,7 @@ public class SdsServiceImpl implements SdsService {
                 String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
 
                 //查找区域服务器然后发送at
-                this.searchAreaServiceAndSend(oidFull,eventType,content,eventNo,targetOid);
+                this.searchAreaServiceAndSend(oid, eventType, content, eventNo, oidFull);
             }
 
             return ApiResult.success();
@@ -247,12 +253,25 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    //TODO  查找区域服务器然后发送at
-    private void searchAreaServiceAndSend(String oidFull, String eventType, String content, String eventNo, String targetOid) {
-        try{
+    //查找区域服务器然后发送at
+    private void searchAreaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid) {
+        try {
+            LoginServer loginServer = loginServerMapper.findByOid(toOid);
+            this.searchAreaServiceAndSendHttp(loginServer.getServerIp(), fromOid, eventType, content, eventNo, toOid);
+        } catch (Exception e) {
+            log.error("查找区域服务器然后发送at,出错了！" + e.getMessage());
+        }
+    }
 
-        }catch (Exception e){
-            log.error("查找区域服务器然后发送at,出错了！"+ e.getMessage());
+    @Override
+    public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid) {
+        try {
+            //TODO  匹配规则不确定,暂定
+            atService.sendAt("N", fromOid, "0501", "A001", "0001", "0000", fromOid, toOid);
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
         }
     }
 
@@ -282,7 +301,7 @@ public class SdsServiceImpl implements SdsService {
                     sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
                     //查找区域服务器然后发送at
-                    this.searchAreaServiceAndSend(oidFull,eventType,content,eventNo,targetOid);
+                    this.searchAreaServiceAndSend(oid, eventType, content, eventNo, oidFull);
                 }
             }
 
@@ -453,7 +472,33 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    private void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid)  throws Exception {
+    private void searchAreaServiceAndSendHttp(String ip, String fromOid, String eventType, String content, String eventNo, String toOid) throws Exception {
+        String url = "http://" + ip + ":" + "9999/areaServiceAndSend";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("fromOid", fromOid);
+        map.put("eventType", eventType);
+        map.put("content", content);
+        map.put("eventNo", eventNo);
+        map.put("toOid", toOid);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+
+                log.info("++++++++++++++++请求searchAreaServiceAndSend成功:");
+            } else {
+                log.info("++++++++++++++++请求searchAreaServiceAndSend失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchAreaServiceAndSend失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求searchAreaServiceAndSend失败:" + "连接错误");
+            throw new Exception("searchAreaServiceAndSend失败:连接错误");
+        }
+    }
+
+    private void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushTask";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -616,7 +661,6 @@ public class SdsServiceImpl implements SdsService {
                 SdsEventInfoDto sdsEventInfoDto = new SdsEventInfoDto();
                 BeanUtils.copyProperties(sdsEventInfo, sdsEventInfoDto);
 
-                //TODO 取得用户信息
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventInfo.getOid());
                 WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(), sdsEventInfo.getOid());
                 if (wjuserOwerDto != null)

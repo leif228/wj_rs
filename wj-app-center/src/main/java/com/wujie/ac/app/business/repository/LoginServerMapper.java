@@ -15,4 +15,6 @@ public interface LoginServerMapper {
     int updateByPrimaryKeySelective(LoginServer record);
 
     int updateByPrimaryKey(LoginServer record);
+
+    LoginServer findByOid(String toOid);
 }

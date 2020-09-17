@@ -143,4 +143,12 @@
     where gen_oid = #{genOid} and event_type_info_id = #{eventTypeInfoId}
     order by id desc limit 0,1
   </select>
+
+  <select id="findByEventNo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sds_event_person_record
+    where event_no = #{eventNo}
+    order by id desc limit 0,1
+  </select>
 </mapper>

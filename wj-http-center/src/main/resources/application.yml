@@ -192,6 +192,7 @@ secure:
       - /searchEvents
       - /searchOwerUserInfo
       - /atTask
+      - /areaServiceAndSend
 
 
 

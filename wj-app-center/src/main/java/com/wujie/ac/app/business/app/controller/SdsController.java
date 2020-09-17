@@ -62,6 +62,15 @@ public class SdsController {
         return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid);
     }
 
+    @PostMapping("/areaServiceAndSend")
+    public ApiResult areaServiceAndSend(@RequestParam(value = "fromOid") String fromOid,
+                               @RequestParam(value = "eventType") String eventType,
+                               @RequestParam(value = "content") String content,
+                               @RequestParam(value = "toOid") String toOid,
+                               @RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.areaServiceAndSend(fromOid, eventType, content, eventNo, toOid);
+    }
+
     @PostMapping("/pushTask")
     public ApiResult pushTask(@RequestParam(value = "oid") String oid,
                                @RequestParam(value = "eventType") String eventType,

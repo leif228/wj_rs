@@ -181,6 +181,13 @@ public interface DispatchUserService {
                               @RequestParam(value = "targetOid") String targetOid,
                               @RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/areaServiceAndSend")
+    public ApiResult areaServiceAndSend(@RequestParam(value = "fromOid") String fromOid,
+                                        @RequestParam(value = "eventType") String eventType,
+                                        @RequestParam(value = "content") String content,
+                                        @RequestParam(value = "toOid") String toOid,
+                                        @RequestParam(value = "eventNo") String eventNo);
+
     @PostMapping("/myEventList")
     public ApiResult myEventList(@RequestParam(value = "oid") String oid);
 
@@ -342,6 +349,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult pushTask(String oid, String eventType, String content, String targetOid, String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String toOid, String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
