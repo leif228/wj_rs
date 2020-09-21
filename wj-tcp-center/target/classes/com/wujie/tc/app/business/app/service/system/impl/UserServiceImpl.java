@@ -1,37 +1,29 @@
 package com.wujie.tc.app.business.app.service.system.impl;
 
 import com.wujie.common.base.ApiResult;
-import com.wujie.common.dto.DeviceVo;
-import com.wujie.common.dto.NodeVo;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.app.service.system.UserService;
-import com.wujie.tc.app.business.entity.Device;
-import com.wujie.tc.app.business.entity.Node;
-import com.wujie.tc.app.business.entity.NodeStandby;
-import com.wujie.tc.app.business.entity.Wjuser;
 import com.wujie.tc.app.business.repository.DeviceMapper;
 import com.wujie.tc.app.business.repository.NodeMapper;
 import com.wujie.tc.app.business.repository.NodeStandbyMapper;
 import com.wujie.tc.app.business.repository.WjuserMapper;
-import com.wujie.tc.app.business.util.MDA;
-import com.wujie.tc.app.business.util.NumConvertUtil;
 import com.wujie.tc.app.business.util.WechatConstant;
-import com.wujie.tc.app.business.util.date.DateUtil;
 import com.wujie.tc.netty.client.TcpClient;
+import com.wujie.tc.netty.pojo.AtTask;
+import com.wujie.tc.netty.pojo.BaseTask;
+import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
+import com.wujie.tc.netty.server.send.Sen_1000_0000;
+import com.wujie.tc.netty.server.send.Sen_factory;
 import com.wujie.tc.netty.utils.FileUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -89,6 +81,28 @@ public class UserServiceImpl implements UserService {
         if (!"".equals(fzwnos))
             fzwnos = fzwnos.substring(0, fzwnos.length() - 1);
         return ApiResult.success(fzwnos);
+    }
+
+    @Override
+    public ApiResult sendAtTask(String oid, String at) {
+        Map<String, Channel> map = channelManager.deviceChannels;
+        Channel channel = map.get(oid);
+        if(channel != null){
+            AtTask atTask = new AtTask();
+            atTask.setAt(at);
+
+            WjProtocol wjProtocol = Sen_factory.getInstance(Sen_1000_0000.main, Sen_1000_0000.sub,atTask);
+            if(wjProtocol == null)
+                return ApiResult.error("发送失败！服务端错误！");
+
+            channel.write(wjProtocol);
+            channel.flush();
+
+            return ApiResult.error("成功");
+        }else{
+            return ApiResult.error("发送失败！用户不在线！");
+        }
+
     }
 
 }

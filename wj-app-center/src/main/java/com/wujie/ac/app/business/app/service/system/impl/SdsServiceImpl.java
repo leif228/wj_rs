@@ -7,6 +7,7 @@ import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.date.DateUtil;
 import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
+import com.wujie.ac.app.framework.util.spring.SpringContextUtil2;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.wj.*;
@@ -36,7 +37,7 @@ public class SdsServiceImpl implements SdsService {
     private NodeInfoOwerMapper nodeInfoOwerMapper;
     private FzwnoMapper fzwnoMapper;
     private LoginServerMapper loginServerMapper;
-    private AtServiceImpl atService;
+//    private AtServiceImpl atService;
 
     private static String ststus1 = "产生事件";
     private static String ststus2 = "事件进行中";
@@ -44,10 +45,10 @@ public class SdsServiceImpl implements SdsService {
     private final static int oid_relation_length = 22;
 
     @Autowired
-    public SdsServiceImpl(AtServiceImpl atService, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
+    public SdsServiceImpl(LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
                           SdsEventTypeInfoMapper sdsEventTypeInfoMapper, SdsPercomRelationMapper sdsPercomRelationMapper, SdsRelationTypeInfoMapper sdsRelationTypeInfoMapper,
                           WjuserOwerMapper wjuserOwerMapper) {
-        this.atService = atService;
+//        this.atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
         this.loginServerMapper = loginServerMapper;
         this.fzwnoMapper = fzwnoMapper;
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
@@ -267,9 +268,9 @@ public class SdsServiceImpl implements SdsService {
     public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid) {
         try {
             //TODO  匹配规则不确定,暂定
-            atService.sendAt("N", fromOid, "0501", "A001", "0001", "0000", fromOid, toOid);
+            AtServiceImpl atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
+            return atService.sendAt("N", fromOid, "0501", "A001", "0001", "0000", fromOid, toOid);
 
-            return ApiResult.success();
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }

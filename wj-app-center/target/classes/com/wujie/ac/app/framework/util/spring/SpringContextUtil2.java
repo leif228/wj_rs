@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -15,13 +16,11 @@ import org.springframework.context.annotation.Configuration;
  * @see                        
  *************************************************
  */
-@Configuration
-public class SpringContextUtil2 implements ApplicationContextAware {
+public class SpringContextUtil2 {
 
 	private static ApplicationContext applicationContext;
 	
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public static void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		SpringContextUtil2.applicationContext = applicationContext;
 	}
 

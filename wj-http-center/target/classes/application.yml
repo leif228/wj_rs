@@ -180,15 +180,19 @@ secure:
       - /myEventList
       - /events
       - /doEvent
+      - /doGenEvent
       - /genEvent
       - /seachOwerService
       - /seachOwerUser
       - /addUser
       - /myUserList
       - /pushEvent
+      - /pushTask
       - /doEventWrite
       - /searchEvents
       - /searchOwerUserInfo
+      - /atTask
+      - /areaServiceAndSend
 
 
 

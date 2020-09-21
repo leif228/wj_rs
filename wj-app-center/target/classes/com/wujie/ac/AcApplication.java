@@ -2,6 +2,7 @@ package com.wujie.ac;
 
 
 import com.wujie.ac.app.framework.netty.WebsocketDanmuServer;
+import com.wujie.ac.app.framework.util.spring.SpringContextUtil2;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,6 +34,7 @@ public class AcApplication   {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = SpringApplication.run(AcApplication.class, args);
+		SpringContextUtil2.setApplicationContext(applicationContext);
 //		applicationContext.getBean(WebsocketDanmuServer.class).run();
 	}
 

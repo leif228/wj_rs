@@ -5,6 +5,7 @@ import com.wujie.ac.app.business.app.service.system.AtService;
 import com.wujie.ac.app.business.entity.BussInfo;
 import com.wujie.ac.app.business.entity.EventtypeBussMdInfo;
 import com.wujie.ac.app.business.entity.SdsEventPersonRecord;
+import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.NumConvertUtil;
 import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
@@ -138,6 +139,12 @@ public class AtServiceImpl implements AtService {
                     //处理事件
                     return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), param);
                 }
+            }else if("E001".equals(buss) && "0001".equals(cmd)){
+                com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+                ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
+                //处理事件
+                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", manageChatMsgAtParam.getMsg(), manageChatMsgAtParam.getEventNo(), "");
+
             }else{
                 return ApiResult.error("该业务暂时还不能处理！");
             }
