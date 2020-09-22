@@ -4,12 +4,12 @@ import com.wujie.common.base.ApiResult;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface SdsService {
-    ApiResult doGenEvent(String oid, String eventType, String content);
+    ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId);
 
-    ApiResult genEvent(String oid, String eventType, String content);
+    ApiResult genEvent(String oid, String eventType, String content, String bussInfoId);
 
-    @Transactional(rollbackFor = Exception.class)
-    ApiResult doEvent(String oid, String eventType, String content, String eventNo,String genOid);
+//    @Transactional(rollbackFor = Exception.class)
+    ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId);
 
     ApiResult getRelationTypes();
 
@@ -25,15 +25,15 @@ public interface SdsService {
     ApiResult events(String oid, String eventNo);
 
     @Transactional(rollbackFor = Exception.class)
-    ApiResult doEventWrite(String oid, String eventType, String content, String eventNo);
+    ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId);
 
     //    @Transactional(rollbackFor = Exception.class)
-    ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid);
+    ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId);
 
-    ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid);
+    ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId);
 
     //    @Transactional(rollbackFor = Exception.class)
-    ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid);
+    ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId);
 
     ApiResult myUserList(String oid);
 }

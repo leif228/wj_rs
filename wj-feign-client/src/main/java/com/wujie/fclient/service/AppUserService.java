@@ -152,47 +152,53 @@ public interface AppUserService {
     @PostMapping("/doGenEvent")
     public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
                                 @RequestParam(value = "eventType") String eventType,
-                                @RequestParam(value = "content") String content);
+                                @RequestParam(value = "content") String content,
+                                @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content);
+                              @RequestParam(value = "content") String content,
+                              @RequestParam(value = "bussInfoId") String bussInfoId);
 
 
     @PostMapping("/doEvent")
     public ApiResult doEvent(@RequestParam(value = "oid") String oid,
                              @RequestParam(value = "eventType") String eventType,
                              @RequestParam(value = "content") String content,
-                             @RequestParam(value = "genOid") String genOid,
-                             @RequestParam(value = "eventNo") String eventNo);
+                             @RequestParam(value = "eventNo") String eventNo,
+                             @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/doEventWrite")
     public ApiResult doEventWrite(@RequestParam(value = "oid") String oid,
                                   @RequestParam(value = "eventType") String eventType,
                                   @RequestParam(value = "content") String content,
-                                  @RequestParam(value = "eventNo") String eventNo);
+                                  @RequestParam(value = "eventNo") String eventNo,
+                                  @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/pushEvent")
     public ApiResult pushEvent(@RequestParam(value = "oid") String oid,
                                @RequestParam(value = "eventType") String eventType,
                                @RequestParam(value = "content") String content,
                                @RequestParam(value = "targetOid") String targetOid,
-                               @RequestParam(value = "eventNo") String eventNo);
+                               @RequestParam(value = "eventNo") String eventNo,
+                               @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/pushTask")
     public ApiResult pushTask(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
                               @RequestParam(value = "content") String content,
                               @RequestParam(value = "targetOid") String targetOid,
-                              @RequestParam(value = "eventNo") String eventNo);
+                              @RequestParam(value = "eventNo") String eventNo,
+                              @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/areaServiceAndSend")
     public ApiResult areaServiceAndSend(@RequestParam(value = "fromOid") String fromOid,
                                         @RequestParam(value = "eventType") String eventType,
                                         @RequestParam(value = "content") String content,
                                         @RequestParam(value = "toOid") String toOid,
-                                        @RequestParam(value = "eventNo") String eventNo);
+                                        @RequestParam(value = "eventNo") String eventNo,
+                                        @RequestParam(value = "bussInfoId") String bussInfoId);
 
     @PostMapping("/myEventList")
     public ApiResult myEventList(@RequestParam(value = "oid") String oid);
@@ -336,37 +342,37 @@ public interface AppUserService {
         }
 
         @Override
-        public ApiResult doGenEvent(String oid, String eventType, String content) {
+        public ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult genEvent(String oid, String eventType, String content) {
+        public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult doEvent(String oid, String eventType, String content, String genOid, String eventNo) {
+        public ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo) {
+        public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult pushEvent(String oid, String eventType, String content, String targetOid, String eventNo) {
+        public ApiResult pushEvent(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult pushTask(String oid, String eventType, String content, String targetOid, String eventNo) {
+        public ApiResult pushTask(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String toOid, String eventNo) {
+        public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String toOid, String eventNo, String bussInfoId) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

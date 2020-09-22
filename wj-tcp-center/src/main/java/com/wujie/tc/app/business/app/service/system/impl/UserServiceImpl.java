@@ -85,6 +85,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResult sendAtTask(String oid, String at) {
+
+        log.info("tcp服务接收到at="+at);
         Map<String, Channel> map = channelManager.deviceChannels;
         Channel channel = map.get(oid);
         if(channel != null){
