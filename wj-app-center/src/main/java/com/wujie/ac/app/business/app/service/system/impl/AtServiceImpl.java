@@ -65,7 +65,7 @@ public class AtServiceImpl implements AtService {
     @Override
     public ApiResult doAtTask(String tx) {
         try {
-            log.debug("接收到的at为:" + tx);
+            log.error("接收到的at为:" + tx);
             if (tx == null || "".equals(tx))
                 return ApiResult.error("传输的数据错误！数据为：" + tx);
 

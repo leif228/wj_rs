@@ -7,13 +7,15 @@ import com.wujie.tc.netty.pojo.Sen_i;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.UnsupportedEncodingException;
+
 @Slf4j
 public class Sen_1000_0000 implements Sen_i {
     public static final byte[] main = new byte[]{0x10, 0x00};
     public static final byte[] sub = new byte[]{0x00, 0x00};
 
     @Override
-    public WjProtocol generateWj(BaseTask baseTask) {
+    public WjProtocol generateWj(BaseTask baseTask) throws UnsupportedEncodingException {
         WjProtocol wjProtocol = new WjProtocol();
         wjProtocol.setPlat(new byte[]{0x20, 0x00});
         wjProtocol.setMaincmd(main);
@@ -27,7 +29,7 @@ public class Sen_1000_0000 implements Sen_i {
             AtTask atTask = (AtTask) baseTask;
 
             log.debug("at=" + atTask.getAt());
-            objectBytes = atTask.getAt().getBytes();
+            objectBytes = atTask.getAt().getBytes("UTF-8");
 
             len = objectBytes.length;
         }

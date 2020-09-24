@@ -5,12 +5,14 @@ import com.wujie.tc.netty.pojo.BaseTask;
 import com.wujie.tc.netty.pojo.Sen_i;
 import com.wujie.tc.netty.protocol.WjProtocol;
 
+import java.io.UnsupportedEncodingException;
+
 public class Sen_0000_0100 implements Sen_i {
     public static final byte[] main = new byte[]{0x00, 0x00};
     public static final byte[] sub = new byte[]{0x01, 0x00};
 
     @Override
-    public WjProtocol generateWj(BaseTask baseTask) {
+    public WjProtocol generateWj(BaseTask baseTask) throws UnsupportedEncodingException {
         WjProtocol wjProtocol = new WjProtocol();
         wjProtocol.setPlat(new byte[]{0x20, 0x00});
         wjProtocol.setMaincmd(main);

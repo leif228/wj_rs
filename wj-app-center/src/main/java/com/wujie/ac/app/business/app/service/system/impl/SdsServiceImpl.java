@@ -226,17 +226,18 @@ public class SdsServiceImpl implements SdsService {
                         }
                     }
                 }
-                //推送到自己的设备,刷新chat页面
+                //推送到产生事件的设备,刷新事件产生设备chat页面
                 if(true){
                     String relation = "";
-                    if(oid.length()>22){
-                        relation = oid.substring(0,22);
+                    if(sdsEventPersonRecord.getGenOid().length()>22){
+                        relation = sdsEventPersonRecord.getGenOid().substring(0,22);
                     }else{
-                        relation = oid;
+                        relation = sdsEventPersonRecord.getGenOid();
                     }
-
-                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
-                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                    //TODO 可以优化，因为已经是在事件产生的服务器了，不用在查找ip
+//                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
+//                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                      pushTask(oid,eventType,content,eventNo,relation,bussInfoId);
                 }
             } catch (Exception e) {
                 //不处理
@@ -289,7 +290,7 @@ public class SdsServiceImpl implements SdsService {
 
             if ("A001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
 
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
+                return atService.sendAt("N", toOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
             }else if("E001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())){
                 ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
                 manageChatMsgAtParam.setMsg(content);
@@ -297,7 +298,7 @@ public class SdsServiceImpl implements SdsService {
                 manageChatMsgAtParam.setEventNo(eventNo);
 
                 String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
+                return atService.sendAt("N", toOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
             }else{
                 return ApiResult.error("该业务暂时还不能处理！");
             }

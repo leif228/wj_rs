@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResult sendAtTask(String oid, String at) {
 
-        log.info("tcp服务接收到at="+at);
+        log.error("tcp服务接收到sendAtTask.at="+at);
         Map<String, Channel> map = channelManager.deviceChannels;
         Channel channel = map.get(oid);
         if(channel != null){
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
             channel.write(wjProtocol);
             channel.flush();
 
-            return ApiResult.error("成功");
+            return ApiResult.success("成功");
         }else{
             return ApiResult.error("发送失败！用户不在线！");
         }

@@ -7,6 +7,9 @@ import com.wujie.tc.netty.pojo.Rec_task_i;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.UnsupportedEncodingException;
+
 @Slf4j
 public class TaskHandler {
     AppUserService appUserService;
@@ -14,28 +17,32 @@ public class TaskHandler {
         this.appUserService = appUserService;
     }
 
-    public void doProtocol(ChannelHandlerContext ctx, WjProtocol wjProtocol) {
+    public void doProtocol(ChannelHandlerContext ctx, WjProtocol wjProtocol) throws UnsupportedEncodingException {
         JSONObject objParam = null;
         String tx = null;
 
         if (WjProtocol.FORMAT_TX.equals(wjProtocol.getFormat())) {
             if (wjProtocol.getUserdata() != null) {
 
-                String dataStr = new String(wjProtocol.getUserdata());
+                String dataStr = new String(wjProtocol.getUserdata(),"UTF-8");
                 tx = dataStr;
+
             }
         } else if (WjProtocol.FORMAT_JS.equals(wjProtocol.getFormat())) {
             if (wjProtocol.getUserdata() != null) {
 
-                String jsonStr = new String(wjProtocol.getUserdata());
+                String jsonStr = new String(wjProtocol.getUserdata(),"UTF-8");
+                log.info( "doProtocol.jsonStr=" + jsonStr);
                 objParam = JSONObject.parseObject(jsonStr);
             }
         } else if (WjProtocol.FORMAT_AT.equals(wjProtocol.getFormat())) {
             if (wjProtocol.getUserdata() != null) {
 
-                tx = new String(wjProtocol.getUserdata());
+                tx = new String(wjProtocol.getUserdata(),"UTF-8");
+
             }
         }
+        log.info( "doProtocol.tx=" + tx);
 
         //======业务处理======
 //        if (Arrays.toString(new Byte[]{0x00, 0x00}).equals(Arrays.toString(wjProtocol.getMaincmd()))

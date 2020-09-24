@@ -25,8 +25,8 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        log.debug("DecoderHandler  收到数据长度：" + in.readableBytes());
         int totalLen = in.readableBytes();
+        log.debug("DecoderHandler  收到数据长度：" + totalLen);
         if (in.readableBytes() >= WjProtocol.MIN_DATA_LEN) {
             log.debug("开始解码数据……");
             WjProtocol wjProtocol = new WjProtocol();
@@ -53,8 +53,9 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
                 int subHeaderLen = len - 8;
                 //数据可读长度必须要大于len，因为结尾还有一字节的解释标志位
                 int rr = in.readableBytes();
-                if (subHeaderLen < in.readableBytes()) {
-                    log.debug(String.format("数据长度不够，数据协议len长度为：%1$d,数据包实际可读内容为：%2$d正在等待处理拆包……", len, in.readableBytes()));
+                log.debug("数据除去头还能读的长度：" + rr);
+                if (subHeaderLen > rr) {
+                    log.debug(String.format("数据长度不够，数据协议len长度为：%1$d,数据包实际可读内容为：%2$d正在等待处理拆包……", len, rr));
                     in.resetReaderIndex();
                     /*
                      **结束解码，这种情况说明数据没有到齐，在父类ByteToMessageDecoder的callDecode中会对out和in进行判断
@@ -121,7 +122,7 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
                 taskHandler.doProtocol(ctx, wjProtocol);
             } else {
                 log.debug("开头不对，可能不是期待的客服端发送的数，将自动略过这一个字节");
-                return;
+//                return;
             }
         } else {
             log.debug("数据长度不符合要求，期待最小长度是：" + WjProtocol.MIN_DATA_LEN + " 字节");
