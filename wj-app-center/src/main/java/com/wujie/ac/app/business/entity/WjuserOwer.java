@@ -52,6 +52,9 @@ public class WjuserOwer implements Serializable {
     //
     private Integer sSort;
 
+    // trade表ids 如：1,3,34
+    private String trades;
+
     //
     private Date creatTime;
 
@@ -68,7 +71,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.userName = userName == null ? null : userName.trim();
     }
 
     public String getPassWord() {
@@ -76,7 +79,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setPassWord(String passWord) {
-        this.passWord = passWord;
+        this.passWord = passWord == null ? null : passWord.trim();
     }
 
     public String getIdcard() {
@@ -84,7 +87,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setIdcard(String idcard) {
-        this.idcard = idcard;
+        this.idcard = idcard == null ? null : idcard.trim();
     }
 
     public String getOid() {
@@ -92,7 +95,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setOid(String oid) {
-        this.oid = oid;
+        this.oid = oid == null ? null : oid.trim();
     }
 
     public String getOwerIp() {
@@ -100,7 +103,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setOwerIp(String owerIp) {
-        this.owerIp = owerIp;
+        this.owerIp = owerIp == null ? null : owerIp.trim();
     }
 
     public String getPhone() {
@@ -108,7 +111,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phone = phone == null ? null : phone.trim();
     }
 
     public String getAddr() {
@@ -116,7 +119,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setAddr(String addr) {
-        this.addr = addr;
+        this.addr = addr == null ? null : addr.trim();
     }
 
     public String getHeadIconUrl() {
@@ -124,7 +127,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setHeadIconUrl(String headIconUrl) {
-        this.headIconUrl = headIconUrl;
+        this.headIconUrl = headIconUrl == null ? null : headIconUrl.trim();
     }
 
     public String getMajor() {
@@ -132,7 +135,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setMajor(String major) {
-        this.major = major;
+        this.major = major == null ? null : major.trim();
     }
 
     public String getSex() {
@@ -140,7 +143,7 @@ public class WjuserOwer implements Serializable {
     }
 
     public void setSex(String sex) {
-        this.sex = sex;
+        this.sex = sex == null ? null : sex.trim();
     }
 
     public Integer getUserType() {
@@ -181,6 +184,14 @@ public class WjuserOwer implements Serializable {
 
     public void setsSort(Integer sSort) {
         this.sSort = sSort;
+    }
+
+    public String getTrades() {
+        return trades;
+    }
+
+    public void setTrades(String trades) {
+        this.trades = trades == null ? null : trades.trim();
     }
 
     public Date getCreatTime() {

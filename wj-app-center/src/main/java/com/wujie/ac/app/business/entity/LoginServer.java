@@ -22,6 +22,9 @@ public class LoginServer {
     private String owerServerOid;
 
     //
+    private Long tradeCodeInfoId;
+
+    //
     private Date creatTime;
 
     public Long getId() {
@@ -70,6 +73,14 @@ public class LoginServer {
 
     public void setOwerServerOid(String owerServerOid) {
         this.owerServerOid = owerServerOid == null ? null : owerServerOid.trim();
+    }
+
+    public Long getTradeCodeInfoId() {
+        return tradeCodeInfoId;
+    }
+
+    public void setTradeCodeInfoId(Long tradeCodeInfoId) {
+        this.tradeCodeInfoId = tradeCodeInfoId;
     }
 
     public Date getCreatTime() {

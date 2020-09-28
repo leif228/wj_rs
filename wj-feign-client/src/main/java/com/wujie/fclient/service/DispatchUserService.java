@@ -235,6 +235,25 @@ public interface DispatchUserService {
                             @RequestParam(value = "cmd") String cmd,
                             @RequestParam(value = "param") String param);
 
+    @PostMapping("/getClass1st")
+    public ApiResult getClass1st();
+
+    @PostMapping("/getClass2nd")
+    public ApiResult getClass2nd(@RequestParam(value = "id") Long id);
+
+    @PostMapping("/getClass3rd")
+    public ApiResult getClass3rd(@RequestParam(value = "id") Long id) ;
+    @PostMapping("/getClass4th")
+    public ApiResult getClass4th(@RequestParam(value = "id") Long id) ;
+
+    @PostMapping("/userTrade")
+    public ApiResult userTrade(@RequestParam(value = "idcard") String idcard,
+                               @RequestParam(value = "tid") String tid);
+
+    @PostMapping("/userTradeOwer")
+    public ApiResult userTradeOwer(@RequestParam(value = "idcard") String idcard,
+                                   @RequestParam(value = "tid") String tid) ;
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -411,6 +430,37 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getClass1st() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getClass2nd(Long id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getClass3rd(Long id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getClass4th(Long id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult userTrade(String idcard, String tid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+
+        }
+
+        @Override
+        public ApiResult userTradeOwer(String idcard, String tid) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

@@ -18,14 +18,15 @@
     <result column="c_sort" property="cSort" jdbcType="INTEGER" />
     <result column="a_sort" property="aSort" jdbcType="INTEGER" />
     <result column="s_sort" property="sSort" jdbcType="INTEGER" />
+    <result column="trades" property="trades" jdbcType="VARCHAR" />
     <result column="creat_time" property="creatTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_name, pass_word, idcard, oid, ower_ip, phone, addr, head_icon_url, major, 
-    sex, user_type, p_sort, c_sort, a_sort, s_sort, creat_time
+    id, user_name, pass_word, idcard, oid, ower_ip, phone, addr, head_icon_url, major,
+    sex, user_type, p_sort, c_sort, a_sort, s_sort, trades, creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from wjuser_ower
     where id = #{id,jdbcType=BIGINT}
@@ -35,18 +36,20 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.WjuserOwer" >
-    insert into wjuser_ower (id, user_name, pass_word, 
-      idcard, oid, ower_ip, 
-      phone, addr, head_icon_url, 
-      major, sex, user_type, 
-      p_sort, c_sort, a_sort, 
-      s_sort, creat_time)
-    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
-      #{idcard,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, #{owerIp,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{headIconUrl,jdbcType=VARCHAR}, 
-      #{major,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
-      #{pSort,jdbcType=INTEGER}, #{cSort,jdbcType=INTEGER}, #{aSort,jdbcType=INTEGER}, 
-      #{sSort,jdbcType=INTEGER}, #{creatTime,jdbcType=DATE})
+    insert into wjuser_ower (id, user_name, pass_word,
+    idcard, oid, ower_ip,
+    phone, addr, head_icon_url,
+    major, sex, user_type,
+    p_sort, c_sort, a_sort,
+    s_sort, trades, creat_time
+    )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR},
+    #{idcard,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, #{owerIp,jdbcType=VARCHAR},
+    #{phone,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{headIconUrl,jdbcType=VARCHAR},
+    #{major,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER},
+    #{pSort,jdbcType=INTEGER}, #{cSort,jdbcType=INTEGER}, #{aSort,jdbcType=INTEGER},
+    #{sSort,jdbcType=INTEGER}, #{trades,jdbcType=VARCHAR}, #{creatTime,jdbcType=DATE}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.WjuserOwer" >
     insert into wjuser_ower
@@ -98,6 +101,9 @@
       </if>
       <if test="sSort != null" >
         s_sort,
+      </if>
+      <if test="trades != null" >
+        trades,
       </if>
       <if test="creatTime != null" >
         creat_time,
@@ -152,6 +158,9 @@
       <if test="sSort != null" >
         #{sSort,jdbcType=INTEGER},
       </if>
+      <if test="trades != null" >
+        #{trades,jdbcType=VARCHAR},
+      </if>
       <if test="creatTime != null" >
         #{creatTime,jdbcType=DATE},
       </if>
@@ -205,6 +214,9 @@
       <if test="sSort != null" >
         s_sort = #{sSort,jdbcType=INTEGER},
       </if>
+      <if test="trades != null" >
+        trades = #{trades,jdbcType=VARCHAR},
+      </if>
       <if test="creatTime != null" >
         creat_time = #{creatTime,jdbcType=DATE},
       </if>
@@ -214,21 +226,22 @@
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.WjuserOwer" >
     update wjuser_ower
     set user_name = #{userName,jdbcType=VARCHAR},
-      pass_word = #{passWord,jdbcType=VARCHAR},
-      idcard = #{idcard,jdbcType=VARCHAR},
-      oid = #{oid,jdbcType=VARCHAR},
-      ower_ip = #{owerIp,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
-      addr = #{addr,jdbcType=VARCHAR},
-      head_icon_url = #{headIconUrl,jdbcType=VARCHAR},
-      major = #{major,jdbcType=VARCHAR},
-      sex = #{sex,jdbcType=VARCHAR},
-      user_type = #{userType,jdbcType=INTEGER},
-      p_sort = #{pSort,jdbcType=INTEGER},
-      c_sort = #{cSort,jdbcType=INTEGER},
-      a_sort = #{aSort,jdbcType=INTEGER},
-      s_sort = #{sSort,jdbcType=INTEGER},
-      creat_time = #{creatTime,jdbcType=DATE}
+    pass_word = #{passWord,jdbcType=VARCHAR},
+    idcard = #{idcard,jdbcType=VARCHAR},
+    oid = #{oid,jdbcType=VARCHAR},
+    ower_ip = #{owerIp,jdbcType=VARCHAR},
+    phone = #{phone,jdbcType=VARCHAR},
+    addr = #{addr,jdbcType=VARCHAR},
+    head_icon_url = #{headIconUrl,jdbcType=VARCHAR},
+    major = #{major,jdbcType=VARCHAR},
+    sex = #{sex,jdbcType=VARCHAR},
+    user_type = #{userType,jdbcType=INTEGER},
+    p_sort = #{pSort,jdbcType=INTEGER},
+    c_sort = #{cSort,jdbcType=INTEGER},
+    a_sort = #{aSort,jdbcType=INTEGER},
+    s_sort = #{sSort,jdbcType=INTEGER},
+    trades = #{trades,jdbcType=VARCHAR},
+    creat_time = #{creatTime,jdbcType=DATE}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

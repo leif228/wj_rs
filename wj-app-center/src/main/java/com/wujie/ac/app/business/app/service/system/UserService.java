@@ -40,4 +40,16 @@ public interface UserService {
     ApiResult userRegistOwer(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
     ResponseEntity wjhttp(byte[] data, HttpServletResponse response);
+
+    ApiResult getClass1st();
+
+    ApiResult getClass2nd(Long id);
+
+    ApiResult getClass3rd(Long id);
+
+    ApiResult getClass4th(Long id);
+
+    ApiResult userTrade(String idcard, String tid);
+
+    ApiResult userTradeOwer(String idcard, String tid);
 }

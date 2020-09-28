@@ -43,7 +43,7 @@ public class TcpClient {
                 protected void initChannel(Channel ch) throws Exception {
 //                ch.pipeline().addLast("logging",new LoggingHandler("DEBUG"));
                     //五秒没有收到消息 将IdleStateHandler 添加到 ChannelPipeline 中
-                    ch.pipeline().addLast(new IdleStateHandler(0, 0, 30));
+                    ch.pipeline().addLast(new IdleStateHandler(0, 30, 0));
                     ch.pipeline().addLast(new WjEncoderHandler());
 //                    ch.pipeline().addLast(new WjEchoHandler());
                     ch.pipeline().addLast(new WjDecoderHandler(new TaskHandler()));//解码器，接收消息时候用

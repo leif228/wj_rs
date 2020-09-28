@@ -225,4 +225,36 @@ public class UserController {
     ) {
         return dispatchUserService.seachOwerUser(oid);
     }
+
+    @PostMapping("/getClass1st")
+    public ApiResult getClass1st() {
+        return dispatchUserService.getClass1st();
+    }
+
+    @PostMapping("/getClass2nd")
+    public ApiResult getClass2nd(@RequestParam(value = "id") Long id) {
+        return dispatchUserService.getClass2nd(id);
+    }
+
+    @PostMapping("/getClass3rd")
+    public ApiResult getClass3rd(@RequestParam(value = "id") Long id) {
+        return dispatchUserService.getClass3rd(id);
+    }
+
+    @PostMapping("/getClass4th")
+    public ApiResult getClass4th(@RequestParam(value = "id") Long id) {
+        return dispatchUserService.getClass4th(id);
+    }
+
+    @PostMapping("/userTrade")
+    public ApiResult userTrade(@RequestParam(value = "tid") String tid) {
+        UserDetailsVo userInfo = SecurityUtil.getUserInfo();
+        return dispatchUserService.userTrade(userInfo.getIdcard(),tid);
+    }
+
+    @PostMapping("/userTradeOwer")
+    public ApiResult userTradeOwer(@RequestParam(value = "idcard") String idcard,
+                                   @RequestParam(value = "tid") String tid) {
+        return dispatchUserService.userTradeOwer(idcard, tid);
+    }
 }

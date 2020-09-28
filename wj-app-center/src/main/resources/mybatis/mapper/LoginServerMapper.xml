@@ -8,13 +8,15 @@
     <result column="server_port" property="serverPort" jdbcType="VARCHAR" />
     <result column="server_oid" property="serverOid" jdbcType="VARCHAR" />
     <result column="ower_server_oid" property="owerServerOid" jdbcType="VARCHAR" />
+    <result column="trade_code_info_id" property="tradeCodeInfoId" jdbcType="BIGINT" />
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, oid, server_ip, server_port, server_oid, ower_server_oid, creat_time
+    id, oid, server_ip, server_port, server_oid, ower_server_oid, trade_code_info_id,
+    creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from login_server
     where id = #{id,jdbcType=BIGINT}
@@ -24,20 +26,14 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.LoginServer" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into login_server (id, oid, server_ip, 
-      server_port, server_oid, ower_server_oid, 
-      creat_time)
-    values (#{id,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR}, #{serverIp,jdbcType=VARCHAR}, 
-      #{serverPort,jdbcType=VARCHAR}, #{serverOid,jdbcType=VARCHAR}, #{owerServerOid,jdbcType=VARCHAR}, 
-      #{creatTime,jdbcType=TIMESTAMP})
+    insert into login_server (id, oid, server_ip,
+    server_port, server_oid, ower_server_oid,
+    trade_code_info_id, creat_time)
+    values (#{id,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR}, #{serverIp,jdbcType=VARCHAR},
+    #{serverPort,jdbcType=VARCHAR}, #{serverOid,jdbcType=VARCHAR}, #{owerServerOid,jdbcType=VARCHAR},
+    #{tradeCodeInfoId,jdbcType=BIGINT}, #{creatTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.LoginServer" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into login_server
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -57,6 +53,9 @@
       </if>
       <if test="owerServerOid != null" >
         ower_server_oid,
+      </if>
+      <if test="tradeCodeInfoId != null" >
+        trade_code_info_id,
       </if>
       <if test="creatTime != null" >
         creat_time,
@@ -81,6 +80,9 @@
       <if test="owerServerOid != null" >
         #{owerServerOid,jdbcType=VARCHAR},
       </if>
+      <if test="tradeCodeInfoId != null" >
+        #{tradeCodeInfoId,jdbcType=BIGINT},
+      </if>
       <if test="creatTime != null" >
         #{creatTime,jdbcType=TIMESTAMP},
       </if>
@@ -104,6 +106,9 @@
       <if test="owerServerOid != null" >
         ower_server_oid = #{owerServerOid,jdbcType=VARCHAR},
       </if>
+      <if test="tradeCodeInfoId != null" >
+        trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+      </if>
       <if test="creatTime != null" >
         creat_time = #{creatTime,jdbcType=TIMESTAMP},
       </if>
@@ -113,11 +118,12 @@
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.LoginServer" >
     update login_server
     set oid = #{oid,jdbcType=VARCHAR},
-      server_ip = #{serverIp,jdbcType=VARCHAR},
-      server_port = #{serverPort,jdbcType=VARCHAR},
-      server_oid = #{serverOid,jdbcType=VARCHAR},
-      ower_server_oid = #{owerServerOid,jdbcType=VARCHAR},
-      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    server_ip = #{serverIp,jdbcType=VARCHAR},
+    server_port = #{serverPort,jdbcType=VARCHAR},
+    server_oid = #{serverOid,jdbcType=VARCHAR},
+    ower_server_oid = #{owerServerOid,jdbcType=VARCHAR},
+    trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+    creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

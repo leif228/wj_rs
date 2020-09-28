@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.EventtypeTradecodeMdInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.EventtypeTradecodeMdInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="event_type_info_id" property="eventTypeInfoId" jdbcType="BIGINT" />
+    <result column="trade_code_info_id" property="tradeCodeInfoId" jdbcType="BIGINT" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, event_type_info_id, trade_code_info_id, creat_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from eventtype_tradecode_md_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from eventtype_tradecode_md_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.EventtypeTradecodeMdInfo" >
+    insert into eventtype_tradecode_md_info (id, event_type_info_id, trade_code_info_id, 
+      creat_time)
+    values (#{id,jdbcType=BIGINT}, #{eventTypeInfoId,jdbcType=BIGINT}, #{tradeCodeInfoId,jdbcType=BIGINT}, 
+      #{creatTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.EventtypeTradecodeMdInfo" >
+    insert into eventtype_tradecode_md_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id,
+      </if>
+      <if test="tradeCodeInfoId != null" >
+        trade_code_info_id,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="eventTypeInfoId != null" >
+        #{eventTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="tradeCodeInfoId != null" >
+        #{tradeCodeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.EventtypeTradecodeMdInfo" >
+    update eventtype_tradecode_md_info
+    <set >
+      <if test="eventTypeInfoId != null" >
+        event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="tradeCodeInfoId != null" >
+        trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.EventtypeTradecodeMdInfo" >
+    update eventtype_tradecode_md_info
+    set event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
+      trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+
+</mapper>

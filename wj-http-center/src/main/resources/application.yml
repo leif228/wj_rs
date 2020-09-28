@@ -193,6 +193,7 @@ secure:
       - /searchOwerUserInfo
       - /atTask
       - /areaServiceAndSend
+      - /userTradeOwer
 
 
 

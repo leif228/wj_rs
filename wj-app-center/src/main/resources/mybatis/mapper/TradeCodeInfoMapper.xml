@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.ac.app.business.repository.TradeCodeInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.common.dto.wj.TradeCodeInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="class_1st" property="class1st" jdbcType="VARCHAR" />
+    <result column="class_2nd" property="class2nd" jdbcType="VARCHAR" />
+    <result column="class_3rd" property="class3rd" jdbcType="VARCHAR" />
+    <result column="class_4th" property="class4th" jdbcType="VARCHAR" />
+    <result column="trade_code" property="tradeCode" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="explain" property="explain" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, class_1st, class_2nd, class_3rd, class_4th, trade_code, class_name, explain
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_code_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trade_code_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.common.dto.wj.TradeCodeInfo" >
+    insert into trade_code_info (id, class_1st, class_2nd,
+    class_3rd, class_4th, trade_code,
+    class_name, explain)
+    values (#{id,jdbcType=BIGINT}, #{class1st,jdbcType=VARCHAR}, #{class2nd,jdbcType=VARCHAR},
+    #{class3rd,jdbcType=VARCHAR}, #{class4th,jdbcType=VARCHAR}, #{tradeCode,jdbcType=VARCHAR},
+    #{className,jdbcType=VARCHAR}, #{explain,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.common.dto.wj.TradeCodeInfo" >
+    insert into trade_code_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="class1st != null" >
+        class_1st,
+      </if>
+      <if test="class2nd != null" >
+        class_2nd,
+      </if>
+      <if test="class3rd != null" >
+        class_3rd,
+      </if>
+      <if test="class4th != null" >
+        class_4th,
+      </if>
+      <if test="tradeCode != null" >
+        trade_code,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="explain != null" >
+        explain,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="class1st != null" >
+        #{class1st,jdbcType=VARCHAR},
+      </if>
+      <if test="class2nd != null" >
+        #{class2nd,jdbcType=VARCHAR},
+      </if>
+      <if test="class3rd != null" >
+        #{class3rd,jdbcType=VARCHAR},
+      </if>
+      <if test="class4th != null" >
+        #{class4th,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeCode != null" >
+        #{tradeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="explain != null" >
+        #{explain,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.common.dto.wj.TradeCodeInfo" >
+    update trade_code_info
+    <set >
+      <if test="class1st != null" >
+        class_1st = #{class1st,jdbcType=VARCHAR},
+      </if>
+      <if test="class2nd != null" >
+        class_2nd = #{class2nd,jdbcType=VARCHAR},
+      </if>
+      <if test="class3rd != null" >
+        class_3rd = #{class3rd,jdbcType=VARCHAR},
+      </if>
+      <if test="class4th != null" >
+        class_4th = #{class4th,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeCode != null" >
+        trade_code = #{tradeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="explain != null" >
+        explain = #{explain,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.common.dto.wj.TradeCodeInfo" >
+    update trade_code_info
+    set class_1st = #{class1st,jdbcType=VARCHAR},
+    class_2nd = #{class2nd,jdbcType=VARCHAR},
+    class_3rd = #{class3rd,jdbcType=VARCHAR},
+    class_4th = #{class4th,jdbcType=VARCHAR},
+    trade_code = #{tradeCode,jdbcType=VARCHAR},
+    class_name = #{className,jdbcType=VARCHAR},
+    explain = #{explain,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+  <select id="getClass1st" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_code_info
+    where class_2nd is NULL and class_3rd is NULL  and class_4th is NULL
+    order by id asc
+  </select>
+  <select id="getClass2nd" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_code_info
+    where class_2nd is not NULL and  class_3rd is NULL  and class_4th is NULL
+    and class_1st = #{class1st}
+    order by id asc
+  </select>
+  <select id="getClass3rd" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_code_info
+    where class_2nd is NULL and  class_3rd like concat(#{class2nd},'%')  and class_4th is NULL
+    and class_1st = #{class1st}
+    order by id asc
+  </select>
+  <select id="getClass4th" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_code_info
+    where class_2nd is NULL and  class_3rd  is NULL  and class_4th like concat(#{class3rd},'%')
+    and class_1st = #{class1st}
+    order by id asc
+  </select>
+</mapper>

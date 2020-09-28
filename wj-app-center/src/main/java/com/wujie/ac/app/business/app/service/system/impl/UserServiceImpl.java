@@ -2,6 +2,7 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
+import com.wujie.ac.app.business.app.service.system.TradeDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.wjhttp.*;
@@ -13,10 +14,7 @@ import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
-import com.wujie.common.dto.wj.DevtypeDto;
-import com.wujie.common.dto.wj.DriverCompDto;
-import com.wujie.common.dto.wj.OwerServiceDto;
-import com.wujie.common.dto.wj.WjuserOwerDto;
+import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,12 +47,14 @@ public class UserServiceImpl implements UserService {
     private LoginServerMapper loginServerMapper;
     private DriverCompMapper driverCompMapper;
     private NodeInfoOwerMapper nodeInfoOwerMapper;
+    private TradeDataService tradeDataService;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.tradeDataService = tradeDataService;
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
         this.wjuserOwerMapper = wjuserOwerMapper;
         this.driverCompMapper = driverCompMapper;
@@ -135,18 +133,18 @@ public class UserServiceImpl implements UserService {
             owerServiceDto.setIp(owerNodeStandby.getIp());
             owerServiceDto.setPort(owerNodeStandby.getPort());
         } else {
-            Integer pSort=0,  cSort=0,  aSort=0,  sSort=0;
+            Integer pSort = 0, cSort = 0, aSort = 0, sSort = 0;
             AreaChangSeq pd = baseDataService.sortByFzwaddr(p_acs);
-            if(pd != null)
+            if (pd != null)
                 pSort = pd.getId();
             AreaChangSeq cd = baseDataService.sortByFzwaddr(c_acs);
-            if(cd != null)
+            if (cd != null)
                 cSort = cd.getId();
             AreaChangSeq ad = baseDataService.sortByFzwaddr(a_acs);
-            if(ad != null)
+            if (ad != null)
                 aSort = ad.getId();
             AreaChangSeq sd = baseDataService.sortByFzwaddr(s_acs);
-            if(sd != null)
+            if (sd != null)
                 sSort = sd.getId();
 
             //查找归属地管理服务器
@@ -169,11 +167,11 @@ public class UserServiceImpl implements UserService {
             return ApiResult.error("oid参数错误！oid=" + oid);
 
         WjuserOwer wjuserOwer = wjuserOwerMapper.findByOid(oid);
-        if(wjuserOwer == null)
+        if (wjuserOwer == null)
             return ApiResult.error("找不到用户数据！oid=" + oid);
 
         WjuserOwerDto wjuserOwerDto = new WjuserOwerDto();
-        BeanUtils.copyProperties(wjuserOwer,wjuserOwerDto);
+        BeanUtils.copyProperties(wjuserOwer, wjuserOwerDto);
 
         return ApiResult.success(wjuserOwerDto);
     }
@@ -1127,6 +1125,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ApiResult userTrade(String idcard, String tid) {
+        try {
+            Wjuser wjuser = wjuserMapper.findByIdCard(idcard);
+            this.userTradeOwerHttp(wjuser.getOwerIp(), idcard, tid);
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult userTradeOwer(String idcard, String tid) {
+        try {
+            WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idcard);
+            wjuserOwer.setTrades(tid);
+            wjuserOwerMapper.updateByPrimaryKeySelective(wjuserOwer);
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseEntity wjhttp(byte[] data, HttpServletResponse response) {
         log.debug("=====收到wjhttp的长度：" + data.length);
         log.debug("=====收到wjhttp的data：" + Arrays.toString(data));
@@ -1141,6 +1162,29 @@ public class UserServiceImpl implements UserService {
             return this.doError(response, e.getMessage());
         }
 
+    }
+
+    @Override
+    public ApiResult getClass1st() {
+        return ApiResult.success(tradeDataService.getClass1st());
+    }
+
+    @Override
+    public ApiResult getClass2nd(Long id) {
+        TradeCodeInfo tradeCodeInfo = tradeDataService.getById(id);
+        return ApiResult.success(tradeDataService.getClass2nd(tradeCodeInfo.getClass1st()));
+    }
+
+    @Override
+    public ApiResult getClass3rd(Long id) {
+        TradeCodeInfo tradeCodeInfo = tradeDataService.getById(id);
+        return ApiResult.success(tradeDataService.getClass3rd(tradeCodeInfo.getClass1st(), tradeCodeInfo.getClass2nd()));
+    }
+
+    @Override
+    public ApiResult getClass4th(Long id) {
+        TradeCodeInfo tradeCodeInfo = tradeDataService.getById(id);
+        return ApiResult.success(tradeDataService.getClass4th(tradeCodeInfo.getClass1st(), tradeCodeInfo.getClass3rd()));
     }
 
     private ResponseEntity doError(HttpServletResponse response, String msg) {
@@ -1325,6 +1369,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private void userTradeOwerHttp(String owerIp, String idcard, String tid) throws Exception {
+        String url = "http://" + owerIp + ":" + "9999/userTradeOwer";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("idcard", idcard);
+        map.put("tid", tid + "");
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+//                String data = (String) jsonObject.get(ApiResult.CONTENT);
+                log.info("++++++++++++++++请求userTradeOwer成功:");
+//                return data;
+            } else {
+                log.info("++++++++++++++++请求userTradeOwer失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("userTradeOwer失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求userTradeOwer失败:" + "连接错误");
+            throw new Exception("userTradeOwer失败:连接错误");
+        }
+    }
+
     //http去管理服务器用户注册，成功返回oid关系段
     private String userRegistOwerHttp(String ip, String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort) throws Exception {
         String url = "http://" + ip + ":" + "9999/userRegistOwer";
@@ -1348,8 +1416,8 @@ public class UserServiceImpl implements UserService {
                 log.info("++++++++++++++++请求userRegistOwer成功:" + data);
                 return data;
             } else {
-                log.info("++++++++++++++++请求userRegistOwer失败:" + "服务端错误："+jsonObject.get(ApiResult.MESSAGE));
-                throw new Exception("userRegistOwer失败：服务端错误："+jsonObject.get(ApiResult.MESSAGE));
+                log.info("++++++++++++++++请求userRegistOwer失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("userRegistOwer失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
             }
         } else {
             log.info("++++++++++++++++请求userRegistOwer失败:" + "连接错误");
@@ -1376,8 +1444,8 @@ public class UserServiceImpl implements UserService {
                 log.info("++++++++++++++++请求searchNodeHttpr成功:" + data.toString());
                 return deviceVo;
             } else {
-                log.info("++++++++++++++++请求searchNodeHttp失败:" + "服务端错误："+jsonObject.get(ApiResult.MESSAGE));
-                throw new Exception("searchNodeHttp失败：服务端错误："+jsonObject.get(ApiResult.MESSAGE));
+                log.info("++++++++++++++++请求searchNodeHttp失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchNodeHttp失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
             }
         } else {
             log.info("++++++++++++++++请求searchNodeHttp失败:" + "连接错误");
