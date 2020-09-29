@@ -8,12 +8,11 @@
     <result column="server_port" property="serverPort" jdbcType="VARCHAR" />
     <result column="server_oid" property="serverOid" jdbcType="VARCHAR" />
     <result column="ower_server_oid" property="owerServerOid" jdbcType="VARCHAR" />
-    <result column="trade_code_info_id" property="tradeCodeInfoId" jdbcType="BIGINT" />
+    <result column="trades" property="trades" jdbcType="VARCHAR" />
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, oid, server_ip, server_port, server_oid, ower_server_oid, trade_code_info_id,
-    creat_time
+    id, oid, server_ip, server_port, server_oid, ower_server_oid, trades, creat_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
@@ -28,10 +27,10 @@
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.LoginServer" >
     insert into login_server (id, oid, server_ip,
     server_port, server_oid, ower_server_oid,
-    trade_code_info_id, creat_time)
+    trades, creat_time)
     values (#{id,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR}, #{serverIp,jdbcType=VARCHAR},
     #{serverPort,jdbcType=VARCHAR}, #{serverOid,jdbcType=VARCHAR}, #{owerServerOid,jdbcType=VARCHAR},
-    #{tradeCodeInfoId,jdbcType=BIGINT}, #{creatTime,jdbcType=TIMESTAMP})
+    #{trades,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.LoginServer" >
     insert into login_server
@@ -54,8 +53,8 @@
       <if test="owerServerOid != null" >
         ower_server_oid,
       </if>
-      <if test="tradeCodeInfoId != null" >
-        trade_code_info_id,
+      <if test="trades != null" >
+        trades,
       </if>
       <if test="creatTime != null" >
         creat_time,
@@ -80,8 +79,8 @@
       <if test="owerServerOid != null" >
         #{owerServerOid,jdbcType=VARCHAR},
       </if>
-      <if test="tradeCodeInfoId != null" >
-        #{tradeCodeInfoId,jdbcType=BIGINT},
+      <if test="trades != null" >
+        #{trades,jdbcType=VARCHAR},
       </if>
       <if test="creatTime != null" >
         #{creatTime,jdbcType=TIMESTAMP},
@@ -106,8 +105,8 @@
       <if test="owerServerOid != null" >
         ower_server_oid = #{owerServerOid,jdbcType=VARCHAR},
       </if>
-      <if test="tradeCodeInfoId != null" >
-        trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+      <if test="trades != null" >
+        trades = #{trades,jdbcType=VARCHAR},
       </if>
       <if test="creatTime != null" >
         creat_time = #{creatTime,jdbcType=TIMESTAMP},
@@ -122,7 +121,7 @@
     server_port = #{serverPort,jdbcType=VARCHAR},
     server_oid = #{serverOid,jdbcType=VARCHAR},
     ower_server_oid = #{owerServerOid,jdbcType=VARCHAR},
-    trade_code_info_id = #{tradeCodeInfoId,jdbcType=BIGINT},
+    trades = #{trades,jdbcType=VARCHAR},
     creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

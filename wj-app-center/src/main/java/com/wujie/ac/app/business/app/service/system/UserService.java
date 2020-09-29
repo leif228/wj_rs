@@ -52,4 +52,6 @@ public interface UserService {
     ApiResult userTrade(String idcard, String tid);
 
     ApiResult userTradeOwer(String idcard, String tid);
+
+    ApiResult updataWjuserTrade(String relation, String trades);
 }

@@ -16,6 +16,7 @@ import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.utils.CalendarUtil;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -48,12 +49,14 @@ public class UserServiceImpl implements UserService {
     private DriverCompMapper driverCompMapper;
     private NodeInfoOwerMapper nodeInfoOwerMapper;
     private TradeDataService tradeDataService;
+    private WjuserTradeMapper wjuserTradeMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.wjuserTradeMapper = wjuserTradeMapper;
         this.tradeDataService = tradeDataService;
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
         this.wjuserOwerMapper = wjuserOwerMapper;
@@ -387,33 +390,33 @@ public class UserServiceImpl implements UserService {
         if (wjuserOwer == null)
             return ApiResult.error("注册失败！没有用户信息！");
 
-        DeviceVo deviceVo = new DeviceVo();
-
-        //查归属服务器
-        NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
-        deviceVo.setOwerIp(nodeInfoOwer.getIp());
-        deviceVo.setOwerPort(nodeInfoOwer.getPort());
-        deviceVo.setOwerFzwno(nodeInfoOwer.getFzwno());
-
-        DeviceVo preDeviceVo = null;
-        //查区域服务器
         try {
-            preDeviceVo = this.searchNodeHttp(rootIp, pSort, cSort, aSort, sSort);
+            DeviceVo deviceVo = new DeviceVo();
+
+            //查归属服务器
+            NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
+            deviceVo.setOwerIp(nodeInfoOwer.getIp());
+            deviceVo.setOwerPort(nodeInfoOwer.getPort());
+            deviceVo.setOwerFzwno(nodeInfoOwer.getFzwno());
+
+            //查区域服务器
+            DeviceVo preDeviceVo = this.searchNodeHttp(rootIp, pSort, cSort, aSort, sSort);
+
+//        deviceVo.setParentNodeId(preNodeStandby.getNodeId());
+            deviceVo.setIp(preDeviceVo.getIp());
+            deviceVo.setPort(preDeviceVo.getPort());
+            deviceVo.setLoginFzwno(preDeviceVo.getLoginFzwno());
+
+            ApiResult apiResult = this.genAndSaveFullFzwno(wjuserOwer.getOid(), Integer.valueOf(deviceSelected), deviceName);
+            if (!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
+                return apiResult;
+
+            deviceVo.setFzwno((String) apiResult.get(ApiResult.CONTENT));
+
+            return ApiResult.success("注册成功！", deviceVo);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
-//        deviceVo.setParentNodeId(preNodeStandby.getNodeId());
-        deviceVo.setIp(preDeviceVo.getIp());
-        deviceVo.setPort(preDeviceVo.getPort());
-        deviceVo.setLoginFzwno(preDeviceVo.getLoginFzwno());
-
-        ApiResult apiResult = this.genAndSaveFullFzwno(wjuserOwer.getOid(), Integer.valueOf(deviceSelected), deviceName);
-        if (!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
-            return apiResult;
-
-        deviceVo.setFzwno((String) apiResult.get(ApiResult.CONTENT));
-
-        return ApiResult.success("注册成功！", deviceVo);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -1187,6 +1190,30 @@ public class UserServiceImpl implements UserService {
         return ApiResult.success(tradeDataService.getClass4th(tradeCodeInfo.getClass1st(), tradeCodeInfo.getClass3rd()));
     }
 
+    @Override
+    public ApiResult updataWjuserTrade(String relation, String trades) {
+        try {
+            WjuserTrade wjuserTrade = wjuserTradeMapper.findByOid(relation);
+            if (wjuserTrade == null) {
+                wjuserTrade = new WjuserTrade();
+                wjuserTrade.setOid(relation);
+                wjuserTrade.setTrades(trades);
+                wjuserTrade.setUpdataTime(DateUtil.getDate());
+
+                wjuserTradeMapper.insertSelective(wjuserTrade);
+            } else {
+                wjuserTrade.setTrades(trades);
+                wjuserTrade.setUpdataTime(DateUtil.getDate());
+
+                wjuserTradeMapper.updateByPrimaryKeySelective(wjuserTrade);
+            }
+            return ApiResult.success();
+        } catch (Exception e) {
+            log.debug("updataWjuserTrade_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
     private ResponseEntity doError(HttpServletResponse response, String msg) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -1241,6 +1268,9 @@ public class UserServiceImpl implements UserService {
                 loginServer.setCreatTime(DateUtil.getDate());
 
                 loginServerMapper.insertSelective(loginServer);
+
+                //在区域服务器，新增或者更新用户行业信息
+                this.doUpdataWjuserTrade(loginServer.getServerIp(), loginServer.getOid());
             }
 
             HttpHeaders headers = new HttpHeaders();
@@ -1254,6 +1284,17 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             log.debug("TaskHandler.doProtocol_报错了:" + e.getMessage());
             throw new Exception("TaskHandler.doProtocol_报错了:" + e.getMessage());
+        }
+    }
+
+    //在区域服务器，新增或者更新用户行业信息
+    private void doUpdataWjuserTrade(String ip, String oid) {
+        try {
+            String relation = oid.substring(0, 22);
+            WjuserOwer wjuserOwer = wjuserOwerMapper.findByOid(relation);
+            this.updataWjuserTradeHttp(ip, oid, wjuserOwer.getTrades());
+        } catch (Exception e) {
+            log.error("updataWjuserTrade_报错了:" + e.getMessage());
         }
     }
 
@@ -1366,6 +1407,30 @@ public class UserServiceImpl implements UserService {
 
             throw new Exception("数据长度不符合要求，期待最小长度是：" + WjProtocol.MIN_DATA_LEN + " 字节");
 //            return;
+        }
+    }
+
+    private void updataWjuserTradeHttp(String ip, String relation, String trades) throws Exception {
+        String url = "http://" + ip + ":" + "9999/updataWjuserTrade";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("relation", relation);
+        map.put("trades", trades);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+//                String data = (String) jsonObject.get(ApiResult.CONTENT);
+                log.info("++++++++++++++++请求updataWjuserTrade成功:");
+//                return data;
+            } else {
+                log.info("++++++++++++++++请求updataWjuserTrade失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("updataWjuserTrade失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求updataWjuserTrade失败:" + "连接错误");
+            throw new Exception("updataWjuserTrade失败:连接错误");
         }
     }
 

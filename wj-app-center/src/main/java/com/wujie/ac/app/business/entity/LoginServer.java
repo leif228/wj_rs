@@ -21,8 +21,8 @@ public class LoginServer {
     //
     private String owerServerOid;
 
-    //
-    private Long tradeCodeInfoId;
+    // trade表ids 如：1,3,34
+    private String trades;
 
     //
     private Date creatTime;
@@ -75,12 +75,12 @@ public class LoginServer {
         this.owerServerOid = owerServerOid == null ? null : owerServerOid.trim();
     }
 
-    public Long getTradeCodeInfoId() {
-        return tradeCodeInfoId;
+    public String getTrades() {
+        return trades;
     }
 
-    public void setTradeCodeInfoId(Long tradeCodeInfoId) {
-        this.tradeCodeInfoId = tradeCodeInfoId;
+    public void setTrades(String trades) {
+        this.trades = trades == null ? null : trades.trim();
     }
 
     public Date getCreatTime() {

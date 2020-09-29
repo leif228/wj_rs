@@ -82,5 +82,11 @@
 
 
 
+  <select id="findByEventId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from eventtype_tradecode_md_info
+    where event_type_info_id = #{eventTypeInfoId}
+  </select>
 
 </mapper>

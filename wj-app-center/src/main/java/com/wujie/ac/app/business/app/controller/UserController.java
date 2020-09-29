@@ -236,4 +236,10 @@ public class UserController {
                                @RequestParam(value = "tid") String tid) {
         return userService.userTradeOwer(idcard, tid);
     }
+
+    @PostMapping("/updataWjuserTrade")
+    public ApiResult updataWjuserTrade(@RequestParam(value = "relation") String relation,
+                               @RequestParam(value = "trades") String trades) {
+        return userService.updataWjuserTrade(relation, trades);
+    }
 }

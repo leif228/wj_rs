@@ -1,6 +1,7 @@
 package com.wujie.ac.app.business.app.controller;
 
 import com.wujie.ac.app.business.app.service.system.BaseDataService;
+import com.wujie.ac.app.business.app.service.system.TradeDataService;
 import com.wujie.ac.app.business.app.service.system.UserService;
 import com.wujie.common.base.ApiResult;
 import com.wujie.fclient.service.HttpUserService;
@@ -122,8 +123,8 @@ public class UserController {
     @PostMapping("/wjhttp")
     public ResponseEntity wjhttp(@RequestBody byte[] data
     ) {
-        HttpServletResponse response =((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-        return userService.wjhttp(data,response);
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        return userService.wjhttp(data, response);
     }
 
     @PostMapping("/deviceComp")
@@ -202,5 +203,43 @@ public class UserController {
     public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
     ) {
         return userService.seachOwerUser(oid);
+    }
+
+    @PostMapping("/getClass1st")
+    public ApiResult getClass1st() {
+        return userService.getClass1st();
+    }
+
+    @PostMapping("/getClass2nd")
+    public ApiResult getClass2nd(@RequestParam(value = "id") Long id) {
+        return userService.getClass2nd(id);
+    }
+
+    @PostMapping("/getClass3rd")
+    public ApiResult getClass3rd(@RequestParam(value = "id") Long id) {
+        return userService.getClass3rd(id);
+    }
+
+    @PostMapping("/getClass4th")
+    public ApiResult getClass4th(@RequestParam(value = "id") Long id) {
+        return userService.getClass4th(id);
+    }
+
+    @PostMapping("/userTrade")
+    public ApiResult userTrade(@RequestParam(value = "idcard") String idcard,
+                               @RequestParam(value = "tid") String tid) {
+        return userService.userTrade(idcard, tid);
+    }
+
+    @PostMapping("/userTradeOwer")
+    public ApiResult userTradeOwer(@RequestParam(value = "idcard") String idcard,
+                               @RequestParam(value = "tid") String tid) {
+        return userService.userTradeOwer(idcard, tid);
+    }
+
+    @PostMapping("/updataWjuserTrade")
+    public ApiResult updataWjuserTrade(@RequestParam(value = "relation") String relation,
+                               @RequestParam(value = "trades") String trades) {
+        return userService.updataWjuserTrade(relation, trades);
     }
 }

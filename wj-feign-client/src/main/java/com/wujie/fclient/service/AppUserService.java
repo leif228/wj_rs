@@ -263,6 +263,10 @@ public interface AppUserService {
     public ApiResult userTradeOwer(@RequestParam(value = "idcard") String idcard,
                                    @RequestParam(value = "tid") String tid);
 
+    @PostMapping("/updataWjuserTrade")
+    public ApiResult updataWjuserTrade(@RequestParam(value = "relation") String relation,
+                                       @RequestParam(value = "trades") String trades);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -478,6 +482,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult userTradeOwer(String idcard, String tid) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult updataWjuserTrade(String relation, String trades) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

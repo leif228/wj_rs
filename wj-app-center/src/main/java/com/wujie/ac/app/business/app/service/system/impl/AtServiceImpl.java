@@ -2,9 +2,7 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.google.gson.Gson;
 import com.wujie.ac.app.business.app.service.system.AtService;
-import com.wujie.ac.app.business.entity.BussInfo;
-import com.wujie.ac.app.business.entity.EventtypeBussMdInfo;
-import com.wujie.ac.app.business.entity.SdsEventPersonRecord;
+import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.NumConvertUtil;
@@ -38,14 +36,18 @@ public class AtServiceImpl implements AtService {
     private EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper;
     private SdsServiceImpl sdsService;
     private TcpUserService tcpUserService;
+    private EventtypeTradecodeMdInfoMapper eventtypeTradecodeMdInfoMapper;
+    private WjuserTradeMapper wjuserTradeMapper;
 
     public static final String HEARD = "AT@";
     public static final String END = "#*";
 
     @Autowired
-    public AtServiceImpl(TcpUserService tcpUserService,SdsServiceImpl sdsService,EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper,BussInfoMapper bussInfoMapper,FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
+    public AtServiceImpl(WjuserTradeMapper wjuserTradeMapper,EventtypeTradecodeMdInfoMapper eventtypeTradecodeMdInfoMapper,TcpUserService tcpUserService,SdsServiceImpl sdsService,EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper,BussInfoMapper bussInfoMapper,FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
                          SdsEventTypeInfoMapper sdsEventTypeInfoMapper, SdsPercomRelationMapper sdsPercomRelationMapper, SdsRelationTypeInfoMapper sdsRelationTypeInfoMapper,
                          WjuserOwerMapper wjuserOwerMapper) {
+        this.wjuserTradeMapper = wjuserTradeMapper;
+        this.eventtypeTradecodeMdInfoMapper = eventtypeTradecodeMdInfoMapper;
         this.tcpUserService = tcpUserService;
         this.sdsService = sdsService;
         this.eventtypeBussMdInfoMapper = eventtypeBussMdInfoMapper;
@@ -155,7 +157,10 @@ public class AtServiceImpl implements AtService {
     }
 
     private void doAtTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
-        //查找oid归属服务器
+        //在区域服务器，处理与行业相关的任务推送
+        //this.doTradeTask(flag,oid,pri,buss,port,cmd,param);
+
+        //查找oid归属服务器,处理用户关系相关的任务推送
         OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
 
         this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);

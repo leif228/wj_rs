@@ -23,7 +23,7 @@ public class TradeCodeInfo {
     private String className;
 
     //
-    private String explain;
+    private String explains;
 
     public Long getId() {
         return id;
@@ -81,11 +81,11 @@ public class TradeCodeInfo {
         this.className = className == null ? null : className.trim();
     }
 
-    public String getExplain() {
-        return explain;
+    public String getExplains() {
+        return explains;
     }
 
-    public void setExplain(String explain) {
-        this.explain = explain == null ? null : explain.trim();
+    public void setExplains(String explains) {
+        this.explains = explains == null ? null : explains.trim();
     }
 }

@@ -193,6 +193,8 @@ secure:
       - /searchOwerUserInfo
       - /atTask
       - /areaServiceAndSend
+      - /userTradeOwer
+      - /updataWjuserTrade
 
 
 

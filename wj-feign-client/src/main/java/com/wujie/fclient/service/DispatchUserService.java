@@ -254,6 +254,10 @@ public interface DispatchUserService {
     public ApiResult userTradeOwer(@RequestParam(value = "idcard") String idcard,
                                    @RequestParam(value = "tid") String tid) ;
 
+    @PostMapping("/updataWjuserTrade")
+    public ApiResult updataWjuserTrade(@RequestParam(value = "relation") String relation,
+                                       @RequestParam(value = "trades") String trades);
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -461,6 +465,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult userTradeOwer(String idcard, String tid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult updataWjuserTrade(String relation, String trades) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
