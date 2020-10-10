@@ -15,4 +15,6 @@ public interface SdsEventRelationMapper {
     int updateByPrimaryKeySelective(SdsEventRelation record);
 
     int updateByPrimaryKey(SdsEventRelation record);
+
+    SdsEventRelation findByEventNo(String eventNo);
 }

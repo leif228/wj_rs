@@ -195,6 +195,7 @@ secure:
       - /areaServiceAndSend
       - /userTradeOwer
       - /updataWjuserTrade
+      - /tradeTaskAtAreaSev
 
 
 

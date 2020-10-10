@@ -8,7 +8,9 @@ public interface SdsService {
 
     ApiResult genEvent(String oid, String eventType, String content, String bussInfoId);
 
-//    @Transactional(rollbackFor = Exception.class)
+    ApiResult tradeTaskAtAreaSev(String eventNo, String oid, String eventType, String content, String bussInfoId);
+
+    //    @Transactional(rollbackFor = Exception.class)
     ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId);
 
     ApiResult getRelationTypes();

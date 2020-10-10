@@ -13,6 +13,9 @@ public class SdsEventRelation {
     private String eventRelationJson;
 
     //
+    private String eventTradeOids;
+
+    //
     private String status;
 
     //
@@ -40,6 +43,14 @@ public class SdsEventRelation {
 
     public void setEventRelationJson(String eventRelationJson) {
         this.eventRelationJson = eventRelationJson == null ? null : eventRelationJson.trim();
+    }
+
+    public String getEventTradeOids() {
+        return eventTradeOids;
+    }
+
+    public void setEventTradeOids(String eventTradeOids) {
+        this.eventTradeOids = eventTradeOids == null ? null : eventTradeOids.trim();
     }
 
     public String getStatus() {

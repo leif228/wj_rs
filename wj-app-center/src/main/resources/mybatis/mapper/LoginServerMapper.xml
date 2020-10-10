@@ -127,7 +127,7 @@
   </update>
 
 
-  <select id="findByOid" resultMap="BaseResultMap" >
+  <select id="findLastByOid" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
     from login_server

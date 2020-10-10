@@ -133,4 +133,13 @@ public class SdsController {
                             @RequestParam(value = "param") String param) {
         return sdsService.atTask( flag,  oid,  pri,  buss,  port,  cmd,  param);
     }
+
+    @PostMapping("/tradeTaskAtAreaSev")
+    public ApiResult tradeTaskAtAreaSev(@RequestParam(value = "eventNo") String eventNo,
+                                        @RequestParam(value = "oid") String oid,
+                                        @RequestParam(value = "eventType") String eventType,
+                                        @RequestParam(value = "content") String content,
+                                        @RequestParam(value = "bussInfoId") String bussInfoId) {
+        return sdsService.tradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
+    }
 }
