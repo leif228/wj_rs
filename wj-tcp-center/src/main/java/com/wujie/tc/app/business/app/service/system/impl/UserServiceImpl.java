@@ -95,14 +95,16 @@ public class UserServiceImpl implements UserService {
 
             WjProtocol wjProtocol = Sen_factory.getInstance(Sen_1000_0000.main, Sen_1000_0000.sub,atTask);
             if(wjProtocol == null)
-                return ApiResult.error("发送失败！服务端错误！");
+                return ApiResult.error("发送失败！服务端错误！oid="+oid);
 
             channel.write(wjProtocol);
             channel.flush();
 
-            return ApiResult.success("成功");
+            log.error("+++++++++++++++++sendAtTask成功oid="+oid);
+            return ApiResult.success("成功oid="+oid);
         }else{
-            return ApiResult.error("发送失败！用户不在线！");
+            log.error("+++++++++++++++++sendAtTask失败oid="+oid);
+            return ApiResult.error("发送失败！用户不在线！oid="+oid);
         }
 
     }

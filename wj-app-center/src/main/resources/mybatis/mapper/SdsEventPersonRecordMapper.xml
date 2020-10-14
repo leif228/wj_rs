@@ -144,7 +144,7 @@
     order by id desc limit 0,1
   </select>
 
-  <select id="findByEventNo" resultMap="BaseResultMap">
+  <select id="findOneByEventNo" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from sds_event_person_record

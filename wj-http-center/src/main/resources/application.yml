@@ -196,6 +196,8 @@ secure:
       - /userTradeOwer
       - /updataWjuserTrade
       - /tradeTaskAtAreaSev
+      - /tradeTaskAtAreaSevAtArea
+      - /updataSdsEventRelation
 
 
 

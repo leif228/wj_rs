@@ -25,5 +25,5 @@ public interface SdsEventPersonRecordMapper {
 
     SdsEventPersonRecord findMaxByGenOidAndEventTypeId(String genOid, Long eventTypeInfoId);
 
-    SdsEventPersonRecord findByEventNo(String eventNo);
+    SdsEventPersonRecord findOneByEventNo(String eventNo);
 }

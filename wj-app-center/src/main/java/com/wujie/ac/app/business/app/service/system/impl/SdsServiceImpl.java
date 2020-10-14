@@ -2,6 +2,8 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
+import com.wujie.ac.app.async.AsyncManager;
+import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.SdsService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
@@ -176,7 +178,55 @@ public class SdsServiceImpl implements SdsService {
             //处理与行业相关的事件
             this.doTradeTask(eventNo, oid, eventType, content, bussInfoId);
 
-            return ApiResult.success("成功");
+            return ApiResult.success(eventNo);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult updataSdsEventRelation(String eventNo, String targetOids) {
+        try {
+            //处理管理服务器与区域服务器是同一台时，oid重复问题
+            SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+            if (sdsEventRelation != null) {
+                Set<String> set = new HashSet();
+
+                String targetOids_m = sdsEventRelation.getEventTradeOids();
+                if (targetOids_m != null && !targetOids_m.equals("")) {
+                    if (targetOids_m.contains(",")) {
+                        String[] arr = targetOids_m.split(",");
+                        for (int i = 0; i < arr.length; i++) {
+                            set.add(arr[i]);
+                        }
+                    } else {
+                        set.add(targetOids_m);
+                    }
+                }
+
+                if (targetOids != null && !targetOids.equals("")) {
+                    if (targetOids.contains(",")) {
+                        String[] arr = targetOids.split(",");
+                        for (int i = 0; i < arr.length; i++) {
+                            set.add(arr[i]);
+                        }
+                    } else {
+                        set.add(targetOids);
+                    }
+                }
+
+                for (String str : set) {
+                    targetOids += str + ",";
+                }
+                if (!targetOids.equals("")) {
+                    targetOids = targetOids.substring(0, targetOids.length() - 1);
+                }
+                sdsEventRelation.setEventTradeOids(targetOids);
+
+                sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+            }
+
+            return ApiResult.success();
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -189,7 +239,7 @@ public class SdsServiceImpl implements SdsService {
         //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
         String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
         //在事件产生的管理服务器上，查找事件产生者所在的区域服务器，处理与区域服务器上的行业相关的任务推送
-        String targetOids_a = this.doTradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
+//        String targetOids_a = this.doTradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
 
         //处理管理服务器与区域服务器是同一台时，oid重复问题
         SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
@@ -201,17 +251,17 @@ public class SdsServiceImpl implements SdsService {
                     set.add(arr[i]);
                 }
             }
-            if(!targetOids_a.equals("")){
-                String[] arr = targetOids_a.split(",");
-                for (int i = 0; i < arr.length; i++) {
-                    set.add(arr[i]);
-                }
-            }
+//            if(!targetOids_a.equals("")){
+//                String[] arr = targetOids_a.split(",");
+//                for (int i = 0; i < arr.length; i++) {
+//                    set.add(arr[i]);
+//                }
+//            }
             for (String str : set) {
                 targetOids += str + ",";
             }
-            if(!targetOids.equals("")){
-               targetOids = targetOids.substring(0,targetOids.length()-1);
+            if (!targetOids.equals("")) {
+                targetOids = targetOids.substring(0, targetOids.length() - 1);
             }
             sdsEventRelation.setEventTradeOids(targetOids);
 
@@ -235,14 +285,22 @@ public class SdsServiceImpl implements SdsService {
             for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
                 List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
 
+                log.error("3333333：" + wjuserTrades.size());
                 for (WjuserTrade wjuserTrade : wjuserTrades) {
                     try {
+                        //去除事件产生者又是行业相关的oid
+                        if (oid.equals(wjuserTrade.getOid()))
+                            continue;
+
                         OwerServiceDto targetOwer = this.getOwerInfo(wjuserTrade.getOid());
                         String relation = wjuserTrade.getOid().substring(0, oid_relation_length);
                         targetOids += wjuserTrade.getOid() + ",";
+
+                        log.error("44444444：" + relation);
                         this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
                     } catch (Exception e) {
                         //不处理， continue;
+
                         log.error("事件推送失败：" + wjuserTrade.getOid().toString());
                     }
                 }
@@ -263,12 +321,16 @@ public class SdsServiceImpl implements SdsService {
     //在事件产生的管理服务器上，查找事件产生者所在的区域服务器，处理与区域服务器上的行业相关的任务推送
     private String doTradeTaskAtAreaSev(String eventNo, String oid, String eventType, String content, String bussInfoId) {
         try {
+
             LoginServer loginServer = loginServerMapper.findLastByOid(oid);
+
+            log.error("11111111：" + loginServer.getServerIp());
+
             String targetOids = this.tradeTaskAtAreaSevHttp(loginServer.getServerIp(), eventNo, oid, eventType, content, bussInfoId);
 
             return targetOids;
         } catch (Exception e) {
-            log.error("sdsService.doTradeTaskAtAreaSev_报错了：" + e.getMessage());
+            log.error("sdsService.doTradeTaskAtAreaSev_在管理服务器上_报错了：" + e.getMessage());
             return "";
         }
     }
@@ -276,7 +338,21 @@ public class SdsServiceImpl implements SdsService {
     @Override
     public ApiResult tradeTaskAtAreaSev(String eventNo, String oid, String eventType, String content, String bussInfoId) {
         try {
-            //判断个人事件是否记录过
+
+            log.error("22222222：" + eventNo);
+
+            String targetOids = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
+
+            return ApiResult.success(targetOids);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult tradeTaskAtAreaSevAtArea(String eventNo, String oid, String eventType, String content, String bussInfoId) {
+        try {
+
             String targetOids = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
 
             return ApiResult.success(targetOids);
@@ -327,14 +403,16 @@ public class SdsServiceImpl implements SdsService {
 
             try {
                 //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
-                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findByEventNoAndOid(eventNo, oid);
+                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findOneByEventNo(eventNo);
 
                 List<SdsPercomRelation> list = this.genEventRelation(sdsEventPersonRecord.getGenOid(), eventType);
                 if (list != null && list.size() > 0) {
                     for (SdsPercomRelation sdsPercomRelation : list) {
                         try {
                             OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
-                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
+//                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
+                            //异步
+                            AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
                         } catch (Exception e) {
                             //不处理， continue;
                             log.error("事件推送失败：" + sdsPercomRelation.toString());
@@ -356,22 +434,29 @@ public class SdsServiceImpl implements SdsService {
                 }
 
                 //根据行业推送
-                if(true){
+                if (true) {
                     SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
-                    if(sdsEventRelation != null){
+                    if (sdsEventRelation != null) {
                         String targetOids = sdsEventRelation.getEventTradeOids();
-                        if(!targetOids.equals("")){
-                            String[] arr = targetOids.split(",");
-                            for(int i=0;i<arr.length;i++){
+                        if (targetOids != null && !targetOids.equals("")) {
+                            String[] arr = null;
+                            if (targetOids.contains(",")) {
+                                arr = targetOids.split(",");
+                            } else {
+                                arr = new String[]{targetOids};
+                            }
+                            for (int i = 0; i < arr.length; i++) {
                                 String relation = "";
                                 try {
-                                    if(arr[i].length()>oid_relation_length){
-                                        relation = arr[i].substring(0,oid_relation_length);
-                                    }else {
+                                    if (arr[i].length() > oid_relation_length) {
+                                        relation = arr[i].substring(0, oid_relation_length);
+                                    } else {
                                         relation = arr[i];
                                     }
-                                    OwerServiceDto targetOwer = this.getOwerInfo(arr[i]);
-                                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                                    OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
+//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                                    //异步
+                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
                                 } catch (Exception e) {
                                     //不处理， continue;
                                     log.error("事件推送失败：" + relation);
@@ -396,6 +481,7 @@ public class SdsServiceImpl implements SdsService {
     public ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId) {
         try {
             //根据targetOid查找oidFull
+            log.info("++++++++++++++++++1 pushTask:targetOid=" + targetOid);
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(targetOid);
             for (Fzwno fzwno : fzwnos) {
                 String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
@@ -413,7 +499,10 @@ public class SdsServiceImpl implements SdsService {
     //查找区域服务器然后发送at
     private void searchAreaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId) {
         try {
+
+            log.info("++++++++++++++++++2 searchAreaServiceAndSendHttp:toOid=" + toOid);
             LoginServer loginServer = loginServerMapper.findLastByOid(toOid);
+            log.info("++++++++++++++++++3 searchAreaServiceAndSendHttp:ip=" + loginServer.getServerIp());
             this.searchAreaServiceAndSendHttp(loginServer.getServerIp(), fromOid, eventType, content, eventNo, toOid, bussInfoId);
         } catch (Exception e) {
             log.error("查找区域服务器然后发送at,出错了！" + e.getMessage());
@@ -423,7 +512,8 @@ public class SdsServiceImpl implements SdsService {
     @Override
     public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId) {
         try {
-            //TODO  匹配规则不确定,暂定
+
+            log.info("++++++++++++++++++5 areaServiceAndSend:toOid=" + toOid);
             AtServiceImpl atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
             BussInfo bussInfo = bussInfoMapper.selectByPrimaryKey(Long.valueOf(bussInfoId));
             if (bussInfo == null)
@@ -431,7 +521,7 @@ public class SdsServiceImpl implements SdsService {
 
             if ("A001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
 
-                return atService.sendAt("N", toOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
+                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
             } else if ("E001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
                 ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
                 manageChatMsgAtParam.setMsg(content);
@@ -439,7 +529,7 @@ public class SdsServiceImpl implements SdsService {
                 manageChatMsgAtParam.setEventNo(eventNo);
 
                 String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
-                return atService.sendAt("N", toOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
+                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
             } else {
                 return ApiResult.error("该业务暂时还不能处理！");
             }
@@ -572,6 +662,33 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
+    private String tradeTaskAtAreaSevAtAreaHttp(String ip, String eventNo, String oid, String eventType, String content, String bussInfoId) throws Exception {
+        String url = "http://" + ip + ":" + "9999/tradeTaskAtAreaSevAtArea";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("eventNo", eventNo);
+        map.put("oid", oid);
+        map.put("eventType", eventType);
+        map.put("content", content);
+        map.put("bussInfoId", bussInfoId);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                String targetOids = (String) jsonObject.get(ApiResult.MESSAGE);
+                log.info("++++++++++++++++请求tradeTaskAtAreaSevAtArea成功:targetOids=" + targetOids);
+                return targetOids;
+            } else {
+                log.info("++++++++++++++++请求tradeTaskAtAreaSevAtArea失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("tradeTaskAtAreaSevAtArea失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求tradeTaskAtAreaSevAtArea失败:" + "连接错误");
+            throw new Exception("tradeTaskAtAreaSevAtArea失败:连接错误");
+        }
+    }
+
     private String tradeTaskAtAreaSevHttp(String ip, String eventNo, String oid, String eventType, String content, String bussInfoId) throws Exception {
         String url = "http://" + ip + ":" + "9999/tradeTaskAtAreaSev";
         String params = "";
@@ -685,13 +802,15 @@ public class SdsServiceImpl implements SdsService {
         map.put("eventNo", eventNo);
         map.put("toOid", toOid);
         map.put("bussInfoId", bussInfoId);
+
+        log.info("++++++++++++++++4 searchAreaServiceAndSendHttp:toOid" + toOid);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
         if (jsonObject != null) {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
 
-                log.info("++++++++++++++++请求searchAreaServiceAndSend成功:");
+                log.info("++++++++++++++++请求searchAreaServiceAndSend成功:" + jsonObject.get(ApiResult.MESSAGE));
             } else {
                 log.info("++++++++++++++++请求searchAreaServiceAndSend失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("searchAreaServiceAndSend失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
@@ -702,7 +821,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    private void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
+    public void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushTask";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -718,7 +837,7 @@ public class SdsServiceImpl implements SdsService {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
 
-                log.info("++++++++++++++++请求pushTask成功:");
+                log.info("++++++++++++++++请求pushTask成功:oid=" + oid);
             } else {
                 log.info("++++++++++++++++请求pushTask失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("pushTask失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
@@ -729,7 +848,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    private void pushEventHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
+    public void pushEventHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushEvent";
         String params = "";
         Map<String, String> map = new HashMap<>();

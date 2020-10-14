@@ -132,4 +132,19 @@ public class SdsController {
         return sdsService.tradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
     }
 
+    @PostMapping("/tradeTaskAtAreaSevAtArea")
+    public ApiResult tradeTaskAtAreaSevAtArea(@RequestParam(value = "eventNo") String eventNo,
+                                        @RequestParam(value = "oid") String oid,
+                                        @RequestParam(value = "eventType") String eventType,
+                                        @RequestParam(value = "content") String content,
+                                        @RequestParam(value = "bussInfoId") String bussInfoId) {
+        return sdsService.tradeTaskAtAreaSevAtArea(eventNo, oid, eventType, content, bussInfoId);
+    }
+
+    @PostMapping("/updataSdsEventRelation")
+    public ApiResult updataSdsEventRelation(@RequestParam(value = "eventNo") String eventNo,
+                                              @RequestParam(value = "targetOids") String targetOids) {
+        return sdsService.updataSdsEventRelation(eventNo, targetOids);
+    }
+
 }

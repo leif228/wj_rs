@@ -133,14 +133,14 @@ public class AtServiceImpl implements AtService {
 
             if ("A001".equals(buss) && "0001".equals(cmd)) {
                 //查找是否已经有事件记录
-                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
-                if (sdsEventPersonRecord == null) {
+//                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
+//                if (sdsEventPersonRecord == null) {
                     //新产生事件
                     return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), "新事件产生",bussInfo.getId()+"");
-                } else {
-                    //处理事件
-                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
-                }
+//                } else {
+//                    //处理事件
+//                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
+//                }
             }else if("E001".equals(buss) && "0001".equals(cmd)){
                 com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
                 ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
@@ -157,13 +157,67 @@ public class AtServiceImpl implements AtService {
     }
 
     private void doAtTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
-        //在区域服务器，处理与行业相关的任务推送
-        //this.doTradeTask(flag,oid,pri,buss,port,cmd,param);
 
         //查找oid归属服务器,处理用户关系相关的任务推送
         OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
 
-        this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+        String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+
+        //在区域服务器，处理与行业相关的任务推送
+        this.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+    }
+
+    private void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+        try{
+            if ("A001".equals(buss) && "0001".equals(cmd)) {
+                BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+                if (bussInfo == null)
+                    throw new Exception("业务基础表找不到数据！");
+
+                List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(Long.valueOf(bussInfo.getId()));
+                if (eventtypeBussMdInfos.size() == 0)
+                    throw new Exception("业务基础表找不到数据！");
+
+                //TODO　后续根据算法实现匹配
+                EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
+
+                String targetOids = "";
+
+                List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
+                for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
+                    List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
+
+                    log.error("3333333：" + wjuserTrades.size());
+                    for (WjuserTrade wjuserTrade : wjuserTrades) {
+                        try {
+                            //去除事件产生者又是行业相关的oid
+                            if(oid.equals(wjuserTrade.getOid()))
+                                continue;
+
+                            OwerServiceDto targetOwer = sdsService.getOwerInfo(wjuserTrade.getOid());
+                            String relation = wjuserTrade.getOid().substring(0, 22);
+                            targetOids += wjuserTrade.getOid() + ",";
+
+                            log.error("44444444：" + relation);
+                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
+                        } catch (Exception e) {
+                            //不处理， continue;
+
+                            log.error("事件推送失败：" + wjuserTrade.getOid().toString());
+                        }
+                    }
+                }
+
+                if (!targetOids.equals("")) {
+                    targetOids = targetOids.substring(0, targetOids.length() - 1);
+                }
+
+                this.updataSdsEventRelationHttp(ip,eventNo,targetOids);
+            }
+
+        }catch (Exception e){
+            log.error("atService.doTradeTask_报错了："+ e.getMessage());
+        }
     }
 
     private String genAt(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
@@ -179,13 +233,17 @@ public class AtServiceImpl implements AtService {
     public ApiResult sendAt(String flag, String senOid, String pri, String buss, String port, String cmd, String param, String recOid) {
         try {
             String at = this.genAt(flag, senOid, pri, buss, port, cmd, param);
+
+            log.info("++++++++++++++++++6 sendAt:at="+at);
+            log.info("++++++++++++++++++sendAt:senOid="+senOid);
+            log.info("++++++++++++++++++sendAt:recOid="+recOid);
             return tcpUserService.sendAtTask(recOid, at);
         }catch (Exception e){
             return ApiResult.error("at发送失败！原因："+ e.getMessage());
         }
     }
 
-    private void atTaskHttp(String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
+    private String atTaskHttp(String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
         String url = "http://" + ip + ":" + "9999/atTask";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -201,11 +259,13 @@ public class AtServiceImpl implements AtService {
         if (jsonObject != null) {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
+                String eventNo = (String) jsonObject.get(ApiResult.MESSAGE);
 //                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
 
 //                OwerServiceDto deviceVo = (OwerServiceDto) JSONObject.toBean(data, OwerServiceDto.class);
-                log.info("++++++++++++++++请求atTask成功:" );
+                log.info("++++++++++++++++请求atTask成功:eventNo=" + eventNo );
 //                return data.toString();
+                return eventNo;
             } else {
                 log.info("++++++++++++++++请求atTask失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("atTask失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
@@ -213,6 +273,32 @@ public class AtServiceImpl implements AtService {
         } else {
             log.info("++++++++++++++++请求atTask失败:" + "连接错误");
             throw new Exception("atTask失败:连接错误");
+        }
+    }
+
+    private void updataSdsEventRelationHttp(String ip, String eventNo, String targetOids) throws Exception {
+        String url = "http://" + ip + ":" + "9999/updataSdsEventRelation";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("eventNo", eventNo);
+        map.put("targetOids", targetOids);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+//                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+
+//                OwerServiceDto deviceVo = (OwerServiceDto) JSONObject.toBean(data, OwerServiceDto.class);
+                log.info("++++++++++++++++请求updataSdsEventRelation成功:" );
+//                return data.toString();
+            } else {
+                log.info("++++++++++++++++请求updataSdsEventRelation失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("updataSdsEventRelation失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求updataSdsEventRelation失败:" + "连接错误");
+            throw new Exception("updataSdsEventRelation失败:连接错误");
         }
     }
 
