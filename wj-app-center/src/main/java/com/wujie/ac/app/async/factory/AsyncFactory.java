@@ -1,5 +1,6 @@
 package com.wujie.ac.app.async.factory;
 
+import com.wujie.ac.app.business.app.service.system.impl.AtServiceImpl;
 import com.wujie.ac.app.business.app.service.system.impl.SdsServiceImpl;
 import com.wujie.ac.app.framework.util.spring.SpringContextUtil2;
 import lombok.extern.slf4j.Slf4j;
@@ -16,24 +17,85 @@ import java.util.TimerTask;
  */
 @Slf4j
 public class AsyncFactory {
-    private static final Logger logger = LoggerFactory.getLogger(AsyncFactory.class);
 
-    /**
-     * 更新货盘阅读数
-     *
-     * @return
-     */
     public static TimerTask pushTaskHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId) {
         return new TimerTask() {
             @Override
             public void run() {
                 try {
-                    log.info("异步开始了");
+                    log.info("pushTaskHttp异步开始了");
                     SdsServiceImpl atService = (SdsServiceImpl) SpringContextUtil2.getBean("sdsServiceImpl");
                     atService.pushTaskHttp(ip, eventNo, oid, eventType, content, targetOid, bussInfoId);
-                    log.info("异步结束");
+                    log.info("pushTaskHttp异步结束");
                 } catch (Exception e) {
-                    log.error("AsyncFactory报错了" + e.getMessage());
+                    log.info("AsyncFactory.pushTaskHttp报错了" + e.getMessage());
+                }
+            }
+        };
+    }
+
+    public static TimerTask pushDoEventWriteHttp(final String ip, final String oid, final String eventType, final String content, final String eventNo, final String bussInfoId) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    log.info("pushDoEventWriteHttp异步开始了");
+                    SdsServiceImpl atService = (SdsServiceImpl) SpringContextUtil2.getBean("sdsServiceImpl");
+                    atService.pushDoEventWriteHttp(ip, oid, eventType, content, eventNo, bussInfoId);
+                    log.info("pushDoEventWriteHttp异步结束");
+                } catch (Exception e) {
+                    log.info("AsyncFactory.pushDoEventWriteHttp报错了" + e.getMessage());
+                }
+            }
+        };
+    }
+
+    public static TimerTask searchAreaServiceAndSendHttp(final String ip, final String fromOid, final String eventType, final String content, final String eventNo, final String toOid, final String bussInfoId) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    log.info("searchAreaServiceAndSendHttp异步开始了");
+                    SdsServiceImpl atService = (SdsServiceImpl) SpringContextUtil2.getBean("sdsServiceImpl");
+                    atService.searchAreaServiceAndSendHttp(ip, fromOid, eventType, content, eventNo, toOid, bussInfoId);
+                    log.info("searchAreaServiceAndSendHttp异步结束");
+                } catch (Exception e) {
+                    log.info("AsyncFactory.searchAreaServiceAndSendHttp报错了" + e.getMessage());
+                }
+            }
+        };
+    }
+
+    public static TimerTask pushEventHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    log.info("pushEventHttp异步开始了");
+                    SdsServiceImpl atService = (SdsServiceImpl) SpringContextUtil2.getBean("sdsServiceImpl");
+                    atService.pushEventHttp(ip, eventNo, oid, eventType, content, targetOid, bussInfoId);
+                    log.info("pushEventHttp异步结束");
+                } catch (Exception e) {
+                    log.info("AsyncFactory.pushEventHttp报错了" + e.getMessage());
+                }
+            }
+        };
+    }
+
+    /*
+     * 在区域服务器，处理与行业相关的任务推送
+     */
+    public static TimerTask doTradeTask(final String eventNo, final String ip, final String flag, final String oid, final String pri, final String buss, final String port, final String cmd, final String param) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    log.info("doTradeTask异步开始了");
+                    AtServiceImpl atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
+                    atService.doTradeTask(eventNo, ip, flag, oid, pri, buss, port, cmd, param);
+                    log.info("doTradeTask异步结束");
+                } catch (Exception e) {
+                    log.info("AsyncFactory.doTradeTask报错了" + e.getMessage());
                 }
             }
         };

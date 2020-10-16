@@ -1,6 +1,8 @@
 package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.google.gson.Gson;
+import com.wujie.ac.app.async.AsyncManager;
+import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.AtService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
@@ -164,10 +166,13 @@ public class AtServiceImpl implements AtService {
         String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
 
         //在区域服务器，处理与行业相关的任务推送
-        this.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+//        this.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+        //异步
+        AsyncManager.me().execute(AsyncFactory.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param));
+
     }
 
-    private void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+    public void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
         try{
             if ("A001".equals(buss) && "0001".equals(cmd)) {
                 BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
@@ -199,7 +204,10 @@ public class AtServiceImpl implements AtService {
                             targetOids += wjuserTrade.getOid() + ",";
 
                             log.error("44444444：" + relation);
-                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
+//                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
+                            //异步
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+""));
+
                         } catch (Exception e) {
                             //不处理， continue;
 

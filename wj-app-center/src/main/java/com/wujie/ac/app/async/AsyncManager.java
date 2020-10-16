@@ -14,12 +14,12 @@ public class AsyncManager
     /**
      * 操作延迟10毫秒
      */
-    private final int OPERATE_DELAY_TIME = 10;
+    private final int OPERATE_DELAY_TIME = 0;
 
     /**
      * 异步操作任务调度线程池
      */
-    private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(5);
+    private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
 
     /**
      * 单例模式
