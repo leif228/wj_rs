@@ -275,6 +275,11 @@ public interface DispatchUserService {
     @PostMapping("/updataSdsEventRelation")
     public ApiResult updataSdsEventRelation(@RequestParam(value = "eventNo") String eventNo,
                                             @RequestParam(value = "targetOids") String targetOids);
+    @PostMapping("/getUserInfo")
+    public ApiResult getUserInfo(@RequestParam(value = "id") Long id);
+
+    @PostMapping("/getUserInfoAtOwer")
+    public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard);
 
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
@@ -503,6 +508,16 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult updataSdsEventRelation(String eventNo, String targetOids) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getUserInfo(Long id) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getUserInfoAtOwer(String idcard) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

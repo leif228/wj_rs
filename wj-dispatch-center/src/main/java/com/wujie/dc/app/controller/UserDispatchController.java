@@ -227,4 +227,14 @@ public class UserDispatchController {
                                        @RequestParam(value = "trades") String trades) {
         return userService.updataWjuserTrade(relation, trades);
     }
+
+    @PostMapping("/getUserInfo")
+    public ApiResult getUserInfo(@RequestParam(value = "id") Long id) {
+        return userService.getUserInfo(id);
+    }
+
+    @PostMapping("/getUserInfoAtOwer")
+    public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard) {
+        return userService.getUserInfoAtOwer(idcard);
+    }
 }

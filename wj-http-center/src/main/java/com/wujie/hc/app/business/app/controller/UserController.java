@@ -164,14 +164,14 @@ public class UserController {
 
     @PostMapping("/userRegistOwer")
     public ApiResult userRegistOwer(@RequestParam(value = "username") String username,
-                                @RequestParam(value = "password") String password,
-                                @RequestParam(value = "idcard") String idcard,
-                                @RequestParam(value = "phone") String phone,
-                                @RequestParam(value = "userSelected") String userSelected,
-                                @RequestParam(value = "pSort") Integer pSort,
-                                @RequestParam(value = "cSort") Integer cSort,
-                                @RequestParam(value = "aSort") Integer aSort,
-                                @RequestParam(value = "sSort") Integer sSort
+                                    @RequestParam(value = "password") String password,
+                                    @RequestParam(value = "idcard") String idcard,
+                                    @RequestParam(value = "phone") String phone,
+                                    @RequestParam(value = "userSelected") String userSelected,
+                                    @RequestParam(value = "pSort") Integer pSort,
+                                    @RequestParam(value = "cSort") Integer cSort,
+                                    @RequestParam(value = "aSort") Integer aSort,
+                                    @RequestParam(value = "sSort") Integer sSort
     ) {
         return dispatchUserService.userRegistOwer(username, password, idcard, phone, userSelected, pSort, cSort, aSort, sSort);
     }
@@ -249,7 +249,7 @@ public class UserController {
     @PostMapping("/userTrade")
     public ApiResult userTrade(@RequestParam(value = "tid") String tid) {
         UserDetailsVo userInfo = SecurityUtil.getUserInfo();
-        return dispatchUserService.userTrade(userInfo.getIdcard(),tid);
+        return dispatchUserService.userTrade(userInfo.getIdcard(), tid);
     }
 
     @PostMapping("/userTradeOwer")
@@ -262,5 +262,15 @@ public class UserController {
     public ApiResult updataWjuserTrade(@RequestParam(value = "relation") String relation,
                                        @RequestParam(value = "trades") String trades) {
         return dispatchUserService.updataWjuserTrade(relation, trades);
+    }
+
+    @PostMapping("/getUserInfo")
+    public ApiResult getUserInfo(@RequestParam(value = "id") Long id) {
+        return dispatchUserService.getUserInfo(id);
+    }
+
+    @PostMapping("/getUserInfoAtOwer")
+    public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard) {
+        return dispatchUserService.getUserInfoAtOwer(idcard);
     }
 }

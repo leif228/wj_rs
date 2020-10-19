@@ -284,6 +284,11 @@ public interface AppUserService {
     @PostMapping("/updataSdsEventRelation")
     public ApiResult updataSdsEventRelation(@RequestParam(value = "eventNo") String eventNo,
                                             @RequestParam(value = "targetOids") String targetOids);
+    @PostMapping("/getUserInfo")
+    public ApiResult getUserInfo(@RequestParam(value = "id") Long id);
+
+    @PostMapping("/getUserInfoAtOwer")
+    public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard);
 
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
@@ -520,6 +525,16 @@ public interface AppUserService {
 
         @Override
         public ApiResult updataSdsEventRelation(String eventNo, String targetOids) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getUserInfo(Long id) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getUserInfoAtOwer(String idcard) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
