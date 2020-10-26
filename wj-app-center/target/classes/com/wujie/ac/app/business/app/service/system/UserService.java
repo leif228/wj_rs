@@ -54,4 +54,8 @@ public interface UserService {
     ApiResult userTradeOwer(String idcard, String tid);
 
     ApiResult updataWjuserTrade(String relation, String trades);
+
+    ApiResult getUserInfo(Long id);
+
+    ApiResult getUserInfoAtOwer(String idcard);
 }

@@ -198,6 +198,7 @@ secure:
       - /tradeTaskAtAreaSev
       - /tradeTaskAtAreaSevAtArea
       - /updataSdsEventRelation
+      - /getUserInfoAtOwer
 
 
 

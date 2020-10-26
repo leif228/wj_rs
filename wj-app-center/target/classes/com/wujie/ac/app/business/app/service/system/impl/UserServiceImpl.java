@@ -1214,6 +1214,59 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ApiResult getUserInfo(Long id) {
+        try {
+            Wjuser wjuser = wjuserMapper.selectByPrimaryKey(id);
+
+            String info = getUserInfoAtOwerHttp(wjuser.getOwerIp(), wjuser.getIdcard());
+
+            String msg = "";
+            msg += "用户名:" + wjuser.getUserName() + "\r";
+            msg += "归属ip:" + wjuser.getOwerIp() + "\r";
+            msg += "关系段:" + wjuser.getOid() + "\r";
+            msg += info;
+
+
+            return ApiResult.success(msg);
+        } catch (Exception e) {
+            log.debug("getUserInfo_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getUserInfoAtOwer(String idcard) {
+        try {
+            String msg = "";
+
+            WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idcard);
+
+            String trades = wjuserOwer.getTrades();
+            if (trades != null && !"".equals(trades)) {
+                TradeCodeInfo tradeCodeInfo = tradeDataService.getById(Long.valueOf(trades));
+                msg += "行业:" + tradeCodeInfo.getClassName() + "\r";
+            } else {
+                msg += "行业:" + "" + "\r";
+            }
+
+            List<Fzwno> fzwnos = fzwnoMapper.findByRelation(wjuserOwer.getOid());
+            for (Fzwno fzwno : fzwnos) {
+                msg += "设备:" + fzwno.getFzwDevice() + "\r";
+                LoginServer loginServer = loginServerMapper.findLastByOid(fzwno.getFzwRelation() + fzwno.getFzwDevice());
+                if (loginServer != null)
+                    msg += "最近登录ip:" + loginServer.getServerIp() + "\r";
+                else
+                    msg += "最近登录ip:" + "" + "\r";
+            }
+
+            return ApiResult.success(msg);
+        } catch (Exception e) {
+            log.debug("getUserInfoAtOwer_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
     private ResponseEntity doError(HttpServletResponse response, String msg) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -1431,6 +1484,29 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("++++++++++++++++请求updataWjuserTrade失败:" + "连接错误");
             throw new Exception("updataWjuserTrade失败:连接错误");
+        }
+    }
+
+    private String getUserInfoAtOwerHttp(String ip, String idcard) throws Exception {
+        String url = "http://" + ip + ":" + "9999/getUserInfoAtOwer";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("idcard", idcard);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                String data = (String) jsonObject.get(ApiResult.MESSAGE);
+                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + data);
+                return data;
+            } else {
+                log.info("++++++++++++++++请求getUserInfoAtOwer失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("getUserInfoAtOwer失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求getUserInfoAtOwer失败:" + "连接错误");
+            throw new Exception("getUserInfoAtOwer失败:连接错误");
         }
     }
 

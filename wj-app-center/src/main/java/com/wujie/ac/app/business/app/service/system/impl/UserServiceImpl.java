@@ -1251,10 +1251,13 @@ public class UserServiceImpl implements UserService {
             }
 
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(wjuserOwer.getOid());
-            for(Fzwno fzwno:fzwnos){
+            for (Fzwno fzwno : fzwnos) {
                 msg += "设备:" + fzwno.getFzwDevice() + "\r";
-                LoginServer loginServer = loginServerMapper.findLastByOid(fzwno.getFzwRelation()+fzwno.getFzwDevice());
-                msg += "最近登录ip:" + loginServer.getServerIp() + "\r";
+                LoginServer loginServer = loginServerMapper.findLastByOid(fzwno.getFzwRelation() + fzwno.getFzwDevice());
+                if (loginServer != null)
+                    msg += "最近登录ip:" + loginServer.getServerIp() + "\r";
+                else
+                    msg += "最近登录ip:" + "" + "\r";
             }
 
             return ApiResult.success(msg);

@@ -137,6 +137,10 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
+            //推送给同一用户下其它设备
+            String oid_relation = oid.substring(0, oid_relation_length);
+            this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId);
+
             //事件流程记录
             SdsEventInfo sdsEventInfo = new SdsEventInfo();
             sdsEventInfo.setContent(content);
@@ -160,6 +164,10 @@ public class SdsServiceImpl implements SdsService {
             sdsEventRelation.setStatus(ststus1);
             sdsEventRelation.setUpdateTime(DateUtil.getDate());
 
+            //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
+            String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
+            sdsEventRelation.setEventTradeOids(targetOids_m);
+
             sdsEventRelationMapper.insertSelective(sdsEventRelation);
 
             //根据List<SdsPercomRelation>推送事件
@@ -179,7 +187,7 @@ public class SdsServiceImpl implements SdsService {
             }
 
             //处理与行业相关的事件
-            this.doTradeTask(eventNo, oid, eventType, content, bussInfoId);
+//            this.doTradeTask(eventNo, oid, eventType, content, bussInfoId);
 
             return ApiResult.success(eventNo);
         } catch (Exception e) {
@@ -217,14 +225,15 @@ public class SdsServiceImpl implements SdsService {
                         set.add(targetOids);
                     }
                 }
+                String oids = "";
 
                 for (String str : set) {
-                    targetOids += str + ",";
+                    oids += str + ",";
                 }
-                if (!targetOids.equals("")) {
-                    targetOids = targetOids.substring(0, targetOids.length() - 1);
+                if (!oids.equals("")) {
+                    oids = oids.substring(0, oids.length() - 1);
                 }
-                sdsEventRelation.setEventTradeOids(targetOids);
+                sdsEventRelation.setEventTradeOids(oids);
 
                 sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
             }
