@@ -552,6 +552,9 @@ public class SdsServiceImpl implements SdsService {
 
                 String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
                 return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
+            } else if ("5010".equals(bussInfo.getBusinessNum()) && "FFFF".equals(bussInfo.getCommand())) {
+
+                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
             } else {
                 return ApiResult.error("该业务暂时还不能处理！");
             }
@@ -1031,4 +1034,29 @@ public class SdsServiceImpl implements SdsService {
     }
 
 
+    public ApiResult doLightOn(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+        try {
+            BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+            if (bussInfo == null)
+                throw new Exception("业务基础表找不到数据！");
+
+            String relation = oid.substring(0, oid_relation_length);
+            List<Fzwno> fzwnos = fzwnoMapper.findByRelation(relation);
+            for (Fzwno fzwno : fzwnos) {
+                if (fzwno.getDevtypeId() == 6) {
+
+                    String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
+
+                    //查找区域服务器然后发送at
+                    this.searchAreaServiceAndSend(oid, "", param, "", oidFull, bussInfo.getId() + "");
+                } else {
+                    continue;
+                }
+            }
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
 }

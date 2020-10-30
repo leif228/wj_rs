@@ -122,6 +122,13 @@ public class AtServiceImpl implements AtService {
     @Override
     public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param)  {
         try {
+            //开灯业务处理
+            if(true){
+                if("5010".equals(buss) && "FFFF".equals(cmd)){
+                    return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
+                }
+            }
+
             BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
             if (bussInfo == null)
                 throw new Exception("业务基础表找不到数据！");
@@ -159,6 +166,17 @@ public class AtServiceImpl implements AtService {
     }
 
     private void doAtTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
+        //开灯业务处理
+        if(true){
+            if("5010".equals(buss) && "FFFF".equals(cmd)){
+                //查找oid归属服务器,处理用户关系相关的任务推送
+                OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
+
+                String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+
+                return;
+            }
+        }
 
         //查找oid归属服务器,处理用户关系相关的任务推送
         OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
