@@ -17,6 +17,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,6 +208,8 @@ public class AtServiceImpl implements AtService {
                 String targetOids = "";
 
                 List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
+                //去除一个行业用户下有两个设备，互相推送的bug
+                List<String> relations = new ArrayList<>();
                 for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
                     List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
 
@@ -221,10 +224,17 @@ public class AtServiceImpl implements AtService {
                             String relation = wjuserTrade.getOid().substring(0, 22);
                             targetOids += wjuserTrade.getOid() + ",";
 
-                            log.error("44444444：" + relation);
+                            //去除一个行业用户下有两个设备，互相推送的bug
+                            if(relations.contains(relation)){
+                                continue;
+                            }else {
+                                relations.add(relation);
+
+                                log.error("44444444：" + relation);
 //                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
-                            //异步
-                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+""));
+                                //异步
+                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+""));
+                            }
 
                         } catch (Exception e) {
                             //不处理， continue;

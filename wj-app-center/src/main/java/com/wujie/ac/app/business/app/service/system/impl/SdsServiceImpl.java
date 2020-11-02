@@ -294,6 +294,8 @@ public class SdsServiceImpl implements SdsService {
             String targetOids = "";
 
             List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
+            //去除一个行业用户下有两个设备，互相推送的bug
+            List<String> relations = new ArrayList<>();
             for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
                 List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
 
@@ -308,10 +310,17 @@ public class SdsServiceImpl implements SdsService {
                         String relation = wjuserTrade.getOid().substring(0, oid_relation_length);
                         targetOids += wjuserTrade.getOid() + ",";
 
-                        log.error("44444444：" + relation);
+                        //去除一个行业用户下有两个设备，互相推送的bug
+                        if(relations.contains(relation)){
+                           continue;
+                        }else {
+                            relations.add(relation);
+
+                            log.error("44444444：" + relation);
 //                        this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                        //异步
-                        AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+                            //异步
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+                        }
 
                     } catch (Exception e) {
                         //不处理， continue;
@@ -464,6 +473,8 @@ public class SdsServiceImpl implements SdsService {
                             } else {
                                 arr = new String[]{targetOids};
                             }
+                            //去除一个行业用户下有两个设备，互相推送的bug
+                            List<String> relations = new ArrayList<>();
                             for (int i = 0; i < arr.length; i++) {
                                 String relation = "";
                                 try {
@@ -472,10 +483,18 @@ public class SdsServiceImpl implements SdsService {
                                     } else {
                                         relation = arr[i];
                                     }
-                                    OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
+                                    //去除一个行业用户下有两个设备，互相推送的bug
+                                    if(relations.contains(relation)){
+                                        continue;
+                                    }else {
+                                        relations.add(relation);
+
+                                        OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
 //                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                                    //异步
-                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+                                        //异步
+                                        AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+                                    }
+
                                 } catch (Exception e) {
                                     //不处理， continue;
                                     log.error("事件推送失败：" + relation);
