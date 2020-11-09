@@ -187,7 +187,7 @@ public class AtServiceImpl implements AtService {
         //在区域服务器，处理与行业相关的任务推送
 //        this.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
         //异步
-        AsyncManager.me().execute(AsyncFactory.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param));
+//        AsyncManager.me().execute(AsyncFactory.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param));
 
     }
 

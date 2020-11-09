@@ -124,22 +124,26 @@ public class SdsServiceImpl implements SdsService {
 //    @Transactional(rollbackFor = Exception.class)
     public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId) {
         try {
+            List<String> relations = new ArrayList<>();
             String eventNo = this.genEventNo(oid, eventType);
 
             //事件发生本地保存事件产生的个人的事件记录
-            SdsEventPersonRecord sdsEventPersonRecord = new SdsEventPersonRecord();
-            sdsEventPersonRecord.setCreatTime(DateUtil.getDate());
-            sdsEventPersonRecord.setEventNo(eventNo);
-            sdsEventPersonRecord.setOid(oid);
-            sdsEventPersonRecord.setStatus(ststus1);
-            sdsEventPersonRecord.setGenOid(oid);
-            sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(eventType));
-
-            sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
+//            SdsEventPersonRecord sdsEventPersonRecord = new SdsEventPersonRecord();
+//            sdsEventPersonRecord.setCreatTime(DateUtil.getDate());
+//            sdsEventPersonRecord.setEventNo(eventNo);
+//            sdsEventPersonRecord.setOid(oid);
+//            sdsEventPersonRecord.setStatus(ststus1);
+//            sdsEventPersonRecord.setGenOid(oid);
+//            sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(eventType));
+//
+//            sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
             //推送给同一用户下其它设备
             String oid_relation = oid.substring(0, oid_relation_length);
-            this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId);
+            if (!relations.contains(oid_relation)) {
+                relations.add(oid_relation);
+                this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId);
+            }
 
             //事件流程记录
             SdsEventInfo sdsEventInfo = new SdsEventInfo();
@@ -164,20 +168,59 @@ public class SdsServiceImpl implements SdsService {
             sdsEventRelation.setStatus(ststus1);
             sdsEventRelation.setUpdateTime(DateUtil.getDate());
 
-            //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
-            String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
-            sdsEventRelation.setEventTradeOids(targetOids_m);
+//            //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
+//            String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
+//            sdsEventRelation.setEventTradeOids(targetOids_m);
+
+//            处理与行业相关的事件
+            String targetOids = this.doTradeTask(eventNo, oid, eventType, content, bussInfoId);
+            sdsEventRelation.setEventTradeOids(targetOids);
 
             sdsEventRelationMapper.insertSelective(sdsEventRelation);
 
-            //根据List<SdsPercomRelation>推送事件
+            //处理行业的推送
+            if (!targetOids.equals("")) {
+                try {
+                    if (targetOids.contains(",")) {
+                        String[] arr = targetOids.split(",");
+                        for (int i = 0; i < arr.length; i++) {
+                            String target_relation = arr[i].substring(0, oid_relation_length);
+                            if (!relations.contains(target_relation)) {
+                                relations.add(target_relation);
+                                OwerServiceDto targetOwer = this.getOwerInfo(arr[i]);
+                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId));
+                            } else {
+                                continue;
+                            }
+                        }
+                    } else {
+                        String target_relation = targetOids.substring(0, oid_relation_length);
+                        if (!relations.contains(target_relation)) {
+                            relations.add(target_relation);
+                            OwerServiceDto targetOwer = this.getOwerInfo(targetOids);
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId));
+                        }
+                    }
+                } catch (Exception e) {
+                    //不处理， continue;
+                    log.error("处理行业的推送事件推送失败：" + targetOids);
+                }
+            }
+
+            //根据关系推送事件
             if (list != null && list.size() > 0) {
                 for (SdsPercomRelation sdsPercomRelation : list) {
                     try {
-                        OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
+                        if (!relations.contains(sdsPercomRelation.getTargetOid())) {
+                            relations.add(sdsPercomRelation.getTargetOid());
+                            OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
 //                        this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
-                        //异步
-                        AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                            //异步
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                        } else {
+                            continue;
+                        }
+
 
                     } catch (Exception e) {
                         //不处理， continue;
@@ -185,9 +228,6 @@ public class SdsServiceImpl implements SdsService {
                     }
                 }
             }
-
-            //处理与行业相关的事件
-//            this.doTradeTask(eventNo, oid, eventType, content, bussInfoId);
 
             return ApiResult.success(eventNo);
         } catch (Exception e) {
@@ -245,40 +285,56 @@ public class SdsServiceImpl implements SdsService {
     }
 
     //处理与行业相关的事件
-    private void doTradeTask(String eventNo, String oid, String eventType, String content, String bussInfoId) {
+    private String doTradeTask(String eventNo, String oid, String eventType, String content, String bussInfoId) {
         String targetOids = "";
+        try {
 
-        //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
-        String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
-        //在事件产生的管理服务器上，查找事件产生者所在的区域服务器，处理与区域服务器上的行业相关的任务推送
-//        String targetOids_a = this.doTradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
+            //在事件产生的管理服务器上，处理与管理服务器上的行业相关的任务推送
+            String targetOids_m = this.doTradeTaskAtManageSev(eventNo, oid, eventType, content, bussInfoId);
+            //在事件产生的管理服务器上，查找事件产生者所在的区域服务器，处理与区域服务器上的行业相关的任务推送
+            String targetOids_a = this.doTradeTaskAtAreaSev(eventNo, oid, eventType, content, bussInfoId);
 
-        //处理管理服务器与区域服务器是同一台时，oid重复问题
-        SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
-        if (sdsEventRelation != null) {
+//        SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+//        if (sdsEventRelation != null) {
+
+            //处理管理服务器与区域服务器是同一台时，oid重复问题
             Set<String> set = new HashSet();
             if (!targetOids_m.equals("")) {
-                String[] arr = targetOids_m.split(",");
-                for (int i = 0; i < arr.length; i++) {
-                    set.add(arr[i]);
+                if (targetOids_m.contains(",")) {
+                    String[] arr = targetOids_m.split(",");
+                    for (int i = 0; i < arr.length; i++) {
+                        set.add(arr[i]);
+                    }
+                } else {
+                    set.add(targetOids_m);
                 }
             }
-//            if(!targetOids_a.equals("")){
-//                String[] arr = targetOids_a.split(",");
-//                for (int i = 0; i < arr.length; i++) {
-//                    set.add(arr[i]);
-//                }
-//            }
+            if (!targetOids_a.equals("")) {
+                if (targetOids_a.contains(",")) {
+                    String[] arr = targetOids_a.split(",");
+                    for (int i = 0; i < arr.length; i++) {
+                        set.add(arr[i]);
+                    }
+                } else {
+                    set.add(targetOids_a);
+                }
+            }
             for (String str : set) {
                 targetOids += str + ",";
             }
             if (!targetOids.equals("")) {
                 targetOids = targetOids.substring(0, targetOids.length() - 1);
             }
-            sdsEventRelation.setEventTradeOids(targetOids);
-
-            sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+//            sdsEventRelation.setEventTradeOids(targetOids);
+//
+//            sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+//        }
+            return targetOids;
+        } catch (Exception e) {
+            log.error("sdsService.doTradeTask_报错了：" + e.getMessage());
+            return targetOids;
         }
+
     }
 
     //在事件产生的管理服务器上，处理与行业相关的任务推送
@@ -295,38 +351,38 @@ public class SdsServiceImpl implements SdsService {
 
             List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
             //去除一个行业用户下有两个设备，互相推送的bug
-            List<String> relations = new ArrayList<>();
+//            List<String> relations = new ArrayList<>();
             for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
                 List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
 
                 log.error("3333333：" + wjuserTrades.size());
                 for (WjuserTrade wjuserTrade : wjuserTrades) {
-                    try {
+//                    try {
                         //去除事件产生者又是行业相关的oid
-                        if (oid.equals(wjuserTrade.getOid()))
-                            continue;
+//                        if (oid.equals(wjuserTrade.getOid()))
+//                            continue;
 
-                        OwerServiceDto targetOwer = this.getOwerInfo(wjuserTrade.getOid());
+//                        OwerServiceDto targetOwer = this.getOwerInfo(wjuserTrade.getOid());
                         String relation = wjuserTrade.getOid().substring(0, oid_relation_length);
                         targetOids += wjuserTrade.getOid() + ",";
 
                         //去除一个行业用户下有两个设备，互相推送的bug
-                        if(relations.contains(relation)){
-                           continue;
-                        }else {
-                            relations.add(relation);
+//                        if (relations.contains(relation)) {
+//                            continue;
+//                        } else {
+//                            relations.add(relation);
 
                             log.error("44444444：" + relation);
 //                        this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
                             //异步
-                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
-                        }
+//                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+//                        }
 
-                    } catch (Exception e) {
-                        //不处理， continue;
-
-                        log.error("事件推送失败：" + wjuserTrade.getOid().toString());
-                    }
+//                    } catch (Exception e) {
+//                        //不处理， continue;
+//
+//                        log.error("事件推送失败：" + wjuserTrade.getOid().toString());
+//                    }
                 }
             }
 
@@ -430,6 +486,7 @@ public class SdsServiceImpl implements SdsService {
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
             try {
+                List<String> relations = new ArrayList<>();
                 //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
                 SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findOneByEventNo(eventNo);
 
@@ -437,10 +494,15 @@ public class SdsServiceImpl implements SdsService {
                 if (list != null && list.size() > 0) {
                     for (SdsPercomRelation sdsPercomRelation : list) {
                         try {
-                            OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
+                            if(!relations.contains(sdsPercomRelation.getTargetOid())){
+                                relations.add(sdsPercomRelation.getTargetOid());
+                                OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
 //                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
-                            //异步
-                            AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                                //异步
+                                AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                            }else {
+                                continue;
+                            }
                         } catch (Exception e) {
                             //不处理， continue;
                             log.error("事件推送失败：" + sdsPercomRelation.toString());
@@ -458,7 +520,10 @@ public class SdsServiceImpl implements SdsService {
                     //TODO 可以优化，因为已经是在事件产生的服务器了，不用在查找ip
 //                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
 //                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                    pushTask(oid, eventType, content, eventNo, relation, bussInfoId);
+                    if(!relations.contains(relation)){
+                        relations.add(relation);
+                        pushTask(oid, eventType, content, eventNo, relation, bussInfoId);
+                    }
                 }
 
                 //根据行业推送
@@ -474,7 +539,7 @@ public class SdsServiceImpl implements SdsService {
                                 arr = new String[]{targetOids};
                             }
                             //去除一个行业用户下有两个设备，互相推送的bug
-                            List<String> relations = new ArrayList<>();
+
                             for (int i = 0; i < arr.length; i++) {
                                 String relation = "";
                                 try {
@@ -484,9 +549,9 @@ public class SdsServiceImpl implements SdsService {
                                         relation = arr[i];
                                     }
                                     //去除一个行业用户下有两个设备，互相推送的bug
-                                    if(relations.contains(relation)){
+                                    if (relations.contains(relation)) {
                                         continue;
-                                    }else {
+                                    } else {
                                         relations.add(relation);
 
                                         OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
