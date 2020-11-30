@@ -2,6 +2,9 @@ package com.wujie.ac.app.business.app.service.system;
 
 import com.wujie.ac.app.business.entity.AreaChangSeq;
 import com.wujie.common.base.ApiResult;
+import com.wujie.common.dto.wj.AreaChangSeqDto;
+
+import java.util.List;
 
 public interface BaseDataService {
 
@@ -16,4 +19,6 @@ public interface BaseDataService {
     AreaChangSeq fzwaddrBySort(Integer sort);
 
     AreaChangSeq sortByFzwaddr(String fzw_str);
+
+    List<AreaChangSeqDto> acsAll();
 }

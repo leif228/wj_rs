@@ -4,10 +4,7 @@ import com.wujie.ac.app.business.app.service.system.BaseDataService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.common.base.ApiResult;
-import com.wujie.common.dto.wj.BsAreaDto;
-import com.wujie.common.dto.wj.BsCityDto;
-import com.wujie.common.dto.wj.BsProvinceDto;
-import com.wujie.common.dto.wj.BsStreetDto;
+import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -233,5 +230,17 @@ public class BaseDataServiceImpl implements BaseDataService {
             return null;
         else
             return areaChangSeq;
+    }
+
+    @Override
+    public List<AreaChangSeqDto> acsAll() {
+        List<AreaChangSeqDto> areaChangSeqDtos = new ArrayList<>();
+        List<AreaChangSeq> areaChangSeqs = areaChangSeqMapper.acsAll();
+        for(AreaChangSeq acs : areaChangSeqs){
+            AreaChangSeqDto areaChangSeqDto = new AreaChangSeqDto();
+            BeanUtils.copyProperties(acs,areaChangSeqDto);
+            areaChangSeqDtos.add(areaChangSeqDto);
+        }
+        return areaChangSeqDtos;
     }
 }

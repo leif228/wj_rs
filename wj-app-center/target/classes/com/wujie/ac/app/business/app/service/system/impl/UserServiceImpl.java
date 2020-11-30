@@ -16,7 +16,6 @@ import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
-import com.wujie.common.utils.CalendarUtil;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -50,12 +49,14 @@ public class UserServiceImpl implements UserService {
     private NodeInfoOwerMapper nodeInfoOwerMapper;
     private TradeDataService tradeDataService;
     private WjuserTradeMapper wjuserTradeMapper;
+    private AreaChangSeqMapper areaChangSeqMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.areaChangSeqMapper = areaChangSeqMapper;
         this.wjuserTradeMapper = wjuserTradeMapper;
         this.tradeDataService = tradeDataService;
         this.nodeInfoOwerMapper = nodeInfoOwerMapper;
@@ -195,7 +196,7 @@ public class UserServiceImpl implements UserService {
             Devtype devtype = devtypeMapper.selectByPrimaryKey(Integer.valueOf(deviceSelected));
             if (devtype == null)
                 return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
-            String fzwNoDevice = this.getFzwnoDevice(devtype.getDevTypeNum(), "01");
+            String fzwNoDevice = this.getFzwnoDevice(devtype.getDevTypeNum(), "01", 0, SPA_STR, 0, SPA_STR, 0, SPA_STR);
 
             String fzwnoFull = fzwNoRelation + fzwNoDevice;
 
@@ -385,29 +386,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+    public ApiResult acsAll() {
+
+        return ApiResult.success(baseDataService.acsAll());
+    }
+
+    @Override
+    public ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort, Integer oneSum, String oneTab, Integer twoSum, String twoTab, Integer threeSum, String threeTab) {
         WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idCard);
         if (wjuserOwer == null)
             return ApiResult.error("注册失败！没有用户信息！");
+
+        NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
+        if (nodeInfoOwer == null)
+            return ApiResult.error("注册失败！基础数据出错，查找根地址失败！");
 
         try {
             DeviceVo deviceVo = new DeviceVo();
 
             //查归属服务器
-            NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
             deviceVo.setOwerIp(nodeInfoOwer.getIp());
             deviceVo.setOwerPort(nodeInfoOwer.getPort());
             deviceVo.setOwerFzwno(nodeInfoOwer.getFzwno());
 
             //查区域服务器
-            DeviceVo preDeviceVo = this.searchNodeHttp(rootIp, pSort, cSort, aSort, sSort);
+            DeviceVo preDeviceVo = this.searchNodeHttp(nodeInfoOwer.getRootIp(), pSort, cSort, aSort, sSort);
 
 //        deviceVo.setParentNodeId(preNodeStandby.getNodeId());
             deviceVo.setIp(preDeviceVo.getIp());
             deviceVo.setPort(preDeviceVo.getPort());
             deviceVo.setLoginFzwno(preDeviceVo.getLoginFzwno());
 
-            ApiResult apiResult = this.genAndSaveFullFzwno(wjuserOwer.getOid(), Integer.valueOf(deviceSelected), deviceName);
+            ApiResult apiResult = this.genAndSaveFullFzwno(wjuserOwer.getOid(), Integer.valueOf(deviceSelected), deviceName, oneSum, oneTab, twoSum, twoTab, threeSum, threeTab);
             if (!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
                 return apiResult;
 
@@ -922,11 +932,15 @@ public class UserServiceImpl implements UserService {
         return ApiResult.success(list);
     }
 
+    @Override
+    public ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName) {
+        return ApiResult.success();
+    }
+
     /**
      * 管理服务器上生成fzwno设备端，并保存注册的设备信息，返回fullFzwno.
      */
-    @Override
-    public ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName) {
+    public ApiResult genAndSaveFullFzwno(String fzwno, Integer deviceType, String deviceName, Integer oneSum, String oneTab, Integer twoSum, String twoTab, Integer threeSum, String threeTab) throws Exception {
         Devtype devtype = devtypeMapper.selectByPrimaryKey(deviceType);
         if (devtype == null)
             return ApiResult.error(ErrorEnum.NOT_DATA_ERR);
@@ -952,7 +966,7 @@ public class UserServiceImpl implements UserService {
 //            String seq = seqno;//2
 //
 //            deviceno = net + stay + dtype + space + seq;
-            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), seqno);
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), seqno, oneSum, oneTab, twoSum, twoTab, threeSum, threeTab);
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
@@ -972,7 +986,7 @@ public class UserServiceImpl implements UserService {
 //            String seq = "01";//2
 //
 //            deviceno = net + stay + dtype + space + seq;
-            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), "01");
+            deviceno = this.getFzwnoDevice(devtype.getDevTypeNum(), "01", oneSum, oneTab, twoSum, twoTab, threeSum, threeTab);
 
             fzwnoMax.setCreatTime(DateUtil.getDate());
             fzwnoMax.setDevtypeId(devtype.getId());
@@ -988,16 +1002,68 @@ public class UserServiceImpl implements UserService {
         return ApiResult.success("成功", full);
     }
 
-    private String getFzwnoDevice(String dtype, String seq) {
+    private String getFzwnoDevice(String dtype, String seq, Integer oneSum, String oneTab, Integer twoSum, String twoTab, Integer threeSum, String threeTab) throws Exception {
         String deviceno = "";
 
         String net = "0";//1
-        String stay = "00000000";//8
+
+        String asctab = "";//6
+
+        if (oneSum < 0 || oneSum > 83 || twoSum < -83 || twoSum > 745 || threeSum < 0 || threeSum > 745) {
+            throw new Exception("注册失败！输入数据有错！");
+        }
+
+        if (oneSum == 0) {
+            asctab += SPA_STR;
+            asctab += SPA_STR;
+        } else {
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(oneSum);
+            asctab += areaChangSeq_sum.getFzwStr();
+            asctab += oneTab;
+        }
+
+        if (twoSum == 0) {
+            asctab += SPA_STR;
+            asctab += SPA_STR;
+        } else if (twoSum < 0) {
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(twoSum*-1);
+            asctab += areaChangSeq_sum.getFzwStr();
+            asctab += "0";
+        } else if (twoSum > 0) {
+            //eg:100/83=1...17 tab_id=1+2;sum_id=17
+            int sum_id = twoSum % 83;
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(sum_id);
+            asctab += areaChangSeq_sum.getFzwStr();
+
+            double oned = twoSum / 83;
+            int onei = (int) oned;
+            int tab_id = onei + 2;
+            AreaChangSeq areaChangSeq_tab = areaChangSeqMapper.selectByPrimaryKey(tab_id);
+            asctab += areaChangSeq_tab.getFzwStr();
+        }
+
+        if (threeSum == 0) {
+            asctab += SPA_STR;
+            asctab += SPA_STR;
+        } else {
+            //eg:100/83=1...17 tab_id=1+2;sum_id=17
+            int sum_id = threeSum % 83;
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(sum_id);
+            asctab += areaChangSeq_sum.getFzwStr();
+
+            double oned = threeSum / 83;
+            int onei = (int) oned;
+            int tab_id = onei + 2;
+            AreaChangSeq areaChangSeq_tab = areaChangSeqMapper.selectByPrimaryKey(tab_id);
+            asctab += areaChangSeq_tab.getFzwStr();
+        }
+
+        String stay = "00";//2
 //        String dtype = devtype.getDevTypeNum();//4
         String space = "01";//2
 //        String seq = "01";//2
 
-        deviceno = net + stay + dtype + space + seq;
+        deviceno = net + asctab + stay + dtype + space + seq;
 
         return deviceno;
     }

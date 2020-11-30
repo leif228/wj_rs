@@ -200,7 +200,6 @@ public class UserController {
         return dispatchUserService.searchNode(pSort, cSort, aSort, sSort);
     }
 
-
     @PostMapping("/deviceRegistElse")
     public ApiResult deviceRegistElse(@RequestParam(value = "rootIp") String rootIp,
                                       @RequestParam(value = "idcard") String idcard,
@@ -209,9 +208,20 @@ public class UserController {
                                       @RequestParam(value = "pSort") Integer pSort,
                                       @RequestParam(value = "cSort") Integer cSort,
                                       @RequestParam(value = "aSort") Integer aSort,
-                                      @RequestParam(value = "sSort") Integer sSort
+                                      @RequestParam(value = "sSort") Integer sSort,
+                                      @RequestParam(value = "oneSum") Integer oneSum,
+                                      @RequestParam(value = "oneTab") String oneTab,
+                                      @RequestParam(value = "twoSum") Integer twoSum,
+                                      @RequestParam(value = "twoTab") String twoTab,
+                                      @RequestParam(value = "threeSum") Integer threeSum,
+                                      @RequestParam(value = "threeTab") String threeTab
     ) {
-        return dispatchUserService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort);
+        return dispatchUserService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort,oneSum,oneTab,twoSum,twoTab,threeSum,threeTab);
+    }
+
+    @PostMapping("/acsAll")
+    public ApiResult acsAll() {
+        return dispatchUserService.acsAll();
     }
 
     @PostMapping("/seachOwerService")

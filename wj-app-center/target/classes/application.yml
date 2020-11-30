@@ -1,5 +1,7 @@
 server:
   port: 8888
+  # 单位 KB
+  #max-http-header-size: 1024000
 logging:
   config: classpath:logback-spring.xml
 
@@ -157,7 +159,7 @@ secure:
       - /webjars/springfox-swagger-ui/**
       - /actuator/**
       - /druid/**
-#      - /deviceRegist
+      #      - /deviceRegist
       - /userLogin
       - /userRegist
 

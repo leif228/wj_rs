@@ -5,12 +5,16 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="ascii10" property="ascii10" jdbcType="VARCHAR" />
     <result column="fzw_str" property="fzwStr" jdbcType="VARCHAR" />
+    <result column="one_tab" property="oneTab" jdbcType="VARCHAR" />
+    <result column="two_tab" property="twoTab" jdbcType="VARCHAR" />
+    <result column="three_tab" property="threeTab" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, ascii10, fzw_str
+    id, ascii10, fzw_str, one_tab, two_tab, three_tab, remarks
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from area_chang_seq
     where id = #{id,jdbcType=INTEGER}
@@ -20,18 +24,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into area_chang_seq (id, ascii10, fzw_str
-      )
-    values (#{id,jdbcType=INTEGER}, #{ascii10,jdbcType=VARCHAR}, #{fzwStr,jdbcType=VARCHAR}
-      )
+    insert into area_chang_seq (id, ascii10, fzw_str,
+    one_tab, two_tab, three_tab,
+    remarks)
+    values (#{id,jdbcType=INTEGER}, #{ascii10,jdbcType=VARCHAR}, #{fzwStr,jdbcType=VARCHAR},
+    #{oneTab,jdbcType=VARCHAR}, #{twoTab,jdbcType=VARCHAR}, #{threeTab,jdbcType=VARCHAR},
+    #{remarks,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into area_chang_seq
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -42,6 +42,18 @@
       </if>
       <if test="fzwStr != null" >
         fzw_str,
+      </if>
+      <if test="oneTab != null" >
+        one_tab,
+      </if>
+      <if test="twoTab != null" >
+        two_tab,
+      </if>
+      <if test="threeTab != null" >
+        three_tab,
+      </if>
+      <if test="remarks != null" >
+        remarks,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -54,6 +66,18 @@
       <if test="fzwStr != null" >
         #{fzwStr,jdbcType=VARCHAR},
       </if>
+      <if test="oneTab != null" >
+        #{oneTab,jdbcType=VARCHAR},
+      </if>
+      <if test="twoTab != null" >
+        #{twoTab,jdbcType=VARCHAR},
+      </if>
+      <if test="threeTab != null" >
+        #{threeTab,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
@@ -65,13 +89,29 @@
       <if test="fzwStr != null" >
         fzw_str = #{fzwStr,jdbcType=VARCHAR},
       </if>
+      <if test="oneTab != null" >
+        one_tab = #{oneTab,jdbcType=VARCHAR},
+      </if>
+      <if test="twoTab != null" >
+        two_tab = #{twoTab,jdbcType=VARCHAR},
+      </if>
+      <if test="threeTab != null" >
+        three_tab = #{threeTab,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.AreaChangSeq" >
     update area_chang_seq
     set ascii10 = #{ascii10,jdbcType=VARCHAR},
-      fzw_str = #{fzwStr,jdbcType=VARCHAR}
+    fzw_str = #{fzwStr,jdbcType=VARCHAR},
+    one_tab = #{oneTab,jdbcType=VARCHAR},
+    two_tab = #{twoTab,jdbcType=VARCHAR},
+    three_tab = #{threeTab,jdbcType=VARCHAR},
+    remarks = #{remarks,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -81,5 +121,10 @@
     <include refid="Base_Column_List" />
     from area_chang_seq
     where BINARY fzw_str = #{fzwStr}
+  </select>
+  <select id="acsAll" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from area_chang_seq
   </select>
 </mapper>

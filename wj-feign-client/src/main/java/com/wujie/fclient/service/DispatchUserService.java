@@ -141,8 +141,17 @@ public interface DispatchUserService {
                                       @RequestParam(value = "pSort") Integer pSort,
                                       @RequestParam(value = "cSort") Integer cSort,
                                       @RequestParam(value = "aSort") Integer aSort,
-                                      @RequestParam(value = "sSort") Integer sSort
+                                      @RequestParam(value = "sSort") Integer sSort,
+                                      @RequestParam(value = "oneSum") Integer oneSum,
+                                      @RequestParam(value = "oneTab") String oneTab,
+                                      @RequestParam(value = "twoSum") Integer twoSum,
+                                      @RequestParam(value = "twoTab") String twoTab,
+                                      @RequestParam(value = "threeSum") Integer threeSum,
+                                      @RequestParam(value = "threeTab") String threeTab
     );
+
+    @PostMapping("/acsAll")
+    public ApiResult acsAll();
 
     @PostMapping("/doGenEvent")
     public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
@@ -371,7 +380,12 @@ public interface DispatchUserService {
         }
 
         @Override
-        public ApiResult deviceRegistElse(String rootIp, String idcard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort) {
+        public ApiResult deviceRegistElse(String rootIp, String idcard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort, Integer oneSum, String oneTab, Integer twoSum, String twoTab, Integer threeSum, String threeTab) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult acsAll() {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

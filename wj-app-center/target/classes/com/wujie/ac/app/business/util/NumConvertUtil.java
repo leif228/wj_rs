@@ -12,6 +12,12 @@ public class NumConvertUtil {
     public static void main(String[] args) {
         System.out.println(IntToHexStringLimit4(54));
         System.out.println(HexStringToInt("0036"));
+        System.out.println(IntToHexString(14));
+        int a = 10;
+        int b = 3;
+        double c= b / a;
+        System.out.println((int)c);
+        System.out.println(84 % 83);
     }
 
     /**
@@ -232,6 +238,8 @@ public class NumConvertUtil {
         return toDouble;
 
     }
+
+
 
 
 }

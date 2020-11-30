@@ -37,6 +37,7 @@ public class AtServiceImpl implements AtService {
     private FzwnoMapper fzwnoMapper;
     private BussInfoMapper bussInfoMapper;
     private EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper;
+
     private SdsServiceImpl sdsService;
     private TcpUserService tcpUserService;
     private EventtypeTradecodeMdInfoMapper eventtypeTradecodeMdInfoMapper;

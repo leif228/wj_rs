@@ -3,6 +3,8 @@ package com.wujie.ac.app.business.repository;
 
 import com.wujie.ac.app.business.entity.AreaChangSeq;
 
+import java.util.List;
+
 public interface AreaChangSeqMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -17,4 +19,7 @@ public interface AreaChangSeqMapper {
     int updateByPrimaryKey(AreaChangSeq record);
 
     AreaChangSeq sortByFzwaddr(String fzwStr);
+
+    List<AreaChangSeq> acsAll();
+
 }

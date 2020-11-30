@@ -134,6 +134,7 @@
     from
     (select * from sds_event_person_record where oid = #{oid}) a,sds_event_type_info b
     WHERE a.event_type_info_id = b.id
+    ORDER BY creat_time desc limit 0,10
   </select>
 
   <select id="findMaxByGenOidAndEventTypeId" resultMap="BaseResultMap">

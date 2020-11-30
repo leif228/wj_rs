@@ -21,7 +21,9 @@ public interface UserService {
 
     ApiResult searchNode(Integer pSort, Integer cSort, Integer aSort, Integer sSort);
 
-    ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+    ApiResult acsAll();
+
+    ApiResult deviceRegistElse(String rootIp, String idCard, String deviceSelected, String deviceName, Integer pSort, Integer cSort, Integer aSort, Integer sSort, Integer oneSum, String oneTab, Integer twoSum, String twoTab, Integer threeSum, String threeTab);
 
     ApiResult secDeviceRegist(Long userId, String deviceSelected, String deviceName, String ip, String port, Long nodeId, String fzwno);
 
