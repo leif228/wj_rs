@@ -38,6 +38,7 @@
         <module>wj-dispatch-center</module>
         <module>wj-feign-client</module>
         <module>wj-common</module>
+        <module>wj-manage-center</module>
     </modules>
 
     <parent>
