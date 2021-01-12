@@ -7,14 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="wj-common" />
         <module name="wj-app-center" />
         <module name="wj-dispatch-center" />
         <module name="wj-register-center" />
-        <module name="wj-tcp-center" />
-        <module name="wj-manage-center" />
-        <module name="wj-feign-client" />
-        <module name="wj-common" />
         <module name="wj-http-center" />
+        <module name="wj-feign-client" />
+        <module name="wj-manage-center" />
+        <module name="wj-tcp-center" />
       </profile>
     </annotationProcessing>
   </component>

@@ -2,6 +2,7 @@ package com.wujie.ac.app.business.repository;
 
 
 import com.wujie.ac.app.business.entity.Devtype;
+import com.wujie.common.dto.wj.DevtypeDto;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface DevtypeMapper {
 
     int updateByPrimaryKey(Devtype record);
 
-    List<Devtype> findAll();
+    List<DevtypeDto> findAll();
 
     List<Devtype> getManageService(int id);
 

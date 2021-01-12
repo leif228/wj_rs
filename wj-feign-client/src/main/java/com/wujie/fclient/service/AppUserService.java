@@ -299,6 +299,18 @@ public interface AppUserService {
     @PostMapping("/getUserInfoAtOwer")
     public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard);
 
+    @PostMapping("/getTabsVersion")
+    public ApiResult getTabsVersion();
+
+    @PostMapping("/getTabsBuss")
+    public ApiResult getTabsBuss();
+
+    @PostMapping("/getTabsDevType")
+    public ApiResult getTabsDevType();
+
+    @PostMapping("/getTabsAreacs")
+    public ApiResult getTabsAreacs();
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -552,7 +564,26 @@ public interface AppUserService {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
-    }
+        @Override
+        public ApiResult getTabsVersion() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
 
+        @Override
+        public ApiResult getTabsBuss() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabsDevType() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabsAreacs() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+    }
 
 }

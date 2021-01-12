@@ -133,4 +133,10 @@
     from buss_info
     where business_num = #{buss} and command = #{cmd}
   </select>
+
+  <select id="findAll" resultType="com.wujie.common.dto.wj.BussInfoDto"  >
+    select
+    <include refid="Base_Column_List" />
+    from buss_info
+  </select>
 </mapper>

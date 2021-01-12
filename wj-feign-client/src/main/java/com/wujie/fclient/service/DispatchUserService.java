@@ -290,6 +290,18 @@ public interface DispatchUserService {
     @PostMapping("/getUserInfoAtOwer")
     public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard);
 
+    @PostMapping("/getTabsVersion")
+    public ApiResult getTabsVersion();
+
+    @PostMapping("/getTabsBuss")
+    public ApiResult getTabsBuss();
+
+    @PostMapping("/getTabsDevType")
+    public ApiResult getTabsDevType();
+
+    @PostMapping("/getTabsAreacs")
+    public ApiResult getTabsAreacs();
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -535,6 +547,25 @@ public interface DispatchUserService {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
+        @Override
+        public ApiResult getTabsVersion() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabsBuss() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabsDevType() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabsAreacs() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
 
     }
 

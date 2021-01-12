@@ -163,43 +163,7 @@ secure:
       #      - /deviceRegist
       - /userLogin
       - /userRegist
-      - /getChildNodes
-      - /tcpClientConnect
-      - /getTcpClientConnectInfo
-      - /getFullFzwno
-      - /owerLoginNotify
-      - /wjhttp
-      - /userRegistOwer
-      - /addrInit
-      - /deviceType
-      - /cityByP
-      - /areaByC
-      - /streetByA
-      - /searchNode
-      - /deviceRegistElse
-      - /myEventList
-      - /events
-      - /doEvent
-      - /doGenEvent
-      - /genEvent
-      - /seachOwerService
-      - /seachOwerUser
-      - /addUser
-      - /myUserList
-      - /pushEvent
-      - /pushTask
-      - /doEventWrite
-      - /searchEvents
-      - /searchOwerUserInfo
-      - /atTask
-      - /areaServiceAndSend
-      - /userTradeOwer
-      - /updataWjuserTrade
-      - /tradeTaskAtAreaSev
-      - /tradeTaskAtAreaSevAtArea
-      - /updataSdsEventRelation
-      - /getUserInfoAtOwer
-      - /acsAll
+     
 
 
 

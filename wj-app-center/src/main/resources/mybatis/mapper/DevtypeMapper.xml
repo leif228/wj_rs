@@ -122,7 +122,7 @@
   </update>
 
 
-  <select id="findAll" resultMap="BaseResultMap"  >
+  <select id="findAll" resultType="com.wujie.common.dto.wj.DevtypeDto"  >
     select
     <include refid="Base_Column_List" />
     from devtype

@@ -127,4 +127,10 @@
     <include refid="Base_Column_List" />
     from area_chang_seq
   </select>
+
+  <select id="findAll" resultType="com.wujie.common.dto.wj.AreaChangSeqDto"  >
+    select
+    <include refid="Base_Column_List" />
+    from area_chang_seq
+  </select>
 </mapper>

@@ -60,4 +60,13 @@ public interface UserService {
     ApiResult getUserInfo(Long id);
 
     ApiResult getUserInfoAtOwer(String idcard);
+
+    ApiResult getTabsVersion();
+
+    ApiResult getTabsBuss();
+
+    ApiResult getTabsDevType();
+
+    ApiResult getTabsAreacs();
+
 }
