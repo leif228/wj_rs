@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujie.mc.app.business.repository.TabsVersionMapper">
+    <resultMap id="BaseResultMap" type="com.wujie.common.dto.wj.TabsVersionDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="tab_name" jdbcType="VARCHAR" property="tabName"/>
+        <result column="version" jdbcType="BIGINT" property="version"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, tab_name, version, update_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tabs_version
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from tabs_version
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wujie.common.dto.wj.TabsVersionDto">
+        insert into tabs_version (id, tab_name, version,
+        update_time)
+        values (#{id,jdbcType=BIGINT}, #{tabName,jdbcType=VARCHAR}, #{version,jdbcType=BIGINT},
+        #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wujie.common.dto.wj.TabsVersionDto">
+        insert into tabs_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="tabName != null">
+                tab_name,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="tabName != null">
+                #{tabName,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wujie.common.dto.wj.TabsVersionDto">
+        update tabs_version
+        <set>
+            <if test="tabName != null">
+                tab_name = #{tabName,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wujie.common.dto.wj.TabsVersionDto">
+        update tabs_version
+        set tab_name = #{tabName,jdbcType=VARCHAR},
+        version = #{version,jdbcType=BIGINT},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tabs_version
+    </select>
+    <select id="findByTabName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tabs_version
+        where tab_name = #{name}
+    </select>
+</mapper>

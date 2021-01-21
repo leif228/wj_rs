@@ -311,6 +311,9 @@ public interface AppUserService {
     @PostMapping("/getTabsAreacs")
     public ApiResult getTabsAreacs();
 
+    @PostMapping("/getTabByType")
+    public ApiResult getTabByType(@RequestParam(value = "name") String name);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -581,6 +584,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult getTabsAreacs() {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult getTabByType(String name) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

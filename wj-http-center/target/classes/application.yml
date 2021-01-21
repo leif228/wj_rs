@@ -200,6 +200,10 @@ secure:
       - /updataSdsEventRelation
       - /getUserInfoAtOwer
       - /acsAll
+      - /getTabsVersion
+      - /getTabsBuss
+      - /getTabsDevType
+      - /getTabsAreacs
 
 
 

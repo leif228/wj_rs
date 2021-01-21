@@ -163,7 +163,10 @@ secure:
       #      - /deviceRegist
       - /userLogin
       - /userRegist
-     
+      - /getBaseTabType
+      - /getTabByType
+      - /updateTabByType
+
 
 
 

@@ -50,12 +50,16 @@ public class UserServiceImpl implements UserService {
     private TradeDataService tradeDataService;
     private WjuserTradeMapper wjuserTradeMapper;
     private AreaChangSeqMapper areaChangSeqMapper;
+    private TabsVersionMapper tabsVersionMapper;
+    private BussInfoMapper bussInfoMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper,AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.bussInfoMapper = bussInfoMapper;
+        this.tabsVersionMapper = tabsVersionMapper;
         this.areaChangSeqMapper = areaChangSeqMapper;
         this.wjuserTradeMapper = wjuserTradeMapper;
         this.tradeDataService = tradeDataService;
@@ -1329,6 +1333,54 @@ public class UserServiceImpl implements UserService {
             return ApiResult.success(msg);
         } catch (Exception e) {
             log.debug("getUserInfoAtOwer_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getTabsVersion() {
+        try {
+           List<TabsVersionDto> tabsVersions = tabsVersionMapper.findAll();
+
+            return ApiResult.success(tabsVersions);
+        } catch (Exception e) {
+            log.debug("getTabsVersion_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getTabsBuss() {
+        try {
+            List<BussInfoDto> tabsVersions = bussInfoMapper.findAll();
+
+            return ApiResult.success(tabsVersions);
+        } catch (Exception e) {
+            log.debug("getTabsVersion_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getTabsDevType() {
+        try {
+            List<DevtypeDto> tabsVersions = devtypeMapper.findAll();
+
+            return ApiResult.success(tabsVersions);
+        } catch (Exception e) {
+            log.debug("getTabsVersion_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getTabsAreacs() {
+        try {
+            List<AreaChangSeqDto> tabsVersions = areaChangSeqMapper.findAll();
+
+            return ApiResult.success(tabsVersions);
+        } catch (Exception e) {
+            log.debug("getTabsVersion_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
         }
     }

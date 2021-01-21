@@ -8,4 +8,8 @@ public interface UserService {
     ApiResult userLogin(String username, String password);
 
     ApiResult userRegist(String username, String password, String idcard, String phone, String userSelected, Integer pSort, Integer cSort, Integer aSort, Integer sSort);
+
+    ApiResult getBaseTabType();
+
+    ApiResult updateTabByType(String name, String jsonObject);
 }

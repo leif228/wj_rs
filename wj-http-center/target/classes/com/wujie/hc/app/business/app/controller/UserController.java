@@ -283,4 +283,24 @@ public class UserController {
     public ApiResult getUserInfoAtOwer(@RequestParam(value = "idcard") String idcard) {
         return dispatchUserService.getUserInfoAtOwer(idcard);
     }
+
+    @PostMapping("/getTabsVersion")
+    public ApiResult getTabsVersion() {
+        return dispatchUserService.getTabsVersion();
+    }
+
+    @PostMapping("/getTabsBuss")
+    public ApiResult getTabsBuss() {
+        return dispatchUserService.getTabsBuss();
+    }
+
+    @PostMapping("/getTabsDevType")
+    public ApiResult getTabsDevType() {
+        return dispatchUserService.getTabsDevType();
+    }
+
+    @PostMapping("/getTabsAreacs")
+    public ApiResult getTabsAreacs() {
+        return dispatchUserService.getTabsAreacs();
+    }
 }

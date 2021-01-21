@@ -1,6 +1,7 @@
 package com.wujie.mc.app.business.app.controller;
 
 import com.wujie.common.base.ApiResult;
+import com.wujie.fclient.service.AppUserService;
 import com.wujie.fclient.service.DispatchUserService;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.mc.app.business.app.service.system.UserService;
@@ -20,9 +21,11 @@ public class UserController {
     private DispatchUserService dispatchUserService;
     private TcpUserService tcpUserService;
     private UserService userService;
+    private AppUserService appUserService;
 
     @Autowired
-    public UserController(DispatchUserService dispatchUserService, UserService userService, TcpUserService tcpUserService) {
+    public UserController(AppUserService appUserService,DispatchUserService dispatchUserService, UserService userService, TcpUserService tcpUserService) {
+        this.appUserService = appUserService;
         this.dispatchUserService = dispatchUserService;
         this.tcpUserService = tcpUserService;
         this.userService = userService;
@@ -47,6 +50,22 @@ public class UserController {
                                @RequestParam(value = "password") String password
     ) {
         return userService.userLogin(username, password);
+    }
+
+    @PostMapping("/getBaseTabType")
+    public ApiResult getBaseTabType() {
+        return userService.getBaseTabType();
+    }
+
+    @PostMapping("/getTabByType")
+    public ApiResult getTabByType(@RequestParam(value = "name") String name) {
+        return appUserService.getTabByType(name);
+    }
+
+    @PostMapping("/updateTabByType")
+    public ApiResult updateTabByType(@RequestParam(value = "name") String name,
+                                     @RequestParam(value = "jsonObject") String jsonObject) {
+        return userService.updateTabByType(name,jsonObject);
     }
 
 }

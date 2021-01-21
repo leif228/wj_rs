@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.mc.app.business.repository.BussInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.mc.app.business.entity.BussInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="business_name" property="businessName" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="VARCHAR" />
+    <result column="business_num" property="businessNum" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="VARCHAR" />
+    <result column="command" property="command" jdbcType="VARCHAR" />
+    <result column="para" property="para" jdbcType="VARCHAR" />
+    <result column="txt" property="txt" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, business_name, priority, business_num, port, command, para, txt
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from buss_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from buss_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.mc.app.business.entity.BussInfo" >
+    insert into buss_info (id, business_name, priority, 
+      business_num, port, command, 
+      para, txt)
+    values (#{id,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{priority,jdbcType=VARCHAR}, 
+      #{businessNum,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{command,jdbcType=VARCHAR}, 
+      #{para,jdbcType=VARCHAR}, #{txt,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.mc.app.business.entity.BussInfo" >
+    insert into buss_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="businessName != null" >
+        business_name,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="businessNum != null" >
+        business_num,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="command != null" >
+        command,
+      </if>
+      <if test="para != null" >
+        para,
+      </if>
+      <if test="txt != null" >
+        txt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="businessName != null" >
+        #{businessName,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=VARCHAR},
+      </if>
+      <if test="businessNum != null" >
+        #{businessNum,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null" >
+        #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="para != null" >
+        #{para,jdbcType=VARCHAR},
+      </if>
+      <if test="txt != null" >
+        #{txt,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.mc.app.business.entity.BussInfo" >
+    update buss_info
+    <set >
+      <if test="businessName != null" >
+        business_name = #{businessName,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=VARCHAR},
+      </if>
+      <if test="businessNum != null" >
+        business_num = #{businessNum,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null" >
+        command = #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="para != null" >
+        para = #{para,jdbcType=VARCHAR},
+      </if>
+      <if test="txt != null" >
+        txt = #{txt,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.mc.app.business.entity.BussInfo" >
+    update buss_info
+    set business_name = #{businessName,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=VARCHAR},
+      business_num = #{businessNum,jdbcType=VARCHAR},
+      port = #{port,jdbcType=VARCHAR},
+      command = #{command,jdbcType=VARCHAR},
+      para = #{para,jdbcType=VARCHAR},
+      txt = #{txt,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="findByBussAndCmd" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from buss_info
+    where business_num = #{buss} and command = #{cmd}
+  </select>
+
+  <select id="findAll" resultType="com.wujie.common.dto.wj.BussInfoDto"  >
+    select
+    <include refid="Base_Column_List" />
+    from buss_info
+  </select>
+</mapper>

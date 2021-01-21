@@ -1,22 +1,18 @@
 package com.wujie.mc.app.business.app.service.system.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
-import com.wujie.common.dto.wj.DeviceTypeDto;
+import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.enums.WjBaseTableCode;
 import com.wujie.common.utils.MD5;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.mc.app.business.app.service.system.AuthUserService;
 import com.wujie.mc.app.business.app.service.system.UserService;
-import com.wujie.mc.app.business.entity.Device;
-import com.wujie.mc.app.business.entity.Node;
-import com.wujie.mc.app.business.entity.NodeStandby;
-import com.wujie.mc.app.business.entity.Wjuser;
-import com.wujie.mc.app.business.repository.DeviceMapper;
-import com.wujie.mc.app.business.repository.NodeMapper;
-import com.wujie.mc.app.business.repository.NodeStandbyMapper;
-import com.wujie.mc.app.business.repository.WjuserMapper;
+import com.wujie.mc.app.business.entity.*;
+import com.wujie.mc.app.business.repository.*;
 import com.wujie.mc.app.business.util.NumConvertUtil;
 import com.wujie.mc.app.business.util.date.DateUtil;
 import com.wujie.mc.app.business.vo.UserDetailsVo;
@@ -24,6 +20,7 @@ import com.wujie.mc.app.framework.auth.util.JwtTokenUtil;
 import com.wujie.mc.app.business.repository.DeviceMapper;
 import lombok.extern.slf4j.Slf4j;
 import com.wujie.mc.app.business.util.MDA;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,6 +41,10 @@ public class UserServiceImpl implements UserService {
     private DeviceMapper deviceMapper;
     private NodeMapper nodeMapper;
     private NodeStandbyMapper nodeStandbyMapper;
+    private TabsVersionMapper tabsVersionMapper;
+    private AreaChangSeqMapper areaChangSeqMapper;
+    private DevtypeMapper devtypeMapper;
+    private BussInfoMapper bussInfoMapper;
 
     private WjuserMapper wjuserMapper;
     private AuthUserService authUserService;
@@ -51,7 +52,8 @@ public class UserServiceImpl implements UserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public UserServiceImpl(NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(TabsVersionMapper tabsVersionMapper, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+        this.tabsVersionMapper = tabsVersionMapper;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.nodeMapper = nodeMapper;
         this.deviceMapper = deviceMapper;
@@ -113,6 +115,51 @@ public class UserServiceImpl implements UserService {
         resultMap.put("token", token);
         resultMap.put("user", userDetailsVo);
         return ApiResult.success(resultMap);
+    }
+
+    @Override
+    public ApiResult getBaseTabType() {
+        List<Map<String, Object>> maps = WjBaseTableCode.getMaps();
+        return ApiResult.success(maps);
+    }
+
+    @Override
+    public ApiResult updateTabByType(String name, String jsonObject) {
+        try {
+            WjBaseTableCode wjBaseTableCode = WjBaseTableCode.valueOf(name);
+            switch (wjBaseTableCode) {
+                case area_chang_seq:
+                    AreaChangSeqDto areaChangSeqDto = JSONObject.parseObject(jsonObject, AreaChangSeqDto.class);
+
+                    AreaChangSeq areaChangSeq = new AreaChangSeq();
+                    BeanUtils.copyProperties(areaChangSeqDto, areaChangSeq);
+
+                    areaChangSeqMapper.updateByPrimaryKey(areaChangSeq);
+                case devtype:
+                    DevtypeDto devtypeDto = JSONObject.parseObject(jsonObject, DevtypeDto.class);
+
+                    Devtype devtype = new Devtype();
+                    BeanUtils.copyProperties(devtypeDto, devtype);
+
+                    devtypeMapper.updateByPrimaryKey(devtype);
+                case buss_info:
+                    BussInfoDto bussInfoDto = JSONObject.parseObject(jsonObject, BussInfoDto.class);
+
+                    BussInfo bussInfo = new BussInfo();
+                    BeanUtils.copyProperties(bussInfoDto, bussInfo);
+
+                    bussInfoMapper.updateByPrimaryKey(bussInfo);
+            }
+
+            TabsVersionDto tabsVersionDto = tabsVersionMapper.findByTabName(wjBaseTableCode.name());
+            tabsVersionDto.setVersion(tabsVersionDto.getVersion()+1);
+            tabsVersionMapper.updateByPrimaryKeySelective(tabsVersionDto);
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            log.debug("updateTabByType_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
     }
 
 

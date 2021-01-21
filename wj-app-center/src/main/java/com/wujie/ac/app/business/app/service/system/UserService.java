@@ -69,4 +69,5 @@ public interface UserService {
 
     ApiResult getTabsAreacs();
 
+    ApiResult getTabByType(String name);
 }
