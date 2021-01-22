@@ -283,4 +283,9 @@ public class UserController {
     public ApiResult getTabsAreacs() {
         return userService.getTabsAreacs();
     }
+
+    @PostMapping("/getTabByType")
+    public ApiResult getTabByType(@RequestParam(value = "name") String name) {
+        return userService.getTabByType(name);
+    }
 }

@@ -16,6 +16,7 @@ import com.wujie.common.dto.DeviceVo;
 import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.*;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.enums.WjBaseTableCode;
 import com.wujie.common.utils.MD5;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -1381,6 +1382,29 @@ public class UserServiceImpl implements UserService {
             return ApiResult.success(tabsVersions);
         } catch (Exception e) {
             log.debug("getTabsVersion_报错了:" + e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult getTabByType(String name) {
+        try {
+            WjBaseTableCode wjBaseTableCode = WjBaseTableCode.valueOf(name);
+            switch (wjBaseTableCode){
+                case area_chang_seq:
+                    List<AreaChangSeqDto> tabsVersions = areaChangSeqMapper.findAll();
+                    return ApiResult.success(tabsVersions);
+                case devtype:
+                    List<DevtypeDto> devtypeDtos = devtypeMapper.findAll();
+                    return ApiResult.success(devtypeDtos);
+                case buss_info:
+                    List<BussInfoDto> bussInfoDtos = bussInfoMapper.findAll();
+                    return ApiResult.success(bussInfoDtos);
+                default:
+                    return ApiResult.error("参数错误");
+            }
+        } catch (Exception e) {
+            log.debug("getTabByType_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
         }
     }

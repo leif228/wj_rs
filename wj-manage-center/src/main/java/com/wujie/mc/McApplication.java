@@ -32,7 +32,7 @@ public class McApplication   {
 
     public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(McApplication.class, args);
-        applicationContext.getBean(WebsocketDanmuServer.class).run();
+//        applicationContext.getBean(WebsocketDanmuServer.class).run();
     }
 
 }

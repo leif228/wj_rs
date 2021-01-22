@@ -131,28 +131,58 @@ public class UserServiceImpl implements UserService {
                 case area_chang_seq:
                     AreaChangSeqDto areaChangSeqDto = JSONObject.parseObject(jsonObject, AreaChangSeqDto.class);
 
-                    AreaChangSeq areaChangSeq = new AreaChangSeq();
-                    BeanUtils.copyProperties(areaChangSeqDto, areaChangSeq);
+                    AreaChangSeq areaChangSeq = areaChangSeqMapper.selectByPrimaryKey(areaChangSeqDto.getId());
+                    if (areaChangSeq == null) {
+                        areaChangSeq = new AreaChangSeq();
+                        BeanUtils.copyProperties(areaChangSeqDto, areaChangSeq);
 
-                    areaChangSeqMapper.updateByPrimaryKey(areaChangSeq);
+                        areaChangSeq.setId(null);
+
+                        areaChangSeqMapper.insertSelective(areaChangSeq);
+                    } else {
+                        areaChangSeq = new AreaChangSeq();
+                        BeanUtils.copyProperties(areaChangSeqDto, areaChangSeq);
+
+                        areaChangSeqMapper.updateByPrimaryKey(areaChangSeq);
+                    }
                 case devtype:
                     DevtypeDto devtypeDto = JSONObject.parseObject(jsonObject, DevtypeDto.class);
 
-                    Devtype devtype = new Devtype();
-                    BeanUtils.copyProperties(devtypeDto, devtype);
+                    Devtype devtype = devtypeMapper.selectByPrimaryKey(devtypeDto.getId());
+                    if (devtype == null) {
+                        devtype = new Devtype();
+                        BeanUtils.copyProperties(devtypeDto, devtype);
 
-                    devtypeMapper.updateByPrimaryKey(devtype);
+                        devtype.setId(null);
+
+                        devtypeMapper.insertSelective(devtype);
+                    } else {
+                        devtype = new Devtype();
+                        BeanUtils.copyProperties(devtypeDto, devtype);
+
+                        devtypeMapper.updateByPrimaryKey(devtype);
+                    }
                 case buss_info:
                     BussInfoDto bussInfoDto = JSONObject.parseObject(jsonObject, BussInfoDto.class);
 
-                    BussInfo bussInfo = new BussInfo();
-                    BeanUtils.copyProperties(bussInfoDto, bussInfo);
+                    BussInfo bussInfo = bussInfoMapper.selectByPrimaryKey(bussInfoDto.getId());
+                    if (bussInfo == null) {
+                        bussInfo = new BussInfo();
+                        BeanUtils.copyProperties(bussInfoDto, bussInfo);
 
-                    bussInfoMapper.updateByPrimaryKey(bussInfo);
+                        bussInfo.setId(null);
+
+                        bussInfoMapper.insertSelective(bussInfo);
+                    } else {
+                        bussInfo = new BussInfo();
+                        BeanUtils.copyProperties(bussInfoDto, bussInfo);
+
+                        bussInfoMapper.updateByPrimaryKey(bussInfo);
+                    }
             }
 
             TabsVersionDto tabsVersionDto = tabsVersionMapper.findByTabName(wjBaseTableCode.name());
-            tabsVersionDto.setVersion(tabsVersionDto.getVersion()+1);
+            tabsVersionDto.setVersion(tabsVersionDto.getVersion() + 1);
             tabsVersionMapper.updateByPrimaryKeySelective(tabsVersionDto);
 
             return ApiResult.success();
