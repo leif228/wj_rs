@@ -52,7 +52,10 @@ public class UserServiceImpl implements UserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public UserServiceImpl(TabsVersionMapper tabsVersionMapper, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(AreaChangSeqMapper areaChangSeqMapper,DevtypeMapper devtypeMapper,BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+        this.areaChangSeqMapper = areaChangSeqMapper;
+        this.devtypeMapper = devtypeMapper;
+        this.bussInfoMapper = bussInfoMapper;
         this.tabsVersionMapper = tabsVersionMapper;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.nodeMapper = nodeMapper;
@@ -145,6 +148,7 @@ public class UserServiceImpl implements UserService {
 
                         areaChangSeqMapper.updateByPrimaryKey(areaChangSeq);
                     }
+                    break;
                 case devtype:
                     DevtypeDto devtypeDto = JSONObject.parseObject(jsonObject, DevtypeDto.class);
 
@@ -162,6 +166,7 @@ public class UserServiceImpl implements UserService {
 
                         devtypeMapper.updateByPrimaryKey(devtype);
                     }
+                    break;
                 case buss_info:
                     BussInfoDto bussInfoDto = JSONObject.parseObject(jsonObject, BussInfoDto.class);
 
@@ -179,10 +184,12 @@ public class UserServiceImpl implements UserService {
 
                         bussInfoMapper.updateByPrimaryKey(bussInfo);
                     }
+                    break;
             }
 
             TabsVersionDto tabsVersionDto = tabsVersionMapper.findByTabName(wjBaseTableCode.name());
             tabsVersionDto.setVersion(tabsVersionDto.getVersion() + 1);
+            tabsVersionDto.setUpdateTime(DateUtil.getDate());
             tabsVersionMapper.updateByPrimaryKeySelective(tabsVersionDto);
 
             return ApiResult.success();
