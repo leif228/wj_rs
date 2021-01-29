@@ -206,4 +206,12 @@
     <include refid="Base_Column_List" />
     from bs_street
   </select>
+
+
+  <select id="getSByAAndSort" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_street
+    where AREA_CODE = #{areaCode} and SORT = #{sSort}
+  </select>
 </mapper>

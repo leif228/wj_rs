@@ -245,6 +245,31 @@ public class BaseDataServiceImpl implements BaseDataService {
     }
 
     @Override
+    public BsProvince getPBySort(Integer pSort) {
+        BsProvince bsProvince = bsProvinceMapper.getPBySort(pSort);
+
+        return bsProvince;
+    }
+
+    @Override
+    public BsCity getCByPAndSort(String provinceCode, Integer cSort) {
+        BsCity bsCity = bsCityMapper.getCByPAndSort(provinceCode,cSort);
+        return bsCity;
+    }
+
+    @Override
+    public BsArea getAByCAndSort(String cityCode, Integer aSort) {
+        BsArea bsArea = bsAreaMapper.getAByCAndSort(cityCode,aSort);
+        return bsArea;
+    }
+
+    @Override
+    public BsStreet getSByAAndSort(String areaCode, Integer sSort) {
+        BsStreet bsStreet = bsStreetMapper.getSByAAndSort(areaCode,sSort);
+        return bsStreet;
+    }
+
+    @Override
     public ApiResult findAllP() {
         List<BsProvinceDto> bsProvinceDtos = new ArrayList<>();
 
@@ -295,4 +320,5 @@ public class BaseDataServiceImpl implements BaseDataService {
         }
         return ApiResult.success(bsStreetDtos);
     }
+
 }

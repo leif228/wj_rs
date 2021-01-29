@@ -206,4 +206,11 @@
     <include refid="Base_Column_List" />
     from bs_city
   </select>
+
+  <select id="getCByPAndSort" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_city
+    where PROVINCE_CODE = #{provinceCode} and SORT = #{cSort}
+  </select>
 </mapper>

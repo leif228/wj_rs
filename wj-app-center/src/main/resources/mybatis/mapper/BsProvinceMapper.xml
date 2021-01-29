@@ -187,4 +187,10 @@
     <include refid="Base_Column_List" />
     from bs_province
   </select>
+  <select id="getPBySort" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_province
+    where SORT = #{pSort}
+  </select>
 </mapper>

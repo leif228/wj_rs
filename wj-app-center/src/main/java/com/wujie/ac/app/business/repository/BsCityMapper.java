@@ -22,4 +22,5 @@ public interface BsCityMapper {
 
     List<BsCity> findAll();
 
+    BsCity getCByPAndSort(String provinceCode, Integer cSort);
 }

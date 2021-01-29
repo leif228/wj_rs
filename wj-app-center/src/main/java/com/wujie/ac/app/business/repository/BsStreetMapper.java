@@ -22,4 +22,5 @@ public interface BsStreetMapper {
 
     List<BsStreet> findAll();
 
+    BsStreet getSByAAndSort(String areaCode, Integer sSort);
 }

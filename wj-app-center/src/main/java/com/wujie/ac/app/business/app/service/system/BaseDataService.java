@@ -1,6 +1,6 @@
 package com.wujie.ac.app.business.app.service.system;
 
-import com.wujie.ac.app.business.entity.AreaChangSeq;
+import com.wujie.ac.app.business.entity.*;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.wj.AreaChangSeqDto;
 
@@ -22,6 +22,8 @@ public interface BaseDataService {
 
     List<AreaChangSeqDto> acsAll();
 
+    BsProvince getPBySort(Integer pSort);
+
     ApiResult findAllP();
 
     ApiResult findAllC();
@@ -29,4 +31,10 @@ public interface BaseDataService {
     ApiResult findAllA();
 
     ApiResult findAllS();
+
+    BsCity getCByPAndSort(String provinceCode, Integer cSort);
+
+    BsArea getAByCAndSort(String cityCode, Integer aSort);
+
+    BsStreet getSByAAndSort(String areaCode, Integer sSort);
 }

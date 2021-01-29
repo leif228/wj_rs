@@ -22,4 +22,5 @@ public interface BsAreaMapper {
 
     List<BsArea> findAll();
 
+    BsArea getAByCAndSort(String cityCode, Integer aSort);
 }

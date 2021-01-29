@@ -167,6 +167,7 @@ secure:
       - /getTabByType
       - /updateTabByType
       - /getTreeData
+      - /seachChinaAddr
 
 
 

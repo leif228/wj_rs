@@ -19,4 +19,6 @@ public interface BsProvinceMapper {
     int updateByPrimaryKey(BsProvince record);
 
     List<BsProvince> findAll();
+
+    BsProvince getPBySort(Integer pSort);
 }

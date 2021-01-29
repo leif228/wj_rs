@@ -73,4 +73,10 @@ public class UserController {
         return appUserService.getTreeData(nodeId);
     }
 
+    @PostMapping("/seachChinaAddr")
+    public ApiResult seachChinaAddr(@RequestParam(value = "oid") String oid
+    ) {
+        return appUserService.seachChinaAddr(oid);
+    }
+
 }

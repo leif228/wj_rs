@@ -207,4 +207,12 @@
     <include refid="Base_Column_List" />
     from bs_area
   </select>
+
+
+  <select id="getAByCAndSort" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_area
+    where CITY_CODE = #{cityCode} and SORT = #{aSort}
+  </select>
 </mapper>

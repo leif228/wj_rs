@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper,AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(BussInfoMapper bussInfoMapper, TabsVersionMapper tabsVersionMapper, AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
         this.bussInfoMapper = bussInfoMapper;
         this.tabsVersionMapper = tabsVersionMapper;
         this.areaChangSeqMapper = areaChangSeqMapper;
@@ -168,6 +168,71 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(owerServiceDto);
+    }
+
+    @Override
+    public ApiResult seachChinaAddr(String oid) {
+        if (oid == null || "".equals(oid))
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        if (oid.length() < 9)
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        try {
+            String addr = "";
+
+            //root的fzwno为chn0!!!!0000000000000；没有选择时fzw地址信息暂用“!”表示
+            String addSorts = oid.substring(4, 8);
+            String p_acs = String.valueOf(addSorts.charAt(0));
+            String c_acs = String.valueOf(addSorts.charAt(1));
+            String a_acs = String.valueOf(addSorts.charAt(2));
+            String s_acs = String.valueOf(addSorts.charAt(3));
+
+            //归属服务器为根
+            if (p_acs.equals(SPA_STR)) {
+
+                addr += "根";
+            } else {
+                Integer pSort = 0, cSort = 0, aSort = 0, sSort = 0;
+                BsProvince bsProvince = null;
+                BsCity bsCity = null;
+                BsArea bsArea = null;
+                BsStreet bsStreet = null;
+
+                AreaChangSeq pd = baseDataService.sortByFzwaddr(p_acs);
+                if (pd != null) {
+                    pSort = pd.getId();
+                    bsProvince = baseDataService.getPBySort(pSort);
+
+                    addr += bsProvince.getShortName();
+                }
+                AreaChangSeq cd = baseDataService.sortByFzwaddr(c_acs);
+                if (cd != null) {
+                    cSort = cd.getId();
+                    bsCity = baseDataService.getCByPAndSort(bsProvince.getProvinceCode(), cSort);
+
+                    addr += bsCity.getShortName();
+                }
+                AreaChangSeq ad = baseDataService.sortByFzwaddr(a_acs);
+                if (ad != null) {
+                    aSort = ad.getId();
+                    bsArea = baseDataService.getAByCAndSort(bsCity.getCityCode(), aSort);
+
+                    addr += bsArea.getShortName();
+                }
+                AreaChangSeq sd = baseDataService.sortByFzwaddr(s_acs);
+                if (sd != null) {
+                    sSort = sd.getId();
+                    bsStreet = baseDataService.getSByAAndSort(bsArea.getAreaCode(), sSort);
+
+                    addr += bsStreet.getShortName();
+                }
+            }
+
+            return ApiResult.success(addr);
+        }catch (Exception e){
+            return ApiResult.error("数据错误，不能解析！");
+        }
     }
 
     @Override
@@ -1031,7 +1096,7 @@ public class UserServiceImpl implements UserService {
             asctab += SPA_STR;
             asctab += SPA_STR;
         } else if (twoSum < 0) {
-            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(twoSum*-1);
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(twoSum * -1);
             asctab += areaChangSeq_sum.getFzwStr();
             asctab += "0";
         } else if (twoSum > 0) {
@@ -1341,7 +1406,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResult getTabsVersion() {
         try {
-           List<TabsVersionDto> tabsVersions = tabsVersionMapper.findAll();
+            List<TabsVersionDto> tabsVersions = tabsVersionMapper.findAll();
 
             return ApiResult.success(tabsVersions);
         } catch (Exception e) {
@@ -1390,7 +1455,7 @@ public class UserServiceImpl implements UserService {
     public ApiResult getTabByType(String name) {
         try {
             WjBaseTableCode wjBaseTableCode = WjBaseTableCode.valueOf(name);
-            switch (wjBaseTableCode){
+            switch (wjBaseTableCode) {
                 case area_chang_seq:
                     List<AreaChangSeqDto> tabsVersions = areaChangSeqMapper.findAll();
                     return ApiResult.success(tabsVersions);
