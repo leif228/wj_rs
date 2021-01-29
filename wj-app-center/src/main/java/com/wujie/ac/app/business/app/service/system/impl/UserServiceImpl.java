@@ -1400,6 +1400,14 @@ public class UserServiceImpl implements UserService {
                 case buss_info:
                     List<BussInfoDto> bussInfoDtos = bussInfoMapper.findAll();
                     return ApiResult.success(bussInfoDtos);
+                case bs_province:
+                    return baseDataService.findAllP();
+                case bs_city:
+                    return baseDataService.findAllC();
+                case bs_area:
+                    return baseDataService.findAllA();
+                case bs_street:
+                    return baseDataService.findAllS();
                 default:
                     return ApiResult.error("参数错误");
             }

@@ -199,4 +199,11 @@
     from bs_street
     where AREA_CODE = #{areaCode}
   </select>
+
+
+  <select id="findAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_street
+  </select>
 </mapper>

@@ -68,4 +68,9 @@ public class UserController {
         return userService.updateTabByType(name,jsonObject);
     }
 
+    @PostMapping("/getTreeData")
+    public ApiResult getTreeData(@RequestParam(value = "nodeId") Long nodeId) {
+        return appUserService.getTreeData(nodeId);
+    }
+
 }

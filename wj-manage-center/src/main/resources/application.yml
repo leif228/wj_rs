@@ -166,6 +166,7 @@ secure:
       - /getBaseTabType
       - /getTabByType
       - /updateTabByType
+      - /getTreeData
 
 
 

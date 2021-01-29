@@ -19,4 +19,7 @@ public interface BsCityMapper {
     int updateByPrimaryKey(BsCity record);
 
     List<BsCity> findByP(String provinceCode);
+
+    List<BsCity> findAll();
+
 }

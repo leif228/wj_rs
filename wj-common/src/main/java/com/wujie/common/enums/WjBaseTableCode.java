@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public enum WjBaseTableCode {
-	area_chang_seq("地区表"), devtype("设备类型表"), buss_info("业务表");
+	area_chang_seq("地区表"), devtype("设备类型表"), buss_info("业务表"),
+	bs_province("省级表"),bs_city("市级表"),bs_area("区级表"),bs_street("街道表");
 
 	private String description;
 

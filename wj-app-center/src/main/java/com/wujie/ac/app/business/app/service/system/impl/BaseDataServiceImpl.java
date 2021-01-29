@@ -236,11 +236,63 @@ public class BaseDataServiceImpl implements BaseDataService {
     public List<AreaChangSeqDto> acsAll() {
         List<AreaChangSeqDto> areaChangSeqDtos = new ArrayList<>();
         List<AreaChangSeq> areaChangSeqs = areaChangSeqMapper.acsAll();
-        for(AreaChangSeq acs : areaChangSeqs){
+        for (AreaChangSeq acs : areaChangSeqs) {
             AreaChangSeqDto areaChangSeqDto = new AreaChangSeqDto();
-            BeanUtils.copyProperties(acs,areaChangSeqDto);
+            BeanUtils.copyProperties(acs, areaChangSeqDto);
             areaChangSeqDtos.add(areaChangSeqDto);
         }
         return areaChangSeqDtos;
+    }
+
+    @Override
+    public ApiResult findAllP() {
+        List<BsProvinceDto> bsProvinceDtos = new ArrayList<>();
+
+        List<BsProvince> plist = bsProvinceMapper.findAll();
+        for (BsProvince p : plist) {
+            BsProvinceDto bsProvinceDto = new BsProvinceDto();
+            BeanUtils.copyProperties(p, bsProvinceDto);
+            bsProvinceDtos.add(bsProvinceDto);
+        }
+        return ApiResult.success(bsProvinceDtos);
+    }
+
+    @Override
+    public ApiResult findAllC() {
+        List<BsCityDto> bsCityDtos = new ArrayList<>();
+
+        List<BsCity> clist = bsCityMapper.findAll();
+        for (BsCity c : clist) {
+            BsCityDto bsCityDto = new BsCityDto();
+            BeanUtils.copyProperties(c, bsCityDto);
+            bsCityDtos.add(bsCityDto);
+        }
+        return ApiResult.success(bsCityDtos);
+    }
+
+    @Override
+    public ApiResult findAllA() {
+        List<BsAreaDto> bsAreaDtos = new ArrayList<>();
+
+        List<BsArea> alist = bsAreaMapper.findAll();
+        for (BsArea a : alist) {
+            BsAreaDto bsAreaDto = new BsAreaDto();
+            BeanUtils.copyProperties(a, bsAreaDto);
+            bsAreaDtos.add(bsAreaDto);
+        }
+        return ApiResult.success(bsAreaDtos);
+    }
+
+    @Override
+    public ApiResult findAllS() {
+        List<BsStreetDto> bsStreetDtos = new ArrayList<>();
+
+        List<BsStreet> slist = bsStreetMapper.findAll();
+        for (BsStreet s : slist) {
+            BsStreetDto bsStreetDto = new BsStreetDto();
+            BeanUtils.copyProperties(s, bsStreetDto);
+            bsStreetDtos.add(bsStreetDto);
+        }
+        return ApiResult.success(bsStreetDtos);
     }
 }

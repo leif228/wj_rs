@@ -19,4 +19,7 @@ public interface BsAreaMapper {
     int updateByPrimaryKey(BsArea record);
 
     List<BsArea> findByC(String cityCode);
+
+    List<BsArea> findAll();
+
 }

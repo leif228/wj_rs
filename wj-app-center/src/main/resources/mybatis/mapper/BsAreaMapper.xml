@@ -200,4 +200,11 @@
     from bs_area
     where CITY_CODE = #{cityCode}
   </select>
+
+
+  <select id="findAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from bs_area
+  </select>
 </mapper>

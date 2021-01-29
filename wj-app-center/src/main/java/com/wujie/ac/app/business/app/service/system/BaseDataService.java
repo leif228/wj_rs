@@ -21,4 +21,12 @@ public interface BaseDataService {
     AreaChangSeq sortByFzwaddr(String fzw_str);
 
     List<AreaChangSeqDto> acsAll();
+
+    ApiResult findAllP();
+
+    ApiResult findAllC();
+
+    ApiResult findAllA();
+
+    ApiResult findAllS();
 }
