@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper,AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(BussInfoMapper bussInfoMapper, TabsVersionMapper tabsVersionMapper, AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
         this.bussInfoMapper = bussInfoMapper;
         this.tabsVersionMapper = tabsVersionMapper;
         this.areaChangSeqMapper = areaChangSeqMapper;
@@ -168,6 +168,71 @@ public class UserServiceImpl implements UserService {
         }
 
         return ApiResult.success(owerServiceDto);
+    }
+
+    @Override
+    public ApiResult seachChinaAddr(String oid) {
+        if (oid == null || "".equals(oid))
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        if (oid.length() < 9)
+            return ApiResult.error("oid参数错误！oid=" + oid);
+
+        try {
+            String addr = "";
+
+            //root的fzwno为chn0!!!!0000000000000；没有选择时fzw地址信息暂用“!”表示
+            String addSorts = oid.substring(4, 8);
+            String p_acs = String.valueOf(addSorts.charAt(0));
+            String c_acs = String.valueOf(addSorts.charAt(1));
+            String a_acs = String.valueOf(addSorts.charAt(2));
+            String s_acs = String.valueOf(addSorts.charAt(3));
+
+            //归属服务器为根
+            if (p_acs.equals(SPA_STR)) {
+
+                addr += "根";
+            } else {
+                Integer pSort = 0, cSort = 0, aSort = 0, sSort = 0;
+                BsProvince bsProvince = null;
+                BsCity bsCity = null;
+                BsArea bsArea = null;
+                BsStreet bsStreet = null;
+
+                AreaChangSeq pd = baseDataService.sortByFzwaddr(p_acs);
+                if (pd != null) {
+                    pSort = pd.getId();
+                    bsProvince = baseDataService.getPBySort(pSort);
+
+                    addr += bsProvince.getShortName();
+                }
+                AreaChangSeq cd = baseDataService.sortByFzwaddr(c_acs);
+                if (cd != null) {
+                    cSort = cd.getId();
+                    bsCity = baseDataService.getCByPAndSort(bsProvince.getProvinceCode(), cSort);
+
+                    addr += bsCity.getShortName();
+                }
+                AreaChangSeq ad = baseDataService.sortByFzwaddr(a_acs);
+                if (ad != null) {
+                    aSort = ad.getId();
+                    bsArea = baseDataService.getAByCAndSort(bsCity.getCityCode(), aSort);
+
+                    addr += bsArea.getShortName();
+                }
+                AreaChangSeq sd = baseDataService.sortByFzwaddr(s_acs);
+                if (sd != null) {
+                    sSort = sd.getId();
+                    bsStreet = baseDataService.getSByAAndSort(bsArea.getAreaCode(), sSort);
+
+                    addr += bsStreet.getShortName();
+                }
+            }
+
+            return ApiResult.success(addr);
+        } catch (Exception e) {
+            return ApiResult.error("数据错误，不能解析！");
+        }
     }
 
     @Override
@@ -1031,7 +1096,7 @@ public class UserServiceImpl implements UserService {
             asctab += SPA_STR;
             asctab += SPA_STR;
         } else if (twoSum < 0) {
-            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(twoSum*-1);
+            AreaChangSeq areaChangSeq_sum = areaChangSeqMapper.selectByPrimaryKey(twoSum * -1);
             asctab += areaChangSeq_sum.getFzwStr();
             asctab += "0";
         } else if (twoSum > 0) {
@@ -1290,16 +1355,17 @@ public class UserServiceImpl implements UserService {
         try {
             Wjuser wjuser = wjuserMapper.selectByPrimaryKey(id);
 
-            String info = getUserInfoAtOwerHttp(wjuser.getOwerIp(), wjuser.getIdcard());
+            UserInfoVo info = getUserInfoAtOwerHttp(wjuser.getOwerIp(), wjuser.getIdcard());
 
             String msg = "";
             msg += "用户名:" + wjuser.getUserName() + "\r";
             msg += "归属ip:" + wjuser.getOwerIp() + "\r";
             msg += "关系段:" + wjuser.getOid() + "\r";
-            msg += info;
+            msg += info.getMsg();
 
+            info.setMsg(msg);
 
-            return ApiResult.success(msg);
+            return ApiResult.success(info);
         } catch (Exception e) {
             log.debug("getUserInfo_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
@@ -1321,17 +1387,27 @@ public class UserServiceImpl implements UserService {
                 msg += "行业:" + "" + "\r";
             }
 
+            UserInfoVo userInfoVo = new UserInfoVo();
+
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(wjuserOwer.getOid());
             for (Fzwno fzwno : fzwnos) {
+                UserDeviceDto userDeviceDto = new UserDeviceDto();
+                userDeviceDto.setFzwnoDev(fzwno.getFzwDevice());
+
                 msg += "设备:" + fzwno.getFzwDevice() + "\r";
                 LoginServer loginServer = loginServerMapper.findLastByOid(fzwno.getFzwRelation() + fzwno.getFzwDevice());
-                if (loginServer != null)
+                if (loginServer != null) {
                     msg += "最近登录ip:" + loginServer.getServerIp() + "\r";
-                else
+                    userDeviceDto.setLastIp(loginServer.getServerIp());
+                } else {
                     msg += "最近登录ip:" + "" + "\r";
+                }
+                userInfoVo.getDeviceDtoList().add(userDeviceDto);
             }
 
-            return ApiResult.success(msg);
+            userInfoVo.setMsg(msg);
+
+            return ApiResult.success(userInfoVo);
         } catch (Exception e) {
             log.debug("getUserInfoAtOwer_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
@@ -1341,7 +1417,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResult getTabsVersion() {
         try {
-           List<TabsVersionDto> tabsVersions = tabsVersionMapper.findAll();
+            List<TabsVersionDto> tabsVersions = tabsVersionMapper.findAll();
 
             return ApiResult.success(tabsVersions);
         } catch (Exception e) {
@@ -1390,7 +1466,7 @@ public class UserServiceImpl implements UserService {
     public ApiResult getTabByType(String name) {
         try {
             WjBaseTableCode wjBaseTableCode = WjBaseTableCode.valueOf(name);
-            switch (wjBaseTableCode){
+            switch (wjBaseTableCode) {
                 case area_chang_seq:
                     List<AreaChangSeqDto> tabsVersions = areaChangSeqMapper.findAll();
                     return ApiResult.success(tabsVersions);
@@ -1637,7 +1713,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private String getUserInfoAtOwerHttp(String ip, String idcard) throws Exception {
+    private UserInfoVo getUserInfoAtOwerHttp(String ip, String idcard) throws Exception {
         String url = "http://" + ip + ":" + "9999/getUserInfoAtOwer";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1647,9 +1723,16 @@ public class UserServiceImpl implements UserService {
         if (jsonObject != null) {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
-                String data = (String) jsonObject.get(ApiResult.MESSAGE);
-                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + data);
-                return data;
+//                String data = (String) jsonObject.get(ApiResult.MESSAGE);
+//                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + data);
+
+                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + ApiResult.CONTENT);
+                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+                Map<String, Class> classMap = new HashMap<String, Class>();
+                classMap.put("deviceDtoList", UserDeviceDto.class);
+                UserInfoVo deviceVo = (UserInfoVo) JSONObject.toBean(data, UserInfoVo.class,classMap);
+
+                return deviceVo;
             } else {
                 log.info("++++++++++++++++请求getUserInfoAtOwer失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("getUserInfoAtOwer失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));

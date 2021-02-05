@@ -216,6 +216,12 @@ public class UserController {
         return userService.seachOwerUser(oid);
     }
 
+    @PostMapping("/seachChinaAddr")
+    public ApiResult seachChinaAddr(@RequestParam(value = "oid") String oid
+    ) {
+        return userService.seachChinaAddr(oid);
+    }
+
     @PostMapping("/getClass1st")
     public ApiResult getClass1st() {
         return userService.getClass1st();

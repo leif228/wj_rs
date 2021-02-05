@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
             }
 
             return ApiResult.success(addr);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ApiResult.error("数据错误，不能解析！");
         }
     }
@@ -1355,16 +1355,17 @@ public class UserServiceImpl implements UserService {
         try {
             Wjuser wjuser = wjuserMapper.selectByPrimaryKey(id);
 
-            String info = getUserInfoAtOwerHttp(wjuser.getOwerIp(), wjuser.getIdcard());
+            UserInfoVo info = getUserInfoAtOwerHttp(wjuser.getOwerIp(), wjuser.getIdcard());
 
             String msg = "";
             msg += "用户名:" + wjuser.getUserName() + "\r";
             msg += "归属ip:" + wjuser.getOwerIp() + "\r";
             msg += "关系段:" + wjuser.getOid() + "\r";
-            msg += info;
+            msg += info.getMsg();
 
+            info.setMsg(msg);
 
-            return ApiResult.success(msg);
+            return ApiResult.success(info);
         } catch (Exception e) {
             log.debug("getUserInfo_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
@@ -1386,17 +1387,27 @@ public class UserServiceImpl implements UserService {
                 msg += "行业:" + "" + "\r";
             }
 
+            UserInfoVo userInfoVo = new UserInfoVo();
+
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(wjuserOwer.getOid());
             for (Fzwno fzwno : fzwnos) {
+                UserDeviceDto userDeviceDto = new UserDeviceDto();
+                userDeviceDto.setFzwnoDev(fzwno.getFzwDevice());
+
                 msg += "设备:" + fzwno.getFzwDevice() + "\r";
                 LoginServer loginServer = loginServerMapper.findLastByOid(fzwno.getFzwRelation() + fzwno.getFzwDevice());
-                if (loginServer != null)
+                if (loginServer != null) {
                     msg += "最近登录ip:" + loginServer.getServerIp() + "\r";
-                else
+                    userDeviceDto.setLastIp(loginServer.getServerIp());
+                } else {
                     msg += "最近登录ip:" + "" + "\r";
+                }
+                userInfoVo.getDeviceDtoList().add(userDeviceDto);
             }
 
-            return ApiResult.success(msg);
+            userInfoVo.setMsg(msg);
+
+            return ApiResult.success(userInfoVo);
         } catch (Exception e) {
             log.debug("getUserInfoAtOwer_报错了:" + e.getMessage());
             return ApiResult.error(e.getMessage());
@@ -1702,7 +1713,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private String getUserInfoAtOwerHttp(String ip, String idcard) throws Exception {
+    private UserInfoVo getUserInfoAtOwerHttp(String ip, String idcard) throws Exception {
         String url = "http://" + ip + ":" + "9999/getUserInfoAtOwer";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1712,9 +1723,16 @@ public class UserServiceImpl implements UserService {
         if (jsonObject != null) {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
-                String data = (String) jsonObject.get(ApiResult.MESSAGE);
-                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + data);
-                return data;
+//                String data = (String) jsonObject.get(ApiResult.MESSAGE);
+//                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + data);
+
+                log.info("++++++++++++++++请求getUserInfoAtOwer成功:" + ApiResult.CONTENT);
+                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
+                Map<String, Class> classMap = new HashMap<String, Class>();
+                classMap.put("deviceDtoList", UserDeviceDto.class);
+                UserInfoVo deviceVo = (UserInfoVo) JSONObject.toBean(data, UserInfoVo.class,classMap);
+
+                return deviceVo;
             } else {
                 log.info("++++++++++++++++请求getUserInfoAtOwer失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
                 throw new Exception("getUserInfoAtOwer失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
