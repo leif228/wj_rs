@@ -230,6 +230,12 @@ public class UserController {
         return dispatchUserService.seachOwerService(oid);
     }
 
+    @PostMapping("/seachChinaAddr")
+    public ApiResult seachChinaAddr(@RequestParam(value = "oid") String oid
+    ) {
+        return dispatchUserService.seachChinaAddr(oid);
+    }
+
     @PostMapping("/seachOwerUser")
     public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
     ) {

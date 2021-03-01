@@ -1130,7 +1130,7 @@ public class UserServiceImpl implements UserService {
 
         String stay = "00";//2
 //        String dtype = devtype.getDevTypeNum();//4
-        String space = "01";//2
+        String space = "00";//2
 //        String seq = "01";//2
 
         deviceno = net + asctab + stay + dtype + space + seq;

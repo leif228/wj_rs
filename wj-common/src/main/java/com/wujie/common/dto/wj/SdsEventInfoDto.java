@@ -31,12 +31,32 @@ public class SdsEventInfoDto implements Serializable {
 
     private String userName;
 
+    private String headIconUrl;
+
+    private String major;
+
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getHeadIconUrl() {
+        return headIconUrl;
+    }
+
+    public void setHeadIconUrl(String headIconUrl) {
+        this.headIconUrl = headIconUrl;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
     }
 
     public Long getId() {

@@ -195,6 +195,11 @@ public class UserDispatchController {
         return userService.seachOwerService(oid);
     }
 
+    @PostMapping("/seachChinaAddr")
+    public ApiResult seachChinaAddr(@RequestParam(value = "oid") String oid
+    ) {
+        return userService.seachChinaAddr(oid);
+    }
     @PostMapping("/seachOwerUser")
     public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
     ) {

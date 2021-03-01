@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class,timeout = 30)
     public ApiResult updateTabByType(String name, String jsonObject) {
         try {
             WjBaseTableCode wjBaseTableCode = WjBaseTableCode.valueOf(name);

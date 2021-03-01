@@ -1071,8 +1071,11 @@ public class SdsServiceImpl implements SdsService {
 
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventInfo.getOid());
                 WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(), sdsEventInfo.getOid());
-                if (wjuserOwerDto != null)
+                if (wjuserOwerDto != null){
                     sdsEventInfoDto.setUserName(wjuserOwerDto.getUserName());
+                    sdsEventInfoDto.setHeadIconUrl(wjuserOwerDto.getHeadIconUrl());
+                    sdsEventInfoDto.setMajor(wjuserOwerDto.getMajor());
+                }
 
                 sdsEventInfoDtos.add(sdsEventInfoDto);
             }

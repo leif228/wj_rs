@@ -220,6 +220,10 @@ public interface DispatchUserService {
     public ApiResult seachOwerService(@RequestParam(value = "oid") String oid
     );
 
+    @PostMapping("/seachChinaAddr")
+    public ApiResult seachChinaAddr(@RequestParam(value = "oid") String oid
+    );
+
     @PostMapping("/seachOwerUser")
     public ApiResult seachOwerUser(@RequestParam(value = "oid") String oid
     );
@@ -458,6 +462,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult seachOwerService(String oid) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult seachChinaAddr(String oid) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
