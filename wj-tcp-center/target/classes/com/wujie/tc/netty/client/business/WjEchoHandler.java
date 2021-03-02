@@ -1,14 +1,8 @@
 package com.wujie.tc.netty.client.business;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wujie.tc.netty.protocol.WjProtocol;
-import com.wujie.tc.netty.pojo.LoginTask;
-import com.wujie.tc.netty.utils.FileUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Properties;
 
 @Slf4j
 public class WjEchoHandler extends ChannelInboundHandlerAdapter {

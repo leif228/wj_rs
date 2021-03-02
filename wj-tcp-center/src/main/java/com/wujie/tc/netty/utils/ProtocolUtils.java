@@ -1,10 +1,5 @@
 package com.wujie.tc.netty.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import java.util.List;
-import java.util.Map;
-
 public class ProtocolUtils {
 //    public final static byte OBJ_TYPE=0x51;
 //    public final static byte LIST_TYPE=0x52;

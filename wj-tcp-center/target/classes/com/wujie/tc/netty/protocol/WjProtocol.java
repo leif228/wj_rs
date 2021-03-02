@@ -1,7 +1,5 @@
 package com.wujie.tc.netty.protocol;
 
-import java.lang.reflect.Array;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class WjProtocol {   //最小的数据长度：开头标准位1字节

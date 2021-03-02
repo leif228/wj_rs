@@ -1,17 +1,12 @@
 package com.wujie.tc.netty.server.decoder;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
-import com.wujie.tc.netty.pojo.Device;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 
 import java.util.Arrays;
 import java.util.List;

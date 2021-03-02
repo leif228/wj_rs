@@ -1,10 +1,7 @@
 package com.wujie.tc.netty.server.encoder;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
-import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 
 @Slf4j
 public class EncoderHandler extends ChannelOutboundHandlerAdapter {

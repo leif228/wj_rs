@@ -1,0 +1,379 @@
+{
+  "groups": [
+    {
+      "name": "management.endpoint.custom-endpoint",
+      "type": "com.wujie.apps.netty.actuator.CustomEndpoint",
+      "sourceType": "com.wujie.apps.netty.actuator.CustomEndpoint"
+    },
+    {
+      "name": "management.endpoint.custom-endpoint",
+      "type": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint"
+    },
+    {
+      "name": "spring.datasource.druid",
+      "type": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid",
+      "type": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "swagger",
+      "type": "com.wujie.apps.app.framework.config.Swagger2Config",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger",
+      "type": "com.wujie.tc.app.framework.config.Swagger2Config",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "xcxwxpay",
+      "type": "com.wujie.apps.app.business.util.WechatConstant",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay",
+      "type": "com.wujie.tc.app.business.util.WechatConstant",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    }
+  ],
+  "properties": [
+    {
+      "name": "management.endpoint.custom-endpoint.cache.time-to-live",
+      "type": "java.time.Duration",
+      "description": "Maximum time that a response can be cached.",
+      "sourceType": "com.wujie.apps.netty.actuator.CustomEndpoint",
+      "defaultValue": "0ms"
+    },
+    {
+      "name": "management.endpoint.custom-endpoint.cache.time-to-live",
+      "type": "java.time.Duration",
+      "description": "Maximum time that a response can be cached.",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "defaultValue": "0ms"
+    },
+    {
+      "name": "management.endpoint.custom-endpoint.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable the custom-endpoint endpoint.",
+      "sourceType": "com.wujie.apps.netty.actuator.CustomEndpoint",
+      "defaultValue": true
+    },
+    {
+      "name": "management.endpoint.custom-endpoint.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable the custom-endpoint endpoint.",
+      "sourceType": "com.wujie.tc.netty.actuator.CustomEndpoint",
+      "defaultValue": true
+    },
+    {
+      "name": "spring.datasource.druid.driver-class-name",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.driver-class-name",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.initial-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.initial-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.jdbc-url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.jdbc-url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.max-active",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.max-active",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.max-wait",
+      "type": "java.lang.Long",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.datasource.druid.max-wait",
+      "type": "java.lang.Long",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.datasource.druid.min-idle",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.min-idle",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.password",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.password",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.pool-prepared-statements",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.datasource.druid.pool-prepared-statements",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.datasource.druid.username",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "spring.datasource.druid.username",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.mybatis.DruidDataSourceProperties"
+    },
+    {
+      "name": "swagger.description",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.description",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.email",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.email",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.name",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.name",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.terms-of-service-url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.terms-of-service-url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.title",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.title",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.url",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.version",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "swagger.version",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.framework.config.Swagger2Config"
+    },
+    {
+      "name": "xcxwxpay.appid",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.appid",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.key",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.key",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.mchid",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.mchid",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.o-k-s-t-a-t-u-s",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant",
+      "defaultValue": 0
+    },
+    {
+      "name": "xcxwxpay.o-k-s-t-a-t-u-s",
+      "type": "java.lang.Integer",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant",
+      "defaultValue": 0
+    },
+    {
+      "name": "xcxwxpay.project-env",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.project-env",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.s-u-c-c-e-s-s",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant",
+      "defaultValue": "SUCCESS"
+    },
+    {
+      "name": "xcxwxpay.s-u-c-c-e-s-s",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant",
+      "defaultValue": "SUCCESS"
+    },
+    {
+      "name": "xcxwxpay.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.server-domain",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.server-domain",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.tcp-client-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.tcp-client-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.tcp-service-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.tcp-service-config-path",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant"
+    },
+    {
+      "name": "xcxwxpay.u-r-l-c-o-d-e2-s-e-s-s-i-o-n",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.weixin.qq.com\/sns\/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+    },
+    {
+      "name": "xcxwxpay.u-r-l-c-o-d-e2-s-e-s-s-i-o-n",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.weixin.qq.com\/sns\/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+    },
+    {
+      "name": "xcxwxpay.u-r-l-g-e-t-a-c-c-e-s-s-t-o-k-e-n",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.weixin.qq.com\/cgi-bin\/token?grant_type=client_credential&appid=%s&secret=%s"
+    },
+    {
+      "name": "xcxwxpay.u-r-l-g-e-t-a-c-c-e-s-s-t-o-k-e-n",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.weixin.qq.com\/cgi-bin\/token?grant_type=client_credential&appid=%s&secret=%s"
+    },
+    {
+      "name": "xcxwxpay.w-x-p-a-y-u-n-i-f-i-e-d-o-r-d-e-r",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.apps.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.mch.weixin.qq.com\/pay\/unifiedorder"
+    },
+    {
+      "name": "xcxwxpay.w-x-p-a-y-u-n-i-f-i-e-d-o-r-d-e-r",
+      "type": "java.lang.String",
+      "sourceType": "com.wujie.tc.app.business.util.WechatConstant",
+      "defaultValue": "https:\/\/api.mch.weixin.qq.com\/pay\/unifiedorder"
+    }
+  ],
+  "hints": []
+}

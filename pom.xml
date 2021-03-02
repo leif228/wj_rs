@@ -39,6 +39,7 @@
         <module>wj-feign-client</module>
         <module>wj-common</module>
         <module>wj-manage-center</module>
+        <module>wj-app-service</module>
     </modules>
 
     <parent>

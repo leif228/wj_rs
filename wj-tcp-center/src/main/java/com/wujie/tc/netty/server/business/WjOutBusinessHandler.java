@@ -1,6 +1,5 @@
 package com.wujie.tc.netty.server.business;
 
-import com.wujie.tc.netty.protocol.TcpProtocol;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

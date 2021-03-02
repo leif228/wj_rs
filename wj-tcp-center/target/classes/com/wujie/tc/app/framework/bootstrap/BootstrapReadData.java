@@ -2,22 +2,13 @@ package com.wujie.tc.app.framework.bootstrap;
 
 import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.util.WechatConstant;
-import com.wujie.tc.app.business.util.jdbc.impl.SHCommonDaoImpl;
 import com.wujie.tc.app.framework.util.base.impl.BaseServiceImpl;
-import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.server.TcpServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * ************************************************

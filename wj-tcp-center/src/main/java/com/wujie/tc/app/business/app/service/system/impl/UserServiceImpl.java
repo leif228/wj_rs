@@ -11,7 +11,6 @@ import com.wujie.tc.app.business.repository.WjuserMapper;
 import com.wujie.tc.app.business.util.WechatConstant;
 import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.pojo.AtTask;
-import com.wujie.tc.netty.pojo.BaseTask;
 import com.wujie.tc.netty.protocol.WjProtocol;
 import com.wujie.tc.netty.server.ChannelManager;
 import com.wujie.tc.netty.server.send.Sen_1000_0000;

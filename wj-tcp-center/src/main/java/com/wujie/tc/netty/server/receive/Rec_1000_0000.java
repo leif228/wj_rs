@@ -5,9 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.wujie.common.base.ApiResult;
 import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.netty.pojo.Rec_task_i;
-import com.wujie.tc.netty.protocol.WjProtocol;
-import com.wujie.tc.netty.server.send.Sen_0000_0000;
-import com.wujie.tc.netty.server.send.Sen_factory;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 

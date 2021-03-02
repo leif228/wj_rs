@@ -1,7 +1,6 @@
 package com.wujie.tc.app.business.util;
 
 import lombok.Data;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

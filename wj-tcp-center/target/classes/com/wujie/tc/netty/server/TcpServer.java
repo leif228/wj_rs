@@ -2,10 +2,7 @@ package com.wujie.tc.netty.server;
 
 import com.wujie.fclient.service.AppUserService;
 import com.wujie.tc.app.business.util.WechatConstant;
-import com.wujie.tc.netty.client.TcpClient;
 import com.wujie.tc.netty.client.encoder.WjEncoderHandler;
-import com.wujie.tc.netty.server.business.OutBusinessHandler;
-import com.wujie.tc.netty.server.business.WjOutBusinessHandler;
 import com.wujie.tc.netty.server.decoder.TaskHandler;
 import com.wujie.tc.netty.server.decoder.WjDecoderHandler;
 import com.wujie.tc.netty.server.encoder.EncoderHandler;
@@ -17,7 +14,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;

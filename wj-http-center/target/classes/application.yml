@@ -204,6 +204,7 @@ secure:
       - /getTabsBuss
       - /getTabsDevType
       - /getTabsAreacs
+      - /seachChinaAddr
 
 
 

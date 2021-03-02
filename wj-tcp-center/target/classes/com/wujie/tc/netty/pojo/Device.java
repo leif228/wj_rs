@@ -1,7 +1,6 @@
 package com.wujie.tc.netty.pojo;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 @Data
 public class Device {

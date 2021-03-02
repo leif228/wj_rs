@@ -1,6 +1,5 @@
 package com.wujie.tc.app.business.entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
