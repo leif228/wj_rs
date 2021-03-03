@@ -4,7 +4,7 @@ import com.wujie.common.base.ApiResult;
 
 public interface UserService {
 
-    ApiResult tcpClientConnect(String ip, String port, String fzwno,String deviceName,String selfIp,String selfPort,String deviceSelected);
+    ApiResult tcpClientConnect(String ip, String port, String fzwno);
 
     ApiResult getTcpClientConnectInfo();
 

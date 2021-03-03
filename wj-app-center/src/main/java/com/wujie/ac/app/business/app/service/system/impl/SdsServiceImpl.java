@@ -6,7 +6,9 @@ import com.wujie.ac.app.async.AsyncManager;
 import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.SdsService;
 import com.wujie.ac.app.business.entity.*;
+import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
+import com.wujie.ac.app.business.enums.ClubUserManageTypeEnum;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.date.DateUtil;
 import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
@@ -358,23 +360,23 @@ public class SdsServiceImpl implements SdsService {
                 log.error("3333333：" + wjuserTrades.size());
                 for (WjuserTrade wjuserTrade : wjuserTrades) {
 //                    try {
-                        //去除事件产生者又是行业相关的oid
+                    //去除事件产生者又是行业相关的oid
 //                        if (oid.equals(wjuserTrade.getOid()))
 //                            continue;
 
 //                        OwerServiceDto targetOwer = this.getOwerInfo(wjuserTrade.getOid());
-                        String relation = wjuserTrade.getOid().substring(0, oid_relation_length);
-                        targetOids += wjuserTrade.getOid() + ",";
+                    String relation = wjuserTrade.getOid().substring(0, oid_relation_length);
+                    targetOids += wjuserTrade.getOid() + ",";
 
-                        //去除一个行业用户下有两个设备，互相推送的bug
+                    //去除一个行业用户下有两个设备，互相推送的bug
 //                        if (relations.contains(relation)) {
 //                            continue;
 //                        } else {
 //                            relations.add(relation);
 
-                            log.error("44444444：" + relation);
+                    log.error("44444444：" + relation);
 //                        this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                            //异步
+                    //异步
 //                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
 //                        }
 
@@ -494,13 +496,13 @@ public class SdsServiceImpl implements SdsService {
                 if (list != null && list.size() > 0) {
                     for (SdsPercomRelation sdsPercomRelation : list) {
                         try {
-                            if(!relations.contains(sdsPercomRelation.getTargetOid())){
+                            if (!relations.contains(sdsPercomRelation.getTargetOid())) {
                                 relations.add(sdsPercomRelation.getTargetOid());
                                 OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
 //                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
                                 //异步
                                 AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
-                            }else {
+                            } else {
                                 continue;
                             }
                         } catch (Exception e) {
@@ -520,7 +522,7 @@ public class SdsServiceImpl implements SdsService {
                     //TODO 可以优化，因为已经是在事件产生的服务器了，不用在查找ip
 //                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
 //                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                    if(!relations.contains(relation)){
+                    if (!relations.contains(relation)) {
                         relations.add(relation);
                         pushTask(oid, eventType, content, eventNo, relation, bussInfoId);
                     }
@@ -535,6 +537,49 @@ public class SdsServiceImpl implements SdsService {
                             String[] arr = null;
                             if (targetOids.contains(",")) {
                                 arr = targetOids.split(",");
+                            } else {
+                                arr = new String[]{targetOids};
+                            }
+                            //去除一个行业用户下有两个设备，互相推送的bug
+
+                            for (int i = 0; i < arr.length; i++) {
+                                String relation = "";
+                                try {
+                                    if (arr[i].length() > oid_relation_length) {
+                                        relation = arr[i].substring(0, oid_relation_length);
+                                    } else {
+                                        relation = arr[i];
+                                    }
+                                    //去除一个行业用户下有两个设备，互相推送的bug
+                                    if (relations.contains(relation)) {
+                                        continue;
+                                    } else {
+                                        relations.add(relation);
+
+                                        OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
+//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                                        //异步
+                                        AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
+                                    }
+
+                                } catch (Exception e) {
+                                    //不处理， continue;
+                                    log.error("事件推送失败：" + relation);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //根据手动添加用户推送
+                if (true) {
+                    SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+                    if (sdsEventRelation != null) {
+                        String targetOids = sdsEventRelation.getEventManualOids();
+                        if (targetOids != null && !targetOids.equals("")) {
+                            String[] arr = null;
+                            if (targetOids.contains("--")) {
+                                arr = targetOids.split("--");
                             } else {
                                 arr = new String[]{targetOids};
                             }
@@ -654,7 +699,7 @@ public class SdsServiceImpl implements SdsService {
      */
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId) {
+    public ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId) {
         try {
             //根据targetOid查找oidFull
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(targetOid);
@@ -669,14 +714,14 @@ public class SdsServiceImpl implements SdsService {
                     sdsEventPersonRecord.setEventNo(eventNo);
                     sdsEventPersonRecord.setOid(oidFull);
                     sdsEventPersonRecord.setStatus(ststus1);
-                    sdsEventPersonRecord.setGenOid(oid);
+                    sdsEventPersonRecord.setGenOid(genOid);
                     sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(eventType));
 
                     sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
                 }
                 //查找区域服务器然后发送at
-                this.searchAreaServiceAndSend(oid, eventType, content, eventNo, oidFull, bussInfoId);
+                this.searchAreaServiceAndSend(genOid, eventType, content, eventNo, oidFull, bussInfoId);
             }
 
             return ApiResult.success();
@@ -703,6 +748,96 @@ public class SdsServiceImpl implements SdsService {
             return ApiResult.error(e.getMessage());
         }
         return ApiResult.success(users);
+    }
+
+    @Override
+    public ApiResult doClubUserManage(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+        try {
+            BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+            if (bussInfo == null)
+                throw new Exception("业务基础表找不到数据！");
+
+            com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+            ClubUserManageAtParam clubUserManageAtParam = (ClubUserManageAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ClubUserManageAtParam.class);
+
+            String eventNo = clubUserManageAtParam.getEventNo();
+            String[] arr = eventNo.split("--");
+            String genOid = arr[0];
+            String eventType = arr[2];
+            String content = "";
+            if (ClubUserManageTypeEnum.add.name().equals(clubUserManageAtParam.getMsgType())) {
+                content = "群增加oid:" + clubUserManageAtParam.getOid();
+            } else if (ClubUserManageTypeEnum.dec.name().equals(clubUserManageAtParam.getMsgType())) {
+                content = "群删除oid:" + clubUserManageAtParam.getOid();
+            }
+
+            //保存事件记录
+            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, clubUserManageAtParam.getOid(), bussInfo.getId() + "");
+            if (ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
+                //在事件产生服务器上保存事件相关用户
+                OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
+                this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid());
+
+                return ApiResult.success();
+            } else {
+                return apiResult;
+            }
+
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
+        try {
+            SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+            if (sdsEventRelation == null)
+                throw new Exception("事件关系找不到记录！");
+
+            String oids = sdsEventRelation.getEventManualOids();
+            if (oids.contains(oid)) {
+                if (ClubUserManageTypeEnum.add.name().equals(msgType)) {
+                    //
+                } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
+                    if (oids.contains("--")) {
+                        String[] arr = oids.split("--");
+                        List<String> list = new ArrayList();
+                        for (int i = 0; i < arr.length; i++) {
+                            if (!arr[i].equals(oid)) {
+                                list.add(arr[i]);
+                            }
+                        }
+                        String newOids = "";
+                        for(String ss:list){
+                            newOids += ss + "--";
+                        }
+                        if(newOids.endsWith("--")){
+                            newOids = newOids.substring(0,newOids.length()-2);
+                        }
+
+                        sdsEventRelation.setEventManualOids(newOids);
+                        sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+                    } else {
+                        sdsEventRelation.setEventManualOids("");
+                        sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+                    }
+                }
+            } else {
+                if (ClubUserManageTypeEnum.add.name().equals(msgType)) {
+                    oids += "--" + oid;
+
+                    sdsEventRelation.setEventManualOids(oids);
+                    sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+                } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
+                    //
+                }
+            }
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
     }
 
     @Override
@@ -768,6 +903,29 @@ public class SdsServiceImpl implements SdsService {
             return ApiResult.success();
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
+        }
+    }
+
+    private void clubUserManageHttp(String ip, String msgType, String eventNo, String oid) throws Exception {
+        String url = "http://" + ip + ":" + "9999/clubUserManage";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("eventNo", eventNo);
+        map.put("oid", oid);
+        map.put("msgType", msgType);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                log.info("++++++++++++++++请求clubUserManage成功");
+            } else {
+                log.info("++++++++++++++++请求clubUserManage失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("clubUserManage失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求clubUserManage失败:" + "连接错误");
+            throw new Exception("clubUserManage失败:连接错误");
         }
     }
 
@@ -1071,7 +1229,7 @@ public class SdsServiceImpl implements SdsService {
 
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventInfo.getOid());
                 WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(), sdsEventInfo.getOid());
-                if (wjuserOwerDto != null){
+                if (wjuserOwerDto != null) {
                     sdsEventInfoDto.setUserName(wjuserOwerDto.getUserName());
                     sdsEventInfoDto.setHeadIconUrl(wjuserOwerDto.getHeadIconUrl());
                     sdsEventInfoDto.setMajor(wjuserOwerDto.getMajor());

@@ -23,14 +23,10 @@ public class UserController {
     @PostMapping("/tcpClientConnect")
     public ApiResult tcpClientConnect(@RequestParam(value = "ip") String ip,
                                       @RequestParam(value = "port") String port,
-                                      @RequestParam(value = "fzwno") String fzwno,
-                                      @RequestParam(value = "deviceName") String deviceName,
-                                      @RequestParam(value = "selfIp") String selfIp,
-                                      @RequestParam(value = "selfPort") String selfPort,
-                                      @RequestParam(value = "deviceSelected") String deviceSelected
+                                      @RequestParam(value = "fzwno") String fzwno
 
     ) {
-        return userService.tcpClientConnect(ip, port, fzwno, deviceName, selfIp, selfPort, deviceSelected);
+        return userService.tcpClientConnect(ip, port, fzwno);
     }
 
     @PostMapping("/getTcpClientConnectInfo")

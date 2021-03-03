@@ -5,6 +5,7 @@ import com.wujie.ac.app.async.AsyncManager;
 import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.AtService;
 import com.wujie.ac.app.business.entity.*;
+import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.NumConvertUtil;
@@ -99,18 +100,27 @@ public class AtServiceImpl implements AtService {
                 String cmd = tx.substring(index, index + 4);
                 log.debug("解码后的cmd为：" + cmd);
                 index += cmd.length();
-                String paramLen = tx.substring(index, index + 4);
-                log.debug("解码后的paramLen为：" + paramLen);
-                int len = NumConvertUtil.HexStringToInt(paramLen);
-                log.debug("len：" + len);
-                index += paramLen.length();
-                String param = tx.substring(index, index + len);
 
-                log.debug("解码后的param为：" + param);
-                index += param.length();
-                String strend = tx.substring(index, index + END.length());//取出帧尾
+                String tempEnd = tx.substring(index);
+                if(END.equals(tempEnd)){
+                    String strend = tx.substring(index, index + END.length());//取出帧尾
 
-                doAtTask(flag,oid,pri,buss,port,cmd,param);
+                    doAtTask(flag,oid,pri,buss,port,cmd,"");
+                }else{
+
+                    String paramLen = tx.substring(index, index + 4);
+                    log.debug("解码后的paramLen为：" + paramLen);
+                    int len = NumConvertUtil.HexStringToInt(paramLen);
+                    log.debug("len：" + len);
+                    index += paramLen.length();
+                    String param = tx.substring(index, index + len);
+
+                    log.debug("解码后的param为：" + param);
+                    index += param.length();
+                    String strend = tx.substring(index, index + END.length());//取出帧尾
+
+                    doAtTask(flag,oid,pri,buss,port,cmd,param);
+                }
 
                 return ApiResult.success("成功");
             } else {
@@ -124,10 +134,13 @@ public class AtServiceImpl implements AtService {
     @Override
     public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param)  {
         try {
-            //开灯业务处理
             if(true){
+                //开灯业务处理
                 if("5010".equals(buss) && "FFFF".equals(cmd)){
                     return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
+
+                }else if("E011".equals(buss) && "0001".equals(cmd)){  //群成员管理业务处理
+                    return sdsService.doClubUserManage(flag, oid, pri, buss, port, cmd, param);
                 }
             }
 
@@ -168,11 +181,14 @@ public class AtServiceImpl implements AtService {
     }
 
     private void doAtTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
-        //开灯业务处理
         if(true){
-            if("5010".equals(buss) && "FFFF".equals(cmd)){
-                //查找oid归属服务器,处理用户关系相关的任务推送
-                OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
+            //群成员管理业务处理
+            if("E011".equals(buss) && "0001".equals(cmd)){
+
+                com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+                ClubUserManageAtParam clubUserManageAtParam = (ClubUserManageAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ClubUserManageAtParam.class);
+                //查找oid归属服务器
+                OwerServiceDto owerServiceDto = sdsService.getOwerInfo(clubUserManageAtParam.getOid());
 
                 String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
 

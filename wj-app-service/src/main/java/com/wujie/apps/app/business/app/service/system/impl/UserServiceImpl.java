@@ -48,10 +48,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult tcpClientConnect(String ip, String port, String fzwno, String deviceName, String selfIp, String selfPort, String deviceSelected) {
-        ApiResult apiResult = appUserService.recodeOwerNodeInfo(deviceSelected,deviceName,selfIp,selfPort,fzwno);
-        if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
-            return apiResult;
+    public ApiResult tcpClientConnect(String ip, String port, String fzwno) {
+//        ApiResult apiResult = appUserService.recodeOwerNodeInfo(deviceSelected,deviceName,selfIp,selfPort,fzwno);
+//        if(!apiResult.get(ApiResult.RETURNCODE).equals(ApiResult.SUCCESS))
+//            return apiResult;
 
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put("ip", ip);

@@ -42,4 +42,8 @@ public interface SdsService {
     ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId);
 
     ApiResult myUserList(String oid);
+
+    ApiResult doClubUserManage(String flag, String oid, String pri, String buss, String port, String cmd, String param);
+
+    ApiResult clubUserManage(String oid, String eventNo, String msgType);
 }

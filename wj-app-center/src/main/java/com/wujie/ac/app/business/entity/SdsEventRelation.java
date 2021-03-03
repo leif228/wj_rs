@@ -15,11 +15,21 @@ public class SdsEventRelation {
     //
     private String eventTradeOids;
 
+    private String eventManualOids;
+
     //
     private String status;
 
     //
     private Date updateTime;
+
+    public String getEventManualOids() {
+        return eventManualOids;
+    }
+
+    public void setEventManualOids(String eventManualOids) {
+        this.eventManualOids = eventManualOids;
+    }
 
     public Long getId() {
         return id;
