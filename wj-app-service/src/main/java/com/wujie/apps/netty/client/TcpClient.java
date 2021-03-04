@@ -5,6 +5,11 @@ import com.wujie.apps.app.business.util.WechatConstant;
 import com.wujie.apps.netty.client.decoder.TaskHandler;
 import com.wujie.apps.netty.client.decoder.WjDecoderHandler;
 import com.wujie.apps.netty.client.encoder.WjEncoderHandler;
+import com.wujie.apps.netty.client.send.Sen_0000_0000;
+import com.wujie.apps.netty.client.send.Sen_0000_0100;
+import com.wujie.apps.netty.client.send.Sen_1000_0000;
+import com.wujie.apps.netty.client.send.Sen_factory;
+import com.wujie.apps.netty.pojo.AtTask;
 import com.wujie.apps.netty.pojo.LoginTask;
 import com.wujie.apps.netty.protocol.WjProtocol;
 import com.wujie.apps.netty.utils.FileUtils;
@@ -114,12 +119,6 @@ public class TcpClient {
      */
     private static void sendLoginData() {
         if (channel != null && channel.isActive()) {
-            WjProtocol wjProtocol = new WjProtocol();
-            wjProtocol.setPlat(new byte[]{0x20,0x00});
-            wjProtocol.setMaincmd(new byte[]{0x00,0x00});
-            wjProtocol.setSubcmd(new byte[]{0x01,0x00});
-            wjProtocol.setFormat("JS");
-            wjProtocol.setBack(new byte[]{0x00,0x00});
 
             LoginTask loginTask = new LoginTask();
             Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
@@ -128,17 +127,29 @@ public class TcpClient {
             else
                 loginTask.setOID("0000000000");
 
-//        byte [] objectBytes= ByteUtils.InstanceObjectMapper().writeValueAsBytes(loginTask);
+            WjProtocol wjProtocol = Sen_factory.getInstance(Sen_0000_0100.main, Sen_0000_0100.sub,loginTask);
+            if(wjProtocol == null)
+                return;
 
-            String jsonStr = JSONObject.toJSONString(loginTask);
-            log.debug(jsonStr);
-            byte[] objectBytes = jsonStr.getBytes();
-
-            int len = WjProtocol.MIN_DATA_LEN + objectBytes.length;
-            wjProtocol.setLen(wjProtocol.short2byte((short) len));
-            wjProtocol.setUserdata(objectBytes);
 
             channel.writeAndFlush(wjProtocol);
+        }
+    }
+    public static int sendAtTask(String at) {
+        if (channel != null && channel.isActive()) {
+
+            AtTask atTask = new AtTask();
+            atTask.setAt(at);
+
+            WjProtocol wjProtocol = Sen_factory.getInstance(Sen_1000_0000.main, Sen_1000_0000.sub,atTask);
+            if(wjProtocol == null)
+                return 2;
+
+            channel.writeAndFlush(wjProtocol);
+
+            return 0;
+        }else {
+            return 1;
         }
     }
 

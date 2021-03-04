@@ -11,7 +11,7 @@ public class Sen_factory {
     public static WjProtocol getInstance(byte[] main, byte[] sub, BaseTask baseTask){
         //通用处理
         try {
-            String classPath = "com.wujie.tc.netty.server.send";
+            String classPath = "com.wujie.apps.netty.server.send";
             String className = "Sen_" + IntToHexStringLimit2(main[0]) + IntToHexStringLimit2(main[1]) + "_"
                     + IntToHexStringLimit2(sub[0]) + IntToHexStringLimit2(sub[1]);
             className = classPath + "." + className;

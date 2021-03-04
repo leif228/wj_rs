@@ -35,9 +35,9 @@ public class UserController {
     }
 
     @PostMapping("/sendAtTask")
-    public ApiResult sendAtTask(@RequestParam(value = "oid") String oid,
-                                @RequestParam(value = "at") String at) {
-        return userService.sendAtTask(oid,at);
+    public ApiResult sendAtTask(
+            @RequestParam(value = "at") String at) {
+        return userService.sendAtTask(at);
     }
 
 }

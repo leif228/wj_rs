@@ -61,9 +61,9 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //		});
 //		thread.start();
 
-        Thread thread = new Thread(() -> {
-            TcpServer.StartTcpServer(wechatConstant,appUserService);
-        });
-        thread.start();
+//        Thread thread = new Thread(() -> {
+//            TcpServer.StartTcpServer(wechatConstant,appUserService);
+//        });
+//        thread.start();
     }
 }

@@ -493,6 +493,17 @@ public class UserServiceImpl implements UserService {
 
             deviceVo.setFzwno((String) apiResult.get(ApiResult.CONTENT));
 
+            //记录设备要登录的服务器
+            LoginServer loginServer = new LoginServer();
+            loginServer.setOid(deviceVo.getFzwno());
+            loginServer.setServerIp(deviceVo.getIp());
+            loginServer.setServerPort(deviceVo.getPort());
+            loginServer.setServerOid(deviceVo.getLoginFzwno());
+            loginServer.setOwerServerOid(deviceVo.getOwerFzwno());
+            loginServer.setCreatTime(DateUtil.getDate());
+
+            loginServerMapper.insertSelective(loginServer);
+
             return ApiResult.success("注册成功！", deviceVo);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());

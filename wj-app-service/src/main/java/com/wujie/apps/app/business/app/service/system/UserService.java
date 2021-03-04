@@ -8,5 +8,5 @@ public interface UserService {
 
     ApiResult getTcpClientConnectInfo();
 
-    ApiResult sendAtTask(String oid, String at);
+    ApiResult sendAtTask(String at);
 }

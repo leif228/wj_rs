@@ -2,8 +2,8 @@ package com.wujie.apps.netty.client.decoder;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.apps.netty.client.send.Sen_factory;
 import com.wujie.apps.netty.pojo.Rec_task_i;
-import com.wujie.apps.netty.server.send.Sen_factory;
 import com.wujie.apps.netty.client.send.Sen_0000_0000;
 import com.wujie.apps.netty.protocol.WjProtocol;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,7 +43,7 @@ public class TaskHandler {
 
         //通用处理
         try {
-            String classPath = "com.wujie.tc.netty.client.receive";
+            String classPath = "com.wujie.apps.netty.client.receive";
             String className = "Rec_" + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[1]) + "_"
                     + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[1]);
             className = classPath + "." + className;

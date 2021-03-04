@@ -4,7 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
 
-public class LoginTask implements Serializable {
+public class LoginTask extends BaseTask {
     @JSONField(name="OID")
     private String OID;
     @JSONField(name="PassNum")

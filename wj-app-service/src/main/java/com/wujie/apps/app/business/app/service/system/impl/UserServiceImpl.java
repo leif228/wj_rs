@@ -83,27 +83,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResult sendAtTask(String oid, String at) {
+    public ApiResult sendAtTask(String at) {
 
         log.error("tcp服务接收到sendAtTask.at="+at);
-        Map<String, Channel> map = channelManager.deviceChannels;
-        Channel channel = map.get(oid);
-        if(channel != null){
-            AtTask atTask = new AtTask();
-            atTask.setAt(at);
+        int result = TcpClient.sendAtTask(at);
+        if(result == 0){
 
-            WjProtocol wjProtocol = Sen_factory.getInstance(Sen_1000_0000.main, Sen_1000_0000.sub,atTask);
-            if(wjProtocol == null)
-                return ApiResult.error("发送失败！服务端错误！oid="+oid);
-
-            channel.write(wjProtocol);
-            channel.flush();
-
-            log.error("+++++++++++++++++sendAtTask成功oid="+oid);
-            return ApiResult.success("成功oid="+oid);
-        }else{
-            log.error("+++++++++++++++++sendAtTask失败oid="+oid);
-            return ApiResult.error("发送失败！用户不在线！oid="+oid);
+            log.error("+++++++++++++++++sendAtTask成功at="+at);
+            return ApiResult.success("成功发送at="+at);
+        }else if(result ==1){
+            log.error("+++++++++++++++++sendAtTask发送失败！用户不在线！at="+at);
+            return ApiResult.error("发送失败！用户不在线！at="+at);
+        }else {
+            log.error("+++++++++++++++++sendAtTask发送失败！其它错误！at="+at);
+            return ApiResult.error("发送失败！其它错误！at="+at);
         }
 
     }
