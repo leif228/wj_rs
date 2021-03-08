@@ -208,6 +208,15 @@ public class AtServiceImpl implements AtService {
 
     }
 
+    public static void main(String[] args) {
+        String s = "{\"event_no\":\"chn0L0C3020210127000110!!!!!!000005000b--20210305160120382--1\",\"msg_type\":\"add\",\"oid\":\"chn0L0RC020210305000110!!!!!!0000050001\"}";
+
+        com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(s);
+        ClubUserManageAtParam clubUserManageAtParam = (ClubUserManageAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ClubUserManageAtParam.class);
+
+        System.out.println(clubUserManageAtParam.getOid());
+    }
+
     public void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
         try{
             if ("A001".equals(buss) && "0001".equals(cmd)) {

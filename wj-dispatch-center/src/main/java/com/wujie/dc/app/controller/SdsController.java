@@ -157,4 +157,11 @@ public class SdsController {
                                             @RequestParam(value = "targetOids") String targetOids) {
         return sdsService.updataSdsEventRelation(eventNo, targetOids);
     }
+
+    @PostMapping("/clubUserManage")
+    public ApiResult clubUserManage(@RequestParam(value = "oid") String oid,
+                                    @RequestParam(value = "eventNo") String eventNo,
+                                    @RequestParam(value = "msgType") String msgType) {
+        return sdsService.clubUserManage(oid, eventNo, msgType);
+    }
 }

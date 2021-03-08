@@ -7,15 +7,10 @@ import com.wujie.apps.app.business.repository.NodeStandbyMapper;
 import com.wujie.apps.app.business.repository.WjuserMapper;
 import com.wujie.apps.app.business.util.WechatConstant;
 import com.wujie.apps.netty.client.TcpClient;
-import com.wujie.apps.netty.pojo.AtTask;
 import com.wujie.apps.netty.server.ChannelManager;
-import com.wujie.apps.netty.server.send.Sen_1000_0000;
-import com.wujie.apps.netty.server.send.Sen_factory;
 import com.wujie.apps.netty.utils.FileUtils;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.enums.ErrorEnum;
-import com.wujie.fclient.service.AppUserService;
-import com.wujie.apps.netty.protocol.WjProtocol;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +29,11 @@ public class UserServiceImpl implements UserService {
     private WjuserMapper wjuserMapper;
     private WechatConstant wechatConstant;
     private ChannelManager channelManager;
-    private AppUserService appUserService;
+//    private AppUserService appUserService;
 
     @Autowired
-    public UserServiceImpl(AppUserService appUserService, ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
-        this.appUserService = appUserService;
+    public UserServiceImpl( ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+//        this.appUserService = appUserService;
         this.channelManager = channelManager;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.wechatConstant = wechatConstant;

@@ -771,8 +771,10 @@ public class SdsServiceImpl implements SdsService {
                 content = "群删除oid:" + clubUserManageAtParam.getOid();
             }
 
+            String relation = clubUserManageAtParam.getOid().substring(0,22);
+
             //保存事件记录
-            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, clubUserManageAtParam.getOid(), bussInfo.getId() + "");
+            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "");
             if (ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
                 //在事件产生服务器上保存事件相关用户
                 OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
@@ -796,7 +798,16 @@ public class SdsServiceImpl implements SdsService {
                 throw new Exception("事件关系找不到记录！");
 
             String oids = sdsEventRelation.getEventManualOids();
-            if (oids.contains(oid)) {
+            if (oids == null || "".equals(oids)) {
+                if (ClubUserManageTypeEnum.add.name().equals(msgType)) {
+                    oids = oid;
+
+                    sdsEventRelation.setEventManualOids(oids);
+                    sdsEventRelationMapper.updateByPrimaryKeySelective(sdsEventRelation);
+                } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
+                    //
+                }
+            } else if (oids.contains(oid)) {
                 if (ClubUserManageTypeEnum.add.name().equals(msgType)) {
                     //
                 } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
@@ -809,11 +820,11 @@ public class SdsServiceImpl implements SdsService {
                             }
                         }
                         String newOids = "";
-                        for(String ss:list){
+                        for (String ss : list) {
                             newOids += ss + "--";
                         }
-                        if(newOids.endsWith("--")){
-                            newOids = newOids.substring(0,newOids.length()-2);
+                        if (newOids.endsWith("--")) {
+                            newOids = newOids.substring(0, newOids.length() - 2);
                         }
 
                         sdsEventRelation.setEventManualOids(newOids);

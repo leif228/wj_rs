@@ -5,8 +5,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -23,10 +21,11 @@ import org.springframework.context.ApplicationContext;
 //@SpringBootApplication
 
 @SpringBootApplication(
-		scanBasePackages = {"com.wujie.apps","com.wujie.common.utils","com.wujie.fclient.service"},
+		scanBasePackages = {"com.wujie.apps","com.wujie.common.utils"},
+//		scanBasePackages = {"com.wujie.apps","com.wujie.common.utils","com.wujie.fclient.service"},
 		exclude = { DataSourceAutoConfiguration.class })
-@EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.wujie.fclient.service")
+//@EnableDiscoveryClient
+//@EnableFeignClients(basePackages = "com.wujie.fclient.service")
 @MapperScan("com.wujie.apps.app.business.repository")
 public class AppServiceApplication {
 

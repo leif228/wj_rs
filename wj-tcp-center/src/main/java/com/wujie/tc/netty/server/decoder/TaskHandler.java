@@ -60,13 +60,13 @@ public class TaskHandler {
             String className = "Rec_" + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[1]) + "_"
                     + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[1]);
             className = classPath + "." + className;
-            log.debug( "className:" + className);
+            log.info( "className:" + className);
             Class genClass = Class.forName(className);
             Rec_task_i rec_task_i = (Rec_task_i) genClass.newInstance();
             rec_task_i.setService(appUserService);
             rec_task_i.doTask(ctx, tx, objParam);
         } catch (Exception e) {
-            log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());
+            log.info( "TaskHandler.doProtocol_报错了:" + e.getMessage());
         }
     }
 

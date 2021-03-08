@@ -318,6 +318,12 @@ public interface AppUserService {
     @PostMapping("/getTabByType")
     public ApiResult getTabByType(@RequestParam(value = "name") String name);
 
+
+    @PostMapping("/clubUserManage")
+    public ApiResult clubUserManage(@RequestParam(value = "oid") String oid,
+                                    @RequestParam(value = "eventNo") String eventNo,
+                                    @RequestParam(value = "msgType") String msgType);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -598,6 +604,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult getTabByType(String name) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

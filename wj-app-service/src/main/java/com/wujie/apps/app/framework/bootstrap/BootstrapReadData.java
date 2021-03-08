@@ -1,7 +1,5 @@
 package com.wujie.apps.app.framework.bootstrap;
 
-import com.wujie.apps.netty.server.TcpServer;
-import com.wujie.fclient.service.AppUserService;
 import com.wujie.apps.app.business.util.WechatConstant;
 import com.wujie.apps.app.framework.util.base.impl.BaseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +26,8 @@ public class BootstrapReadData extends BaseServiceImpl implements CommandLineRun
 //    private SHCommonDaoImpl shCommonDaoImpl;
     @Autowired
     private WechatConstant wechatConstant;
-    @Autowired
-    private AppUserService appUserService;
+//    @Autowired
+//    private AppUserService appUserService;
 
     @Override
     public void run(String... args) throws Exception {

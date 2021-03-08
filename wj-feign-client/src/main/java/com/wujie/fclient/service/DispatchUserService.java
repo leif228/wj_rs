@@ -306,6 +306,12 @@ public interface DispatchUserService {
     @PostMapping("/getTabsAreacs")
     public ApiResult getTabsAreacs();
 
+    @PostMapping("/clubUserManage")
+    public ApiResult clubUserManage(@RequestParam(value = "oid") String oid,
+                                    @RequestParam(value = "eventNo") String eventNo,
+                                    @RequestParam(value = "msgType") String msgType);
+
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -573,6 +579,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult getTabsAreacs() {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 
