@@ -9,4 +9,9 @@ public interface UserService {
     ApiResult getTcpClientConnectInfo();
 
     ApiResult sendAtTask(String at);
+
+    ApiResult addUser(String oid);
+
+    ApiResult users();
+
 }

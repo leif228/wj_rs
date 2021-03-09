@@ -1,22 +1,23 @@
 package com.wujie.apps.app.business.app.service.system.impl;
 
 import com.wujie.apps.app.business.app.service.system.UserService;
-import com.wujie.apps.app.business.repository.DeviceMapper;
-import com.wujie.apps.app.business.repository.NodeMapper;
-import com.wujie.apps.app.business.repository.NodeStandbyMapper;
-import com.wujie.apps.app.business.repository.WjuserMapper;
+import com.wujie.apps.app.business.entity.AppsUser;
+import com.wujie.apps.app.business.repository.*;
 import com.wujie.apps.app.business.util.WechatConstant;
 import com.wujie.apps.netty.client.TcpClient;
 import com.wujie.apps.netty.server.ChannelManager;
 import com.wujie.apps.netty.utils.FileUtils;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.enums.ErrorEnum;
+import com.wujie.common.utils.DateUtils;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,11 +30,13 @@ public class UserServiceImpl implements UserService {
     private WjuserMapper wjuserMapper;
     private WechatConstant wechatConstant;
     private ChannelManager channelManager;
+    private AppsUserMapper appsUserMapper;
 //    private AppUserService appUserService;
 
     @Autowired
-    public UserServiceImpl( ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl( AppsUserMapper appsUserMapper,ChannelManager channelManager, WechatConstant wechatConstant, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
 //        this.appUserService = appUserService;
+        this.appsUserMapper = appsUserMapper;
         this.channelManager = channelManager;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.wechatConstant = wechatConstant;
@@ -94,6 +97,36 @@ public class UserServiceImpl implements UserService {
             return ApiResult.error("发送失败！其它错误！at="+at);
         }
 
+    }
+
+    @Override
+    public ApiResult addUser(String oid) {
+        try {
+            AppsUser appsUser  = appsUserMapper.findByOid(oid);
+            if(appsUser == null){
+                appsUser = new AppsUser();
+                appsUser.setCreatTime(DateUtils.getNowDate());
+                appsUser.setOid(oid);
+
+                appsUserMapper.insertSelective(appsUser);
+            }else {
+                throw new Exception("已经添加过oid=" + oid);
+            }
+            return ApiResult.success();
+        }catch (Exception e){
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult users() {
+        try {
+            List<AppsUser> list = appsUserMapper.findAll();
+
+            return ApiResult.success(list);
+        }catch (Exception e){
+            return ApiResult.error(e.getMessage());
+        }
     }
 
 }

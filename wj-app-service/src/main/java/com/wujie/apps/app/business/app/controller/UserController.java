@@ -40,4 +40,15 @@ public class UserController {
         return userService.sendAtTask(at);
     }
 
+    @PostMapping("/addUser")
+    public ApiResult addUser(
+            @RequestParam(value = "oid") String oid) {
+        return userService.addUser(oid);
+    }
+
+    @PostMapping("/users")
+    public ApiResult users() {
+        return userService.users();
+    }
+
 }
