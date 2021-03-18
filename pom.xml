@@ -40,6 +40,7 @@
         <module>wj-common</module>
         <module>wj-manage-center</module>
         <module>wj-app-service</module>
+        <module>wj-pcclient-service</module>
     </modules>
 
     <parent>

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.wujie.apps.app.framework.cache.ecache.CacheRemove;
+import com.wujie.apps.app.framework.cache.ecache.CacheUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -47,7 +49,7 @@ public class CacheRemoveAspect {
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		Object[] args = joinPoint.getArgs(); //切面方法的参数
 	    Method method = signature.getMethod(); //切面方法
-	    CacheRemove cacheRemove = method.getAnnotation(CacheRemove.class);
+	    com.wujie.apps.app.framework.cache.ecache.CacheRemove cacheRemove = method.getAnnotation(CacheRemove.class);
 	    if (cacheRemove != null){
 	    	/** 获取到所有的缓存的value */
 	        String[] values = cacheRemove.value();
@@ -56,7 +58,7 @@ public class CacheRemoveAspect {
 	        Arrays.asList(values).forEach(value -> {
 	        	//得到指定value中的所有的key
 	        	@SuppressWarnings("unchecked")
-				List<Object> cacheKeys = CacheUtils.cacheKeys(value);
+				List<Object> cacheKeys = com.wujie.apps.app.framework.cache.ecache.CacheUtils.cacheKeys(value);
 	        	//遍历指定所有的正则表达式key
 	        	Arrays.asList(keys).stream().forEach(key -> {
 	        		//转换指定的key

@@ -22,7 +22,7 @@ public class SpringContextUtil2 implements ApplicationContextAware {
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		SpringContextUtil2.applicationContext = applicationContext;
+		com.wujie.apps.app.framework.util.spring.SpringContextUtil2.applicationContext = applicationContext;
 	}
 
     public static ApplicationContext getApplicationContext() {

@@ -1,5 +1,7 @@
 package com.wujie.apps.netty.pojo;
 
+import com.wujie.apps.netty.pojo.BaseTask;
+
 public class AtTask extends BaseTask {
     private String at;
 

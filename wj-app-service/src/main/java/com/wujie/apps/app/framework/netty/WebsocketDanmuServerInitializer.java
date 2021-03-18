@@ -1,5 +1,8 @@
 package com.wujie.apps.app.framework.netty;
 
+import com.wujie.apps.app.framework.netty.HttpRequestHandler;
+import com.wujie.apps.app.framework.netty.ServerIdleStateTrigger;
+import com.wujie.apps.app.framework.netty.TextWebSocketFrameHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -20,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class WebsocketDanmuServerInitializer extends ChannelInitializer<SocketChannel> {
 
 
-    private TextWebSocketFrameHandler textWebSocketFrameHandler;
+    private com.wujie.apps.app.framework.netty.TextWebSocketFrameHandler textWebSocketFrameHandler;
 
     @Autowired
     public WebsocketDanmuServerInitializer(TextWebSocketFrameHandler textWebSocketFrameHandler) {

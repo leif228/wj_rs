@@ -51,4 +51,32 @@ public class UserController {
         return userService.users();
     }
 
+    @PostMapping("/delUser")
+    public ApiResult delUser(
+            @RequestParam(value = "id") Long id) {
+        return userService.delUser(id);
+    }
+
+    @PostMapping("/addEvent")
+    public ApiResult addEvent(
+            @RequestParam(value = "event") String event) {
+        return userService.addEvent(event);
+    }
+
+    @PostMapping("/events")
+    public ApiResult events() {
+        return userService.events();
+    }
+
+    @PostMapping("/delEvent")
+    public ApiResult delEvent(
+            @RequestParam(value = "id") Long id) {
+        return userService.delEvent(id);
+    }
+
+    @PostMapping("/serverInfo")
+    public ApiResult serverInfo() {
+        return userService.serverInfo();
+    }
+
 }

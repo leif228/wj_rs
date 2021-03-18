@@ -2,6 +2,7 @@ package com.wujie.apps.netty.server.decoder;
 
 import com.wujie.apps.netty.protocol.WjProtocol;
 import com.wujie.apps.netty.server.ChannelManager;
+import com.wujie.apps.netty.server.decoder.TaskHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 public class WjDecoderHandler extends ByteToMessageDecoder {
-    TaskHandler taskHandler;
+    com.wujie.apps.netty.server.decoder.TaskHandler taskHandler;
     public WjDecoderHandler(TaskHandler taskHandler) {
         this.taskHandler = taskHandler;
     }

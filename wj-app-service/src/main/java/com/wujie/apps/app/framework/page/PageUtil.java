@@ -1,6 +1,7 @@
 package com.wujie.apps.app.framework.page;
 
 import com.jfinal.plugin.activerecord.Record;
+import com.wujie.apps.app.framework.page.PageAction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,8 +55,8 @@ public class PageUtil {
         return PageRequest.of(PageCurrent-1, pageSize, direction, properties);
     }
 
-    public static PageAction setPageAction(Page page) {
-        PageAction resultPage = new PageAction();
+    public static com.wujie.apps.app.framework.page.PageAction setPageAction(Page page) {
+        com.wujie.apps.app.framework.page.PageAction resultPage = new com.wujie.apps.app.framework.page.PageAction();
         Pageable pageable = page.getPageable();
         int totalPages = page.getTotalPages();       //总页数
         int pageSize = pageable.getPageSize();       //每页长度
@@ -70,8 +71,8 @@ public class PageUtil {
         return resultPage;
     }
 
-    public static PageAction setPageAction(Integer totalElements, Integer totalPages, Integer pageSize, Integer pageNumber, boolean isFirstPage, boolean isLastPage) {
-        PageAction resultPage = new PageAction();
+    public static com.wujie.apps.app.framework.page.PageAction setPageAction(Integer totalElements, Integer totalPages, Integer pageSize, Integer pageNumber, boolean isFirstPage, boolean isLastPage) {
+        com.wujie.apps.app.framework.page.PageAction resultPage = new com.wujie.apps.app.framework.page.PageAction();
         resultPage.setTotalCount(totalElements);//设置总条数
         resultPage.setTotalPage(totalPages);//设置总页数
         resultPage.setPageSize(pageSize);//每页长度
@@ -98,7 +99,7 @@ public class PageUtil {
             }
         }
         //分页工具类处理分页
-        return PageUtil.getPageable(pageCurrent, pageSize, desc, orderCondition);
+        return com.wujie.apps.app.framework.page.PageUtil.getPageable(pageCurrent, pageSize, desc, orderCondition);
     }
 
 

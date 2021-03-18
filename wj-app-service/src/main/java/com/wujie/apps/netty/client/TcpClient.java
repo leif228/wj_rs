@@ -1,11 +1,9 @@
 package com.wujie.apps.netty.client;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wujie.apps.app.business.util.WechatConstant;
 import com.wujie.apps.netty.client.decoder.TaskHandler;
 import com.wujie.apps.netty.client.decoder.WjDecoderHandler;
 import com.wujie.apps.netty.client.encoder.WjEncoderHandler;
-import com.wujie.apps.netty.client.send.Sen_0000_0000;
 import com.wujie.apps.netty.client.send.Sen_0000_0100;
 import com.wujie.apps.netty.client.send.Sen_1000_0000;
 import com.wujie.apps.netty.client.send.Sen_factory;
@@ -172,7 +170,7 @@ public class TcpClient {
     }
 
     public static int startTcpClient(WechatConstant wechatConstant) {
-        TcpClient.wechatConstant = wechatConstant;
+        com.wujie.apps.netty.client.TcpClient.wechatConstant = wechatConstant;
         Properties properties = FileUtils.readFile(wechatConstant.getTcpClientConfigPath());
         ip = properties.getProperty("ip");
         port = Integer.valueOf(properties.getProperty("port"));

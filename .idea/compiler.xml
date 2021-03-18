@@ -7,11 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="wj-pcclient-service" />
         <module name="wj-app-center" />
         <module name="wj-dispatch-center" />
         <module name="wj-register-center" />
-        <module name="wj-tcp-center" />
         <module name="wj-manage-center" />
+        <module name="wj-tcp-center" />
         <module name="wj-app-service" />
         <module name="wj-common" />
         <module name="wj-feign-client" />
@@ -19,6 +20,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="wj-app-service (1)" target="1.8" />
       <module name="wj-tcp-center (1)" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -26,11 +28,13 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="wj-app-center" options="-parameters" />
       <module name="wj-app-service" options="-parameters" />
+      <module name="wj-app-service (1)" options="-parameters" />
       <module name="wj-common" options="-parameters" />
       <module name="wj-dispatch-center" options="-parameters" />
       <module name="wj-feign-client" options="-parameters" />
       <module name="wj-http-center" options="-parameters" />
       <module name="wj-manage-center" options="-parameters" />
+      <module name="wj-pcclient-service" options="-parameters" />
       <module name="wj-register-center" options="-parameters" />
       <module name="wj-tcp-center" options="-parameters" />
       <module name="wj-tcp-center (1)" options="-parameters" />

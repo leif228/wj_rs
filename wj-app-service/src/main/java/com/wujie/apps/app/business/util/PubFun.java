@@ -452,7 +452,7 @@ public class PubFun {
 	 * @return void
 	 */
 	public static void checkFileExists(String filePath) {
-		PubFun.isNull(filePath, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(filePath, SystemConstant.DATA_ILLEGALITY_CODE);
 		File file = new File(filePath);
 		if (!file.exists()) {
 			try {
@@ -474,7 +474,7 @@ public class PubFun {
 	 * @return void
 	 */
 	public static void checkFolderExists(String filePath) {
-		PubFun.isNull(filePath, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(filePath, SystemConstant.DATA_ILLEGALITY_CODE);
 		File file = new File(filePath);
 		if (!file.exists() && !file.isDirectory()) {
 			file.mkdir();
@@ -489,7 +489,7 @@ public class PubFun {
 	 * @return String
 	 */
 	public static String getFileSuffix(String fileName) {
-		PubFun.isNull(fileName, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(fileName, SystemConstant.DATA_ILLEGALITY_CODE);
 		return fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length());
 	}
 
@@ -528,7 +528,7 @@ public class PubFun {
 	 * @return String
 	 */
 	public static String removeTheLastOne(String str) {
-		PubFun.isNull(str, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(str, SystemConstant.DATA_ILLEGALITY_CODE);
 		return str.substring(0, str.length() - 1);
 	}
 
@@ -540,7 +540,7 @@ public class PubFun {
 	 * @return Boolean
 	 */
 	public static Boolean digitalCheck(String str) {
-		PubFun.isNull(str, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(str, SystemConstant.DATA_ILLEGALITY_CODE);
 		return MYREGEX.matcher(str).matches();
 	}
 
@@ -553,7 +553,7 @@ public class PubFun {
 	 * @return String
 	 */
 	public static String generateRandomNumbersMax10(int len) {
-		PubFun.isNull(len, SystemConstant.DATA_ILLEGALITY_CODE);
+		com.wujie.apps.app.business.util.PubFun.isNull(len, SystemConstant.DATA_ILLEGALITY_CODE);
 		if (len > INT_10) {
 			throw new CustomException(ErrorEnum.GATEWAY_ERROR);
 		}

@@ -1,8 +1,7 @@
 package com.wujie.apps.netty.pojo;
 
 import com.alibaba.fastjson.annotation.JSONField;
-
-import java.io.Serializable;
+import com.wujie.apps.netty.pojo.BaseTask;
 
 public class LoginTask extends BaseTask {
     @JSONField(name="OID")

@@ -2,6 +2,7 @@ package com.wujie.apps.app.framework.submit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wujie.apps.app.framework.result.GeneralResult;
+import com.wujie.apps.app.framework.submit.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,9 +42,9 @@ public class AvoidDuplicateSubmissionInterceptor extends HandlerInterceptorAdapt
 			return true;
 		}
 		//获取到方法上的注解
-		Token annotation = null;
+		com.wujie.apps.app.framework.submit.Token annotation = null;
 		try{
-			annotation = getAnnotation(handler, Token.class);
+			annotation = getAnnotation(handler, com.wujie.apps.app.framework.submit.Token.class);
 		}catch (Exception e){
 			return true;
 		}
@@ -95,7 +96,7 @@ public class AvoidDuplicateSubmissionInterceptor extends HandlerInterceptorAdapt
 		if(!(handler instanceof ResourceHttpRequestHandler)){
 			//获取到方法上的注解
 			try{
-				Token annotation = getAnnotation(handler, Token.class);
+				com.wujie.apps.app.framework.submit.Token annotation = getAnnotation(handler, Token.class);
 				if (!Objects.isNull(annotation) && !Objects.isNull(modelAndView) && annotation.createToken()) {
 					log.info("token to client");
 					Object token = request.getSession().getAttribute(TOKEN);

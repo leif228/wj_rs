@@ -53,27 +53,27 @@ public class ResultVo<T> implements Serializable {
         this.data = t;
     }
 
-    public static ResultVo err(String code, String errMsg){
-        return new ResultVo(code, errMsg);
+    public static com.wujie.apps.app.business.vo.ResultVo err(String code, String errMsg){
+        return new com.wujie.apps.app.business.vo.ResultVo(code, errMsg);
     }
 
-    public static ResultVo err(ErrorEnum errorEnum){
-        return new ResultVo(errorEnum);
+    public static com.wujie.apps.app.business.vo.ResultVo err(ErrorEnum errorEnum){
+        return new com.wujie.apps.app.business.vo.ResultVo(errorEnum);
     }
 
 
     /**
      * 未登录返回结果
      */
-    public static <T> ResultVo<T> unauthorized(T data) {
-        return new ResultVo<T>(ErrorEnum.UNAUTHORIZED.getErrCode(), ErrorEnum.UNAUTHORIZED.getErrMsg(), data);
+    public static <T> com.wujie.apps.app.business.vo.ResultVo<T> unauthorized(T data) {
+        return new com.wujie.apps.app.business.vo.ResultVo<T>(ErrorEnum.UNAUTHORIZED.getErrCode(), ErrorEnum.UNAUTHORIZED.getErrMsg(), data);
     }
 
-    public static <JSONObject> ResultVo<JSONObject> ok() {
-        return new ResultVo(successCode, successMsg, DEFAULT_RESULT);
+    public static <JSONObject> com.wujie.apps.app.business.vo.ResultVo<JSONObject> ok() {
+        return new com.wujie.apps.app.business.vo.ResultVo(successCode, successMsg, DEFAULT_RESULT);
     }
 
-    public static <T> ResultVo<T> ok(T t) {
-        return new ResultVo(successCode, successMsg, t);
+    public static <T> com.wujie.apps.app.business.vo.ResultVo<T> ok(T t) {
+        return new com.wujie.apps.app.business.vo.ResultVo(successCode, successMsg, t);
     }
 }

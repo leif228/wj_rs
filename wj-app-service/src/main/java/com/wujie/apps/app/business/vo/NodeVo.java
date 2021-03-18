@@ -13,6 +13,6 @@ public class NodeVo extends Node implements Serializable {
     private String port;
     private int layer;
     /** 子级分类 */
-    private List<NodeVo> children = new ArrayList<>();
+    private List<com.wujie.apps.app.business.vo.NodeVo> children = new ArrayList<>();
 
  }

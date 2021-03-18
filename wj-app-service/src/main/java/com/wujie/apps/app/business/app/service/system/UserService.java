@@ -14,4 +14,13 @@ public interface UserService {
 
     ApiResult users();
 
+    ApiResult delUser(Long id);
+
+    ApiResult serverInfo();
+
+    ApiResult addEvent(String event);
+
+    ApiResult events();
+
+    ApiResult delEvent(Long id);
 }

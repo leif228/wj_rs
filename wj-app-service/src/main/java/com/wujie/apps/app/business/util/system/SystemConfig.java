@@ -79,7 +79,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSysCompanyName(String sysCompanyName) {
-		SystemConfig.sysCompanyName = sysCompanyName;
+		com.wujie.apps.app.business.util.system.SystemConfig.sysCompanyName = sysCompanyName;
 	}
 
 	public static String getSysSoftwareName() {
@@ -87,7 +87,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSysSoftwareName(String sysSoftwareName) {
-		SystemConfig.sysSoftwareName = sysSoftwareName;
+		com.wujie.apps.app.business.util.system.SystemConfig.sysSoftwareName = sysSoftwareName;
 	}
 
 	public static String getAppSoftwareName() {
@@ -95,7 +95,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAppSoftwareName(String appSoftwareName) {
-		SystemConfig.appSoftwareName = appSoftwareName;
+		com.wujie.apps.app.business.util.system.SystemConfig.appSoftwareName = appSoftwareName;
 	}
 
 	public static String getCopyright() {
@@ -103,7 +103,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setCopyright(String copyright) {
-		SystemConfig.copyright = copyright;
+		com.wujie.apps.app.business.util.system.SystemConfig.copyright = copyright;
 	}
 
 	public static String getDomain() {
@@ -111,7 +111,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setDomain(String domain) {
-		SystemConfig.domain = domain;
+		com.wujie.apps.app.business.util.system.SystemConfig.domain = domain;
 	}
 
 	public static String getDevDomain() {
@@ -119,7 +119,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setDevDomain(String devDomain) {
-		SystemConfig.devDomain = devDomain;
+		com.wujie.apps.app.business.util.system.SystemConfig.devDomain = devDomain;
 	}
 
 	public static String getHostDomain() {
@@ -127,7 +127,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setHostDomain(String hostDomain) {
-		SystemConfig.hostDomain = hostDomain;
+		com.wujie.apps.app.business.util.system.SystemConfig.hostDomain = hostDomain;
 	}
 
 	public static String getWxAppId() {
@@ -135,7 +135,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setWxAppId(String wxAppId) {
-		SystemConfig.wxAppId = wxAppId;
+		com.wujie.apps.app.business.util.system.SystemConfig.wxAppId = wxAppId;
 	}
 
 	public static String getWxAppSecret() {
@@ -143,7 +143,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setWxAppSecret(String wxAppSecret) {
-		SystemConfig.wxAppSecret = wxAppSecret;
+		com.wujie.apps.app.business.util.system.SystemConfig.wxAppSecret = wxAppSecret;
 	}
 
 	public static String getWxMchId() {
@@ -151,7 +151,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setWxMchId(String wxMchId) {
-		SystemConfig.wxMchId = wxMchId;
+		com.wujie.apps.app.business.util.system.SystemConfig.wxMchId = wxMchId;
 	}
 
 	public static String getWxPartnerKey() {
@@ -159,7 +159,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setWxPartnerKey(String wxPartnerKey) {
-		SystemConfig.wxPartnerKey = wxPartnerKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.wxPartnerKey = wxPartnerKey;
 	}
 
 	public static String getWxPayCertPath() {
@@ -167,7 +167,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setWxPayCertPath(String wxPayCertPath) {
-		SystemConfig.wxPayCertPath = wxPayCertPath;
+		com.wujie.apps.app.business.util.system.SystemConfig.wxPayCertPath = wxPayCertPath;
 	}
 
 	public static String getAliAppId() {
@@ -175,7 +175,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAliAppId(String aliAppId) {
-		SystemConfig.aliAppId = aliAppId;
+		com.wujie.apps.app.business.util.system.SystemConfig.aliAppId = aliAppId;
 	}
 
 	public static String getAliMerchantPrivateKey() {
@@ -183,7 +183,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAliMerchantPrivateKey(String aliMerchantPrivateKey) {
-		SystemConfig.aliMerchantPrivateKey = aliMerchantPrivateKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.aliMerchantPrivateKey = aliMerchantPrivateKey;
 	}
 
 	public static String getAliMerchantPublicKey() {
@@ -191,7 +191,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAliMerchantPublicKey(String aliMerchantPublicKey) {
-		SystemConfig.aliMerchantPublicKey = aliMerchantPublicKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.aliMerchantPublicKey = aliMerchantPublicKey;
 	}
 
 	public static String getAliPayPublicKey() {
@@ -199,7 +199,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAliPayPublicKey(String aliPayPublicKey) {
-		SystemConfig.aliPayPublicKey = aliPayPublicKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.aliPayPublicKey = aliPayPublicKey;
 	}
 
 	public static String getQiNiuYunAccessKey() {
@@ -207,7 +207,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunAccessKey(String qiNiuYunAccessKey) {
-		SystemConfig.qiNiuYunAccessKey = qiNiuYunAccessKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunAccessKey = qiNiuYunAccessKey;
 	}
 
 	public static String getQiNiuYunSecretKey() {
@@ -215,7 +215,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunSecretKey(String qiNiuYunSecretKey) {
-		SystemConfig.qiNiuYunSecretKey = qiNiuYunSecretKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunSecretKey = qiNiuYunSecretKey;
 	}
 
 	public static String getQiNiuYunPushFlowDomain() {
@@ -223,7 +223,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunPushFlowDomain(String qiNiuYunPushFlowDomain) {
-		SystemConfig.qiNiuYunPushFlowDomain = qiNiuYunPushFlowDomain;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunPushFlowDomain = qiNiuYunPushFlowDomain;
 	}
 
 	public static String getQiNiuYunLiveAddressLine1() {
@@ -231,7 +231,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunLiveAddressLine1(String qiNiuYunLiveAddressLine1) {
-		SystemConfig.qiNiuYunLiveAddressLine1 = qiNiuYunLiveAddressLine1;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunLiveAddressLine1 = qiNiuYunLiveAddressLine1;
 	}
 
 	public static String getQiNiuYunLiveAddressLine2() {
@@ -239,7 +239,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunLiveAddressLine2(String qiNiuYunLiveAddressLine2) {
-		SystemConfig.qiNiuYunLiveAddressLine2 = qiNiuYunLiveAddressLine2;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunLiveAddressLine2 = qiNiuYunLiveAddressLine2;
 	}
 
 	public static String getQiNiuYunLiveAddressLine3() {
@@ -247,7 +247,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setQiNiuYunLiveAddressLine3(String qiNiuYunLiveAddressLine3) {
-		SystemConfig.qiNiuYunLiveAddressLine3 = qiNiuYunLiveAddressLine3;
+		com.wujie.apps.app.business.util.system.SystemConfig.qiNiuYunLiveAddressLine3 = qiNiuYunLiveAddressLine3;
 	}
 
 	public static String getCommissionPercentage() {
@@ -255,7 +255,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setCommissionPercentage(String commissionPercentage) {
-		SystemConfig.commissionPercentage = commissionPercentage;
+		com.wujie.apps.app.business.util.system.SystemConfig.commissionPercentage = commissionPercentage;
 	}
 
 	public static String getRegisterCommissionPercentage() {
@@ -263,7 +263,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setRegisterCommissionPercentage(String registerCommissionPercentage) {
-		SystemConfig.registerCommissionPercentage = registerCommissionPercentage;
+		com.wujie.apps.app.business.util.system.SystemConfig.registerCommissionPercentage = registerCommissionPercentage;
 	}
 
 	public static String getServiceCommissionRatio() {
@@ -271,7 +271,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setServiceCommissionRatio(String serviceCommissionRatio) {
-		SystemConfig.serviceCommissionRatio = serviceCommissionRatio;
+		com.wujie.apps.app.business.util.system.SystemConfig.serviceCommissionRatio = serviceCommissionRatio;
 	}
 
 	public static String getAccessKeyId() {
@@ -279,7 +279,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAccessKeyId(String accessKeyId) {
-		SystemConfig.accessKeyId = accessKeyId;
+		com.wujie.apps.app.business.util.system.SystemConfig.accessKeyId = accessKeyId;
 	}
 
 	public static String getAccessKeySecret() {
@@ -287,7 +287,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setAccessKeySecret(String accessKeySecret) {
-		SystemConfig.accessKeySecret = accessKeySecret;
+		com.wujie.apps.app.business.util.system.SystemConfig.accessKeySecret = accessKeySecret;
 	}
 
 	public static String getImgBucketName() {
@@ -295,7 +295,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setImgBucketName(String imgBucketName) {
-		SystemConfig.imgBucketName = imgBucketName;
+		com.wujie.apps.app.business.util.system.SystemConfig.imgBucketName = imgBucketName;
 	}
 
 	public static String getEndpoint() {
@@ -303,7 +303,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setEndpoint(String endpoint) {
-		SystemConfig.endpoint = endpoint;
+		com.wujie.apps.app.business.util.system.SystemConfig.endpoint = endpoint;
 	}
 
 	public static String getImgDomain() {
@@ -311,7 +311,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setImgDomain(String imgDomain) {
-		SystemConfig.imgDomain = imgDomain;
+		com.wujie.apps.app.business.util.system.SystemConfig.imgDomain = imgDomain;
 	}
 
 	public static String getShareLogo() {
@@ -319,7 +319,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setShareLogo(String shareLogo) {
-		SystemConfig.shareLogo = shareLogo;
+		com.wujie.apps.app.business.util.system.SystemConfig.shareLogo = shareLogo;
 	}
 
 	public static String getSignMoney1() {
@@ -327,7 +327,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney1(String signMoney1) {
-		SystemConfig.signMoney1 = signMoney1;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney1 = signMoney1;
 	}
 
 	public static String getSignMoney2() {
@@ -335,7 +335,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney2(String signMoney2) {
-		SystemConfig.signMoney2 = signMoney2;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney2 = signMoney2;
 	}
 
 	public static String getSignMoney3() {
@@ -343,7 +343,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney3(String signMoney3) {
-		SystemConfig.signMoney3 = signMoney3;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney3 = signMoney3;
 	}
 
 	public static String getSignMoney4() {
@@ -351,7 +351,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney4(String signMoney4) {
-		SystemConfig.signMoney4 = signMoney4;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney4 = signMoney4;
 	}
 
 	public static String getSignMoney5() {
@@ -359,7 +359,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney5(String signMoney5) {
-		SystemConfig.signMoney5 = signMoney5;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney5 = signMoney5;
 	}
 
 	public static String getSignMoney6() {
@@ -367,7 +367,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney6(String signMoney6) {
-		SystemConfig.signMoney6 = signMoney6;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney6 = signMoney6;
 	}
 
 	public static String getSignMoney7() {
@@ -375,7 +375,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setSignMoney7(String signMoney7) {
-		SystemConfig.signMoney7 = signMoney7;
+		com.wujie.apps.app.business.util.system.SystemConfig.signMoney7 = signMoney7;
 	}
 
 	public static String getExpressKey() {
@@ -383,7 +383,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setExpressKey(String expressKey) {
-		SystemConfig.expressKey = expressKey;
+		com.wujie.apps.app.business.util.system.SystemConfig.expressKey = expressKey;
 	}
 
 	public static String getExpressCustomer() {
@@ -391,7 +391,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setExpressCustomer(String expressCustomer) {
-		SystemConfig.expressCustomer = expressCustomer;
+		com.wujie.apps.app.business.util.system.SystemConfig.expressCustomer = expressCustomer;
 	}
 
 	public static String getPersonalTaxSwitch() {
@@ -399,7 +399,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setPersonalTaxSwitch(String personalTaxSwitch) {
-		SystemConfig.personalTaxSwitch = personalTaxSwitch;
+		com.wujie.apps.app.business.util.system.SystemConfig.personalTaxSwitch = personalTaxSwitch;
 	}
 
 	public static String getMaximumAmountWithdrawn() {
@@ -407,7 +407,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setMaximumAmountWithdrawn(String maximumAmountWithdrawn) {
-		SystemConfig.maximumAmountWithdrawn = maximumAmountWithdrawn;
+		com.wujie.apps.app.business.util.system.SystemConfig.maximumAmountWithdrawn = maximumAmountWithdrawn;
 	}
 
 	public static String getShareGoodsId() {
@@ -415,7 +415,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setShareGoodsId(String shareGoodsId) {
-		SystemConfig.shareGoodsId = shareGoodsId;
+		com.wujie.apps.app.business.util.system.SystemConfig.shareGoodsId = shareGoodsId;
 	}
 
 	public static String getApplyBigButlerMoney() {
@@ -423,7 +423,7 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setApplyBigButlerMoney(String applyBigButlerMoney) {
-		SystemConfig.applyBigButlerMoney = applyBigButlerMoney;
+		com.wujie.apps.app.business.util.system.SystemConfig.applyBigButlerMoney = applyBigButlerMoney;
 	}
 
 	public static String getApplySmallButlerMoney() {
@@ -431,6 +431,6 @@ public class SystemConfig extends BaseServiceImpl {
 	}
 
 	public static void setApplySmallButlerMoney(String applySmallButlerMoney) {
-		SystemConfig.applySmallButlerMoney = applySmallButlerMoney;
+		com.wujie.apps.app.business.util.system.SystemConfig.applySmallButlerMoney = applySmallButlerMoney;
 	}
 }

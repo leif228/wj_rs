@@ -56,7 +56,7 @@ public class TaskHandler {
 
         //通用处理
         try {
-            String classPath = "com.wujie.tc.netty.server.receive";
+            String classPath = "com.wujie.apps.netty.server.receive";
             String className = "Rec_" + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getMaincmd()[1]) + "_"
                     + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[0]) + wjProtocol.IntToHexStringLimit2(wjProtocol.getSubcmd()[1]);
             className = classPath + "." + className;

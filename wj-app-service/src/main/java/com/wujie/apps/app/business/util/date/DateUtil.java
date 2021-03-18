@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.function.IntFunction;
 
 import com.wujie.apps.app.business.enums.ErrorEnum;
+import com.wujie.apps.app.business.util.date.CalculateTypeEnum;
+import com.wujie.apps.app.business.util.date.TimeTypeEnum;
 import com.wujie.apps.app.framework.exception.CustomException;
 import org.springframework.stereotype.Component;
 
@@ -156,7 +158,7 @@ public class DateUtil {
 	 * @param type 要计算的时间差类型
 	 * @Return long 技术按结果
 	 */
-	public static long differenceTime(Date oldTime, Date nowTime, TimeTypeEnum type){
+	public static long differenceTime(Date oldTime, Date nowTime, com.wujie.apps.app.business.util.date.TimeTypeEnum type){
 		LocalDateTime oldLocalDateTime = dateToLocalDateTime(oldTime);
 		LocalDateTime nowLocalDateTime = dateToLocalDateTime(nowTime);
 		switch (type) {
@@ -305,7 +307,7 @@ public class DateUtil {
 	 * @param calculateTypeEnum 计算的类型
 	 * @Return java.util.Date
 	 */
-	public static Date calculatingTime(Date time, int num, TimeTypeEnum timeTypeEnum, CalculateTypeEnum calculateTypeEnum){
+	public static Date calculatingTime(Date time, int num, TimeTypeEnum timeTypeEnum, com.wujie.apps.app.business.util.date.CalculateTypeEnum calculateTypeEnum){
 		LocalDateTime localDateTime = dateToLocalDateTime(time);
 		switch (timeTypeEnum){
 			case YEAR: return calculation(num, calculateTypeEnum, localDateTime::plusYears, localDateTime::minusYears);

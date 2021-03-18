@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IdRuleDemo {
 
-	static Logger logger = LoggerFactory.getLogger(IdRuleDemo.class);
+	static Logger logger = LoggerFactory.getLogger(com.wujie.apps.app.business.util.IdRuleDemo.class);
 	
 	/** 开始时间截 (2017-12-15) */
     private final long twepoch = 1513267200000L;
@@ -61,7 +61,7 @@ public class IdRuleDemo {
     /** 上次生成ID的时间截 */
     private long lastTimestamp = -1L;
     
-    private volatile static IdRuleDemo idRuleDemo;
+    private volatile static com.wujie.apps.app.business.util.IdRuleDemo idRuleDemo;
     
     /**
      * 使用单例模式保证多线程下调用不会导致id重复
@@ -69,11 +69,11 @@ public class IdRuleDemo {
      * @param datacenterId 数据中心ID (0~31)
      * @return
      */
-    public static IdRuleDemo getInstance(long workerId, long datacenterId){
+    public static com.wujie.apps.app.business.util.IdRuleDemo getInstance(long workerId, long datacenterId){
     	if (idRuleDemo==null){
-    		synchronized (IdRuleDemo.class) {
+    		synchronized (com.wujie.apps.app.business.util.IdRuleDemo.class) {
 				if (idRuleDemo==null){
-					idRuleDemo = new IdRuleDemo(workerId,datacenterId);
+					idRuleDemo = new com.wujie.apps.app.business.util.IdRuleDemo(workerId,datacenterId);
 				}
 			}
     	}
@@ -164,7 +164,7 @@ public class IdRuleDemo {
      */
     public static Long getIdComplete(){
     	Long res = null;
-		IdRuleDemo idWorker = IdRuleDemo.getInstance(0, 0);
+		com.wujie.apps.app.business.util.IdRuleDemo idWorker = com.wujie.apps.app.business.util.IdRuleDemo.getInstance(0, 0);
 		res = idWorker.nextId();
     	return  res;
     }
@@ -190,7 +190,7 @@ public class IdRuleDemo {
      */
     public static Long getId(int startNum,int endNum){
     	Long res = null;
-		IdRuleDemo idWorker = IdRuleDemo.getInstance(0, 0);
+		com.wujie.apps.app.business.util.IdRuleDemo idWorker = com.wujie.apps.app.business.util.IdRuleDemo.getInstance(0, 0);
 		res = idWorker.nextId();
 		//res = PubFun.getLongValue(res.toString().substring(startNum, endNum));
     	return  res;
@@ -202,7 +202,7 @@ public class IdRuleDemo {
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IdRuleDemo idWorker = IdRuleDemo.getInstance(0, 0);
+				com.wujie.apps.app.business.util.IdRuleDemo idWorker = com.wujie.apps.app.business.util.IdRuleDemo.getInstance(0, 0);
 				for (int i = 0; i < 10; i++) {
 		            long id = idWorker.nextId();
 		            //System.out.println(Long.toBinaryString(id));
@@ -214,7 +214,7 @@ public class IdRuleDemo {
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
-				IdRuleDemo idWorker = IdRuleDemo.getInstance(0, 0);
+				com.wujie.apps.app.business.util.IdRuleDemo idWorker = com.wujie.apps.app.business.util.IdRuleDemo.getInstance(0, 0);
 				for (int i = 0; i < 10; i++) {
 		            long id = idWorker.nextId();
 		            //System.out.println(Long.toBinaryString(id));

@@ -2,6 +2,7 @@ package com.wujie.apps.app.framework.exception;
 
 import com.wujie.apps.app.business.enums.ErrorEnum;
 import com.wujie.apps.app.business.vo.ResultVo;
+import com.wujie.apps.app.framework.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     private ResultVo<Object> handlerErrorInfo(HttpServletRequest request, Exception e) {
         log.error("{} Exception", request.getRequestURI(), e);
-        if (e instanceof CustomException) {
+        if (e instanceof com.wujie.apps.app.framework.exception.CustomException) {
             return ResultVo.err(((CustomException) e).getCode(), e.getMessage());
         } else {
             return ResultVo.err(ErrorEnum.GATEWAY_ERROR.getErrCode(), ErrorEnum.GATEWAY_ERROR.getErrMsg() + " : " + e.getMessage());

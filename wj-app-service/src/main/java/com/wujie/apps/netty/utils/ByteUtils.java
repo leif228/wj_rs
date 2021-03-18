@@ -70,8 +70,8 @@ public class ByteUtils {
 
     public static void main(String[] args) {
         byte[] bytes = hexToByte("00f5");
-        System.out.println(ByteUtils.byteToHex(bytes));
-        System.out.println( NumConvertUtil.HexStringToInt(ByteUtils.byteToHex(bytes)));
+        System.out.println(com.wujie.apps.netty.utils.ByteUtils.byteToHex(bytes));
+        System.out.println( NumConvertUtil.HexStringToInt(com.wujie.apps.netty.utils.ByteUtils.byteToHex(bytes)));
         System.out.println(NumConvertUtil.IntToHexStringLimit4(245));
     }
 }

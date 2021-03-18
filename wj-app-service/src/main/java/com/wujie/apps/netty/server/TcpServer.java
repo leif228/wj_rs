@@ -62,7 +62,7 @@ public class TcpServer {
     }
 
     public static void main(String[] args) {
-        new TcpServer(8777).init();
+        new com.wujie.apps.netty.server.TcpServer(8777).init();
     }
 
     private TcpServer(int port) {
@@ -70,14 +70,14 @@ public class TcpServer {
     }
 
     public static boolean StartTcpServer(WechatConstant wechatConstant, AppUserService appUserService) {
-        TcpServer.wechatConstant = wechatConstant;
-        TcpServer.appUserService = appUserService;
+        com.wujie.apps.netty.server.TcpServer.wechatConstant = wechatConstant;
+        com.wujie.apps.netty.server.TcpServer.appUserService = appUserService;
         try {
             Properties properties = FileUtils.readFile(wechatConstant.getTcpServiceConfigPath());
             if (properties.getProperty("port") != null)
-                new TcpServer(Integer.valueOf(properties.getProperty("port"))).init();
+                new com.wujie.apps.netty.server.TcpServer(Integer.valueOf(properties.getProperty("port"))).init();
             else
-                new TcpServer(8777).init();
+                new com.wujie.apps.netty.server.TcpServer(8777).init();
             return true;
         } catch (Exception e) {
             e.printStackTrace();

@@ -38,15 +38,15 @@ public class GeneralResult implements Serializable {
 	/** 防止重复提交的Token **/
 	private String token;
 
-	private static GeneralResult g = new GeneralResult();
+	private static com.wujie.apps.app.framework.result.GeneralResult g = new com.wujie.apps.app.framework.result.GeneralResult();
 
-	public static GeneralResult ok(){
+	public static com.wujie.apps.app.framework.result.GeneralResult ok(){
 		try {
-			return (GeneralResult) g.clone();
+			return (com.wujie.apps.app.framework.result.GeneralResult) g.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		return new GeneralResult();
+		return new com.wujie.apps.app.framework.result.GeneralResult();
 	}
 
 	public GeneralResult() {
@@ -119,11 +119,11 @@ public class GeneralResult implements Serializable {
 	}
 
 	//异常返回
-	public static GeneralResult fail(String msg) {
-		return new GeneralResult(-1, msg);
+	public static com.wujie.apps.app.framework.result.GeneralResult fail(String msg) {
+		return new com.wujie.apps.app.framework.result.GeneralResult(-1, msg);
 	}
-	public static GeneralResult fail(int code,String msg) {
-		return new GeneralResult(code, msg);
+	public static com.wujie.apps.app.framework.result.GeneralResult fail(int code, String msg) {
+		return new com.wujie.apps.app.framework.result.GeneralResult(code, msg);
 	}
 
 	@Override

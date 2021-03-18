@@ -6,6 +6,7 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import com.alibaba.druid.wall.WallConfig;
 import com.alibaba.druid.wall.WallFilter;
+import com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -30,12 +31,12 @@ import java.util.*;
  * @Description: mybatis 配置
  * @Date: 2020/4/20 17:32
  */
-@EnableConfigurationProperties(value = DruidDataSourceProperties.class)
+@EnableConfigurationProperties(value = com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties.class)
 @Configuration
 @MapperScan(basePackages = {"com.wujie.app.business.repository"})
 public class MybatisConfig {
 
-    private final DruidDataSourceProperties druidDataSourceProperties;
+    private final com.wujie.apps.app.framework.mybatis.DruidDataSourceProperties druidDataSourceProperties;
 
     @Autowired
     public MybatisConfig(DruidDataSourceProperties druidDataSourceProperties) {

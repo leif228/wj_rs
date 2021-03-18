@@ -170,14 +170,14 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
         return (int) b;
     }
 
-    public byte[] getCheckSumArray(WjProtocol protocol) {
+    public byte[] getCheckSumArray(com.wujie.apps.netty.protocol.WjProtocol protocol) {
 
         int dataLength = 0;
         if (protocol.getUserdata() != null) {
             dataLength = protocol.getUserdata().length;
         }
 
-        int cslength = WjProtocol.MIN_DATA_LEN - WjProtocol.headerLength - WjProtocol.checkLength + dataLength;
+        int cslength = com.wujie.apps.netty.protocol.WjProtocol.MIN_DATA_LEN - com.wujie.apps.netty.protocol.WjProtocol.headerLength - com.wujie.apps.netty.protocol.WjProtocol.checkLength + dataLength;
         byte[] arr = new byte[cslength];
 
         int index = 0;
@@ -212,7 +212,7 @@ public class WjProtocol {   //最小的数据长度：开头标准位1字节
         return arr;
     }
 
-    public byte getCheckSum(WjProtocol protocol) {
+    public byte getCheckSum(com.wujie.apps.netty.protocol.WjProtocol protocol) {
 
         return getXOR(getCheckSumArray(protocol));
     }

@@ -8,6 +8,8 @@
 */
 package com.wujie.apps.app.framework.systemlog;
 
+import com.wujie.apps.app.framework.systemlog.LogType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,5 +38,5 @@ public @interface SystemLog {
 	 * 
 	 * @title: type
 	 */
-	LogType type() default LogType.OPERATION;
+	com.wujie.apps.app.framework.systemlog.LogType type() default LogType.OPERATION;
 }

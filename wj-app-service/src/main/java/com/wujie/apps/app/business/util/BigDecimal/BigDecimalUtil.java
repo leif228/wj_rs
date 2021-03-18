@@ -119,7 +119,7 @@ public class BigDecimalUtil {
      * @return BigDecimal
      */
     public static BigDecimal multiply(Object v1, Object v2, int scale) {
-        return BigDecimalUtil.round(PubFun.ObjectToBigDecimal(v1).multiply(PubFun.ObjectToBigDecimal(v2)), scale);
+        return com.wujie.apps.app.business.util.BigDecimal.BigDecimalUtil.round(PubFun.ObjectToBigDecimal(v1).multiply(PubFun.ObjectToBigDecimal(v2)), scale);
     }
     
     /**
@@ -133,7 +133,7 @@ public class BigDecimalUtil {
      * @return BigDecimal
      */
     public static BigDecimal multiplyPpt(Object v1, Object v2, int scale) {
-        return BigDecimalUtil.round(PubFun.ObjectToBigDecimal(v1).multiply(PubFun.ObjectToBigDecimal(v2).divide(new BigDecimal(100))), scale);
+        return com.wujie.apps.app.business.util.BigDecimal.BigDecimalUtil.round(PubFun.ObjectToBigDecimal(v1).multiply(PubFun.ObjectToBigDecimal(v2).divide(new BigDecimal(100))), scale);
     }
 
     /**
@@ -242,7 +242,7 @@ public class BigDecimalUtil {
      * @return boolean
      */
     public static boolean moreThanZero(Object bd) {
-    	return BigDecimalUtil.eq(bd, BigDecimal.ZERO) == 1;
+    	return com.wujie.apps.app.business.util.BigDecimal.BigDecimalUtil.eq(bd, BigDecimal.ZERO) == 1;
     }
 
     /**
@@ -254,7 +254,7 @@ public class BigDecimalUtil {
      * @return boolean
      */
     public static boolean lessThanZero(Object bd) {
-        return BigDecimalUtil.eq(bd, BigDecimal.ZERO) == -1;
+        return com.wujie.apps.app.business.util.BigDecimal.BigDecimalUtil.eq(bd, BigDecimal.ZERO) == -1;
     }
     
     /**
@@ -266,7 +266,7 @@ public class BigDecimalUtil {
      * @return boolean
      */
     public static boolean eqZero(Object bd) {
-    	return BigDecimalUtil.eq(bd, BigDecimal.ZERO) == 0;
+    	return com.wujie.apps.app.business.util.BigDecimal.BigDecimalUtil.eq(bd, BigDecimal.ZERO) == 0;
     }
 
 }

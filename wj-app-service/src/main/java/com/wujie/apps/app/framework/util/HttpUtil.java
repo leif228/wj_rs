@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.apps.app.framework.exception.CustomException;
 import com.wujie.apps.app.business.enums.ErrorEnum;
+import com.wujie.apps.app.framework.util.StrKit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ public class HttpUtil {
 
     private static String getContent(HttpServletRequest request) throws UnsupportedEncodingException {
         String method = request.getMethod();
-        if (StrKit.isBlank(method)) {
+        if (com.wujie.apps.app.framework.util.StrKit.isBlank(method)) {
             return null;
         }
         if ("POST".equals(method)) {
@@ -40,12 +41,12 @@ public class HttpUtil {
         Map<String, Object> map = new HashMap<>();
 
         for (String s : split) {
-            if (StrKit.notBlank(s) && s.contains("=")) {
+            if (com.wujie.apps.app.framework.util.StrKit.notBlank(s) && s.contains("=")) {
                 String[] val1 = s.split("=");
                 if (val1.length == 2) {
                     String key = val1[0];
                     String value = val1[1];
-                    if (StrKit.notBlank(key) && StrKit.notBlank(value))
+                    if (com.wujie.apps.app.framework.util.StrKit.notBlank(key) && com.wujie.apps.app.framework.util.StrKit.notBlank(value))
                         map.put(key, value);
                 }
             }
@@ -93,7 +94,7 @@ public class HttpUtil {
         Map<String, String[]> map = request.getParameterMap();
         if (map.isEmpty()) {
             String applicationJSONStr = getApplicationJSON(request);
-            json = StrKit.notBlank(applicationJSONStr) ? JSON.parseObject(applicationJSONStr) : json;
+            json = com.wujie.apps.app.framework.util.StrKit.notBlank(applicationJSONStr) ? JSON.parseObject(applicationJSONStr) : json;
         } else {
             Enumeration<String> parameterNames = request.getParameterNames();
             while (parameterNames.hasMoreElements()) {

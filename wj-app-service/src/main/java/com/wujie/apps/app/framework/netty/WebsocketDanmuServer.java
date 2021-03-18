@@ -1,5 +1,6 @@
 package com.wujie.apps.app.framework.netty;
 
+import com.wujie.apps.app.framework.netty.WebsocketDanmuServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebsocketDanmuServer {
 
-    private WebsocketDanmuServerInitializer websocketDanmuServerInitializer;
+    private com.wujie.apps.app.framework.netty.WebsocketDanmuServerInitializer websocketDanmuServerInitializer;
 
     @Autowired
     public WebsocketDanmuServer(WebsocketDanmuServerInitializer websocketDanmuServerInitializer) {
