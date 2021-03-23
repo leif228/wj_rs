@@ -2,6 +2,7 @@ package com.wujie.pcclient.app.framework.netty;
 
 
 import com.alibaba.fastjson.JSONObject;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -717,18 +718,19 @@ public class TextWebSocketFrameHandler<removeChannel> extends SimpleChannelInbou
 		TextWebSocketFrame homeownerResp = new TextWebSocketFrame(resultJson.toJSONString());
 		ctx.channel().writeAndFlush(homeownerResp);
 	}
-//
-//	@Override
-//    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-//        Channel incoming = ctx.channel();
-//		log.info("新连接：{}", incoming);
-//        // Broadcast a message to multiple Channels
+
+	@Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        Channel incoming = ctx.channel();
+		log.info("新连接：{}", incoming);
+        // Broadcast a message to multiple Channels
 //        channels.add(incoming);
-//		// userChannels.put()
-//    }
-//
-//    @Override
-//    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+		// userChannels.put()
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+		log.info("handlerRemoved：{}", ctx.channel());
 //        Channel incoming = ctx.channel();
 //        if(incoming.hasAttr(userInfoVoAttr)){
 //			userChannels.remove(incoming.attr(userInfoVoAttr).get().getUserId());
@@ -738,14 +740,16 @@ public class TextWebSocketFrameHandler<removeChannel> extends SimpleChannelInbou
 //			Long roomId = incoming.attr(roomKey).get();
 //			rooms.get(roomId).remove(incoming);
 //		}
-//	}
-//
-//	@Override
-//	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//	}
-//
-//	@Override
-//	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	}
+
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		log.info("channelActive：{}", ctx.channel());
+	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		log.info("channelInactive：{}", ctx.channel());
 //        Channel incoming = ctx.channel();
 //		if(incoming.hasAttr(userInfoVoAttr)){
 //			userChannels.remove(incoming.attr(userInfoVoAttr).get().getUserId());
@@ -755,12 +759,13 @@ public class TextWebSocketFrameHandler<removeChannel> extends SimpleChannelInbou
 //			Long roomId = incoming.attr(roomKey).get();
 //			rooms.get(roomId).remove(incoming);
 //		}
-//	}
+	}
 //
-//	@Override
-//	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-//			throws Exception {
-//		cause.printStackTrace();
-//        ctx.close();
-//	}
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		log.info("exceptionCaught：{}", ctx.channel());
+		cause.printStackTrace();
+        ctx.close();
+	}
 }

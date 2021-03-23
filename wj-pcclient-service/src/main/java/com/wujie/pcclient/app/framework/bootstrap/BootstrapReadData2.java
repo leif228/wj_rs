@@ -60,20 +60,20 @@ public class BootstrapReadData2 extends BaseServiceImpl implements CommandLineRu
 
         Thread thread = new Thread(() -> {
             int type = TcpClient.startTcpClient(wechatConstant);
-            if(type == 1)//1:cconfig没有读到ip和port 0:成功
-                return;
+//            if(type == 1)//1:cconfig没有读到ip和port 0:成功
+//                return;
 
-            while (type != 0){
-                type = TcpClient.startTcpClient(wechatConstant);
-                if(type == 1)
-                    break;
-
-                try {
-                    Thread.sleep(60000l);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            };
+//            while (type != 0){
+//                type = TcpClient.startTcpClient(wechatConstant);
+//                if(type == 1)
+//                    break;
+//
+//                try {
+//                    Thread.sleep(60000l);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            };
         });
         thread.start();
     }

@@ -16,10 +16,12 @@ import org.springframework.stereotype.Component;
 public class WebsocketDanmuServer {
 
     private com.wujie.pcclient.app.framework.netty.WebsocketDanmuServerInitializer websocketDanmuServerInitializer;
+    private NioWebSocketChannelInitializer nioWebSocketChannelInitializer;
 
     @Autowired
-    public WebsocketDanmuServer(WebsocketDanmuServerInitializer websocketDanmuServerInitializer) {
+    public WebsocketDanmuServer(WebsocketDanmuServerInitializer websocketDanmuServerInitializer,NioWebSocketChannelInitializer nioWebSocketChannelInitializer) {
         this.websocketDanmuServerInitializer = websocketDanmuServerInitializer;
+        this.nioWebSocketChannelInitializer = nioWebSocketChannelInitializer;
     }
 
     public void run(){
@@ -30,9 +32,9 @@ public class WebsocketDanmuServer {
             ServerBootstrap b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class) // (3)
-             .childHandler(websocketDanmuServerInitializer)  //(4)
-             .option(ChannelOption.SO_BACKLOG, 128)          // (5)
-             .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+             .childHandler(nioWebSocketChannelInitializer)  ;//(4)
+//             .option(ChannelOption.SO_BACKLOG, 128)          // (5)
+//             .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
             
             // 绑定端口，开始接收进来的连接
             ChannelFuture f = null; // (7)

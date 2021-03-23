@@ -14,6 +14,10 @@ public class ServerIdleStateTrigger extends ChannelInboundHandlerAdapter {
                 case READER_IDLE:
                     // eventType = "读空闲";
                     ctx.channel().close();
+//                    if(NioWebSocketHandler.channel != null&&ctx.channel().id().asLongText().equals(NioWebSocketHandler.channel.id().asLongText())){
+//
+//                        NioWebSocketHandler.channel = null;
+//                    }
                     break;
                 case WRITER_IDLE:
                     // eventType = "写空闲";

@@ -27,7 +27,7 @@ public class TcpClient {
 
     private static String ip;
     private static Integer port;
-    private static NioEventLoopGroup worker = new NioEventLoopGroup();
+    private static NioEventLoopGroup worker;
 
     private static Channel channel;
 
@@ -38,6 +38,7 @@ public class TcpClient {
         try {
             log.info("启动tcp客户端:去连接:" + ip + ":" + port);
             bootstrap = new Bootstrap();
+            worker = new NioEventLoopGroup();
             bootstrap.group(worker);
             bootstrap.channel(NioSocketChannel.class);
             bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
@@ -105,8 +106,12 @@ public class TcpClient {
 
     public static void closeConnect() {
         try {
-            channel.closeFuture().sync();//以异步的方式关闭端口
-            worker.shutdownGracefully().sync();
+            if(channel !=null && worker != null){
+                log.info("关闭tcp客户端:" + ip + ":" + port);
+                channel.closeFuture().sync();//以异步的方式关闭端口
+                worker.shutdownGracefully().sync();
+                bootstrap=null;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

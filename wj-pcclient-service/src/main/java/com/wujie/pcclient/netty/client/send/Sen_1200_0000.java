@@ -1,13 +1,14 @@
 package com.wujie.pcclient.netty.client.send;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.wujie.pcclient.netty.pojo.BaseTask;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 
 import java.io.UnsupportedEncodingException;
 
-public class Sen_0000_0000 implements Sen_i{
-    public static final byte[] main = new byte[]{0x00, 0x00};
+public class Sen_1200_0000 implements Sen_i{
+    public static final byte[] main = new byte[]{0x12, 0x00};
     public static final byte[] sub = new byte[]{0x00, 0x00};
 
     @Override
@@ -22,9 +23,9 @@ public class Sen_0000_0000 implements Sen_i{
         int len = 0;
         byte[] objectBytes = null;
 //        if(baseTask != null){
-//            NetInfoTask netInfoTask = (NetInfoTask) baseTask;
+//            LoginTask loginTask = (LoginTask) baseTask;
 //
-//            String jsonStr = JSONObject.toJSONString(netInfoTask);
+//            String jsonStr = JSONObject.toJSONString(loginTask);
 //            Log.v(WjProtocol.TAG, jsonStr);
 //            objectBytes = jsonStr.getBytes();
 //
