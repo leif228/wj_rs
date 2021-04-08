@@ -45,5 +45,7 @@ public interface SdsService {
 
     ApiResult doClubUserManage(String flag, String oid, String pri, String buss, String port, String cmd, String param);
 
-    ApiResult clubUserManage(String oid, String eventNo, String msgType);
+    ApiResult clubUserManage(String oid,String operaterOid, String eventNo, String msgType);
+
+    ApiResult doNewClub(String flag, String oid, String pri, String buss, String port, String cmd, String param);
 }

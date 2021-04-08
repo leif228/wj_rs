@@ -71,6 +71,7 @@ public class TcpClient {
             return 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            log.error("doConnet连接报错了"+ e.getMessage());
             return 2;
         }
     }
@@ -176,7 +177,7 @@ public class TcpClient {
     private static void sendChatMsg(WebViewWebSocketFuctionEnum type, ManageChatMsgTask manageChatMsgTask) {
         ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
         manageChatMsgAtParam.setEventNo(manageChatMsgTask.getEventNo());
-        manageChatMsgAtParam.setMsg(manageChatMsgTask.getMsg());
+        manageChatMsgAtParam.setMsgContent(manageChatMsgTask.getMsgContent());
         manageChatMsgAtParam.setMsgType(manageChatMsgTask.getMsgType());
 
         String json = JSONObject.toJSONString(manageChatMsgAtParam);
@@ -344,8 +345,18 @@ public class TcpClient {
         ip = properties.getProperty("ip");
         port = Integer.valueOf(properties.getProperty("port"));
         if (ip != null && port != null) {
+            if(channel != null){
+                try {
+                    doConnect();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    log.error("doConnet连接报错了"+ e.getMessage());
+                }
+                return  0;
+            }else {
 
-            return init();
+                return init();
+            }
         } else {
             return 1;
         }

@@ -72,6 +72,7 @@ public class GTcpClient {
             return 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            log.error("doConnet连接报错了"+ e.getMessage());
             return 2;
         }
     }
@@ -94,7 +95,7 @@ public class GTcpClient {
 
                 if (channelFuture.isSuccess()) {
                     channel = channelFuture.channel();
-                    sendLoginData();
+//                    sendLoginData();
                     log.info("连接成功:" + ip + ":" + port);
                 } else {
 
@@ -123,6 +124,7 @@ public class GTcpClient {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            log.info("关闭tcp客户端报错了:" + e.getMessage());
         }
     }
 
@@ -205,11 +207,19 @@ public class GTcpClient {
     }
 
     private static void toNetTcp(WebViewWebSocketFuctionEnum webViewWebSocketFuctionEnum, String netIp) {
-        if (channel != null) {
-            closeConnect();
-        }
         log.debug("connectNet  ip=" + netIp);
         ip = netIp;
+
+        if (channel != null) {
+//            closeConnect();
+            try {
+                log.debug("reconnectNet  ip=" + netIp);
+                doConnect();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                log.debug("reconnectNet报错了  ip=" + netIp);
+            }
+        }
 
         startTcpClient();
     }

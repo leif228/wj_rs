@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         log.info("===============================写cconfig.properties成功！ip:" + ip + ":port" + port);
         boolean issuccess = FileUtils.updatePropertiess(wechatConstant.getTcpClientConfigPath(), keyValueMap);
         if (issuccess) {
-            TcpClient.closeConnect();
+//            TcpClient.closeConnect();
             TcpClient.startTcpClient(wechatConstant);
 
             return ApiResult.success("写配置文件成功");

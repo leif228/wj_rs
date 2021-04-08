@@ -8,6 +8,7 @@ import com.wujie.ac.app.business.app.service.system.SdsService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
+import com.wujie.ac.app.business.entity.at.NewClubAtParam;
 import com.wujie.ac.app.business.enums.ClubUserManageTypeEnum;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.date.DateUtil;
@@ -771,14 +772,14 @@ public class SdsServiceImpl implements SdsService {
                 content = "群删除oid:" + clubUserManageAtParam.getOid();
             }
 
-            String relation = clubUserManageAtParam.getOid().substring(0,22);
+            String relation = clubUserManageAtParam.getOid().substring(0, 22);
 
             //保存事件记录
             ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "");
             if (ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
                 //在事件产生服务器上保存事件相关用户
                 OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
-                this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid());
+                this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid(),oid);
 
                 return ApiResult.success();
             } else {
@@ -791,8 +792,9 @@ public class SdsServiceImpl implements SdsService {
     }
 
     @Override
-    public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
+    public ApiResult clubUserManage(String oid,String operaterOid, String eventNo, String msgType) {
         try {
+            //一、在事件产生服务器上保存事件相关用户
             SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
             if (sdsEventRelation == null)
                 throw new Exception("事件关系找不到记录！");
@@ -844,6 +846,55 @@ public class SdsServiceImpl implements SdsService {
                     //
                 }
             }
+
+            //二、保存用户变动消息记录
+            String content = "";
+            if (ClubUserManageTypeEnum.add.name().equals(msgType)) {
+                content = "群增加oid:" + oid;
+            } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
+                content = "群删除oid:" + oid;
+            }
+            String[] arr = eventNo.split("--");
+            String genOid = arr[0];
+            String eventType = arr[2];
+
+            SdsEventInfo sdsEventInfo = new SdsEventInfo();
+            sdsEventInfo.setContent(content);
+            sdsEventInfo.setCreatTime(DateUtil.getDate());
+            sdsEventInfo.setEventNo(eventNo);
+            sdsEventInfo.setEventTypeInfoId(Long.valueOf(eventType));
+            sdsEventInfo.setOid(operaterOid);
+            sdsEventInfo.setStatus(ststus1);
+
+            sdsEventInfoMapper.insertSelective(sdsEventInfo);
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult doNewClub(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+        try {
+            SdsEventTypeInfo sdsEventTypeInfo = sdsEventTypeInfoMapper.selectByPrimaryKey(2l);
+            if (sdsEventTypeInfo == null)
+                throw new Exception("基础数据找不到！");
+
+            com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+            NewClubAtParam newClubAtParam = com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, NewClubAtParam.class);
+
+            SdsEventPersonRecord sdsEventPersonRecord = new SdsEventPersonRecord();
+            sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(sdsEventTypeInfo.getType()));
+            sdsEventPersonRecord.setGenOid(oid);
+            sdsEventPersonRecord.setStatus(newClubAtParam.getRelativeEventNo());
+            sdsEventPersonRecord.setCreatTime(DateUtil.getDate());
+            sdsEventPersonRecord.setOid(oid);
+
+            String eventNo = this.genEventNo(oid, sdsEventTypeInfo.getType().toString());
+            sdsEventPersonRecord.setEventNo(eventNo);
+
+            sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
             return ApiResult.success();
         } catch (Exception e) {
@@ -917,12 +968,13 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    private void clubUserManageHttp(String ip, String msgType, String eventNo, String oid) throws Exception {
+    private void clubUserManageHttp(String ip, String msgType, String eventNo, String oid, String operaterOid) throws Exception {
         String url = "http://" + ip + ":" + "9999/clubUserManage";
         String params = "";
         Map<String, String> map = new HashMap<>();
         map.put("eventNo", eventNo);
         map.put("oid", oid);
+        map.put("operaterOid", operaterOid);
         map.put("msgType", msgType);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);

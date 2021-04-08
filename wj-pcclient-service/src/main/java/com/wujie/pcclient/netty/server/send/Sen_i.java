@@ -1,6 +1,7 @@
-package com.wujie.pcclient.netty.pojo;
+package com.wujie.pcclient.netty.server.send;
 
 
+import com.wujie.pcclient.netty.pojo.BaseTask;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 
 import java.io.UnsupportedEncodingException;

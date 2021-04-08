@@ -308,6 +308,7 @@ public interface DispatchUserService {
 
     @PostMapping("/clubUserManage")
     public ApiResult clubUserManage(@RequestParam(value = "oid") String oid,
+                                    @RequestParam(value = "operaterOid") String operaterOid,
                                     @RequestParam(value = "eventNo") String eventNo,
                                     @RequestParam(value = "msgType") String msgType);
 
@@ -583,9 +584,10 @@ public interface DispatchUserService {
         }
 
         @Override
-        public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
+        public ApiResult clubUserManage(String oid, String operaterOid, String eventNo, String msgType) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
+
 
     }
 

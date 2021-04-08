@@ -25,13 +25,19 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.debug("收到消息：" + msg);
-        if (msg instanceof FullHttpRequest) {
-            //以http请求形式接入，但是走的是websocket
-            handleHttpRequest(ctx, (FullHttpRequest) msg);
-        } else if (msg instanceof WebSocketFrame) {
-            //处理websocket客户端的消息
-            handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
+        try{
+            if (msg instanceof FullHttpRequest) {
+                //以http请求形式接入，但是走的是websocket
+                handleHttpRequest(ctx, (FullHttpRequest) msg);
+            } else if (msg instanceof WebSocketFrame) {
+                //处理websocket客户端的消息
+                handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.debug("channelRead0报错了：" + e.getMessage());
         }
+
     }
 
     @Override

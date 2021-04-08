@@ -2,7 +2,6 @@ package com.wujie.pcclient.netty.server.send;
 
 
 import com.wujie.pcclient.netty.pojo.BaseTask;
-import com.wujie.pcclient.netty.pojo.Sen_i;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 import lombok.extern.slf4j.Slf4j;
 

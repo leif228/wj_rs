@@ -1,5 +1,4 @@
-package com.wujie.apps.netty.pojo;
-
+package com.wujie.apps.netty.server.send;
 
 import com.wujie.apps.netty.pojo.BaseTask;
 import com.wujie.apps.netty.protocol.WjProtocol;

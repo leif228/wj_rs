@@ -2,7 +2,6 @@ package com.wujie.apps.netty.client.send;
 
 
 import com.wujie.apps.netty.pojo.BaseTask;
-import com.wujie.apps.netty.pojo.Sen_i;
 import com.wujie.apps.netty.protocol.WjProtocol;
 
 //终端→服务 心跳

@@ -127,7 +127,7 @@ public class AtServiceImpl implements AtService {
                 return ApiResult.error("传输的数据格式错误！数据为：" + tx);
             }
         } catch (Exception e) {
-            return ApiResult.error("AT数据解析出错了！"+ e.getMessage());
+            return ApiResult.error("AT数据处理出错了！"+ e.getMessage());
         }
     }
 
@@ -141,6 +141,8 @@ public class AtServiceImpl implements AtService {
 
                 }else if("E011".equals(buss) && "0001".equals(cmd)){  //群成员管理业务处理
                     return sdsService.doClubUserManage(flag, oid, pri, buss, port, cmd, param);
+                }else if("E012".equals(buss) && "0001".equals(cmd)){  //新建群管理业务处理
+                    return sdsService.doNewClub(flag, oid, pri, buss, port, cmd, param);
                 }
             }
 

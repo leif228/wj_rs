@@ -171,8 +171,18 @@ public class TcpClient {
         ip = properties.getProperty("ip");
         port = Integer.valueOf(properties.getProperty("port"));
         if (ip != null && port != null) {
+            if(channel != null){
+                try {
+                    doConnect();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    log.error("doConnet连接报错了"+ e.getMessage());
+                }
+                return  0;
+            }else {
 
-            return init();
+                return init();
+            }
         } else {
             return 1;
         }

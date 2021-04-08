@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 /**
  * 用户服务接口
  *
@@ -321,6 +318,7 @@ public interface AppUserService {
 
     @PostMapping("/clubUserManage")
     public ApiResult clubUserManage(@RequestParam(value = "oid") String oid,
+                                    @RequestParam(value = "operaterOid") String operaterOid,
                                     @RequestParam(value = "eventNo") String eventNo,
                                     @RequestParam(value = "msgType") String msgType);
 
@@ -608,9 +606,10 @@ public interface AppUserService {
         }
 
         @Override
-        public ApiResult clubUserManage(String oid, String eventNo, String msgType) {
+        public ApiResult clubUserManage(String oid, String operaterOid, String eventNo, String msgType) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
+
 
     }
 

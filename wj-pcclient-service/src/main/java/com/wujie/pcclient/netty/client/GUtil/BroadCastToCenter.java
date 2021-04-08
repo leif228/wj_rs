@@ -56,7 +56,7 @@ public class BroadCastToCenter extends Thread {
             log.info("ip=" + ip);
 
             /*这一步就是将本机的IP地址转换成xxx.xxx.xxx.255*/
-            String[] ips = ip.split(".");
+            String[] ips = ip.split("\\.");
 
             String broadCastIP = ips[0] + "." + ips[1] + "." +ips[2] + "." + "255";
             log.info("broadCastIP=" + broadCastIP);
@@ -99,6 +99,8 @@ public class BroadCastToCenter extends Thread {
 //                byte[] headerbyte = Arrays.copyOfRange(recBytes,0,6);
                     byte[] lenShortbyte = Arrays.copyOfRange(recBytes,6,8);
                     int len = wjProtocol.byte2shortSmall(lenShortbyte);
+
+
                     log.info("数据解码的长度：" + len);
 
                     int dataLen = len - WjProtocol.MIN_DATA_LEN;

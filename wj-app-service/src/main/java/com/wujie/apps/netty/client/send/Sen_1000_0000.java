@@ -3,7 +3,6 @@ package com.wujie.apps.netty.client.send;
 
 import com.wujie.apps.netty.pojo.AtTask;
 import com.wujie.apps.netty.pojo.BaseTask;
-import com.wujie.apps.netty.pojo.Sen_i;
 import com.wujie.apps.netty.protocol.WjProtocol;
 import lombok.extern.slf4j.Slf4j;
 
