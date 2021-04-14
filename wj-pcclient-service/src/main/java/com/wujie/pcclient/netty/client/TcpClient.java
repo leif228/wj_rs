@@ -1,5 +1,6 @@
 package com.wujie.pcclient.netty.client;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.pcclient.app.business.enums.WebViewWebSocketFuctionEnum;
 import com.wujie.pcclient.app.business.util.WechatConstant;
@@ -156,7 +157,7 @@ public class TcpClient {
     }
 
     private static void toAt(WebViewWebSocketFuctionEnum type,String at) {
-        log.info("at事件" );
+        log.info("at事件" +at);
 
         AtTask atTask = new AtTask();
         atTask.setAt(at);
@@ -240,7 +241,14 @@ public class TcpClient {
     private static void toGenEvent(WebViewWebSocketFuctionEnum type, ManageChatMsgTask manageChatMsgTask) {
         log.info("事件产生json：" + manageChatMsgTask.getOid());
 
-        String at = genAt("N", manageChatMsgTask.getOid(), "0500", "A001", "0001", "0001", manageChatMsgTask.getOid());
+        ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+        manageChatMsgAtParam.setMsgContent("新事件开始了");
+        manageChatMsgAtParam.setMsgType("txt");
+        manageChatMsgAtParam.setEventNo("");
+
+        String content = JSON.toJSONString(manageChatMsgAtParam);
+
+        String at = genAt("N", manageChatMsgTask.getOid(), "0500", "A001", "0001", "0001", content);
         AtTask atTask = new AtTask();
         atTask.setAt(at);
 

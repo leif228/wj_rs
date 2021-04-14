@@ -162,7 +162,7 @@ public class AtServiceImpl implements AtService {
 //                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
 //                if (sdsEventPersonRecord == null) {
                     //新产生事件
-                    return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), "新事件产生",bussInfo.getId()+"");
+                    return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), param,bussInfo.getId()+"");
 //                } else {
 //                    //处理事件
 //                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
@@ -170,8 +170,9 @@ public class AtServiceImpl implements AtService {
             }else if("E001".equals(buss) && "0001".equals(cmd)){
                 com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
                 ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
+
                 //处理事件
-                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", manageChatMsgAtParam.getMsg(), manageChatMsgAtParam.getEventNo(), bussInfo.getId()+"");
+                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId()+"");
 
             }else{
                 return ApiResult.error("该业务暂时还不能处理！");

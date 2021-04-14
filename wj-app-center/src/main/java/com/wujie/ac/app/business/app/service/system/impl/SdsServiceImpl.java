@@ -675,13 +675,13 @@ public class SdsServiceImpl implements SdsService {
 
                 return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
             } else if ("E001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
-                ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
-                manageChatMsgAtParam.setMsg(content);
-                manageChatMsgAtParam.setMsgType("txt");
-                manageChatMsgAtParam.setEventNo(eventNo);
-
-                String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), param, toOid);
+//                ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+//                manageChatMsgAtParam.setMsgContent(content);
+//                manageChatMsgAtParam.setMsgType("txt");
+//                manageChatMsgAtParam.setEventNo(eventNo);
+//
+//                String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
+                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
             } else if ("5010".equals(bussInfo.getBusinessNum()) && "FFFF".equals(bussInfo.getCommand())) {
 
                 return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
@@ -772,6 +772,13 @@ public class SdsServiceImpl implements SdsService {
                 content = "群删除oid:" + clubUserManageAtParam.getOid();
             }
 
+            ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+            manageChatMsgAtParam.setEventNo(eventNo);
+            manageChatMsgAtParam.setMsgContent(content);
+            manageChatMsgAtParam.setMsgType("txt");
+
+            content = JSON.toJSONString(manageChatMsgAtParam);
+
             String relation = clubUserManageAtParam.getOid().substring(0, 22);
 
             //保存事件记录
@@ -854,6 +861,14 @@ public class SdsServiceImpl implements SdsService {
             } else if (ClubUserManageTypeEnum.dec.name().equals(msgType)) {
                 content = "群删除oid:" + oid;
             }
+
+            ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+            manageChatMsgAtParam.setEventNo(eventNo);
+            manageChatMsgAtParam.setMsgContent(content);
+            manageChatMsgAtParam.setMsgType("txt");
+
+            content = JSON.toJSONString(manageChatMsgAtParam);
+
             String[] arr = eventNo.split("--");
             String genOid = arr[0];
             String eventType = arr[2];
@@ -888,6 +903,7 @@ public class SdsServiceImpl implements SdsService {
             sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(sdsEventTypeInfo.getType()));
             sdsEventPersonRecord.setGenOid(oid);
             sdsEventPersonRecord.setStatus(newClubAtParam.getRelativeEventNo());
+
             sdsEventPersonRecord.setCreatTime(DateUtil.getDate());
             sdsEventPersonRecord.setOid(oid);
 
@@ -1194,6 +1210,7 @@ public class SdsServiceImpl implements SdsService {
                     JSONObject jsonObject_i = (JSONObject) datas.get(i);
                     SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
                     deviceVo.setCreatTime(CalendarUtil.parseYYYY_MM_DD_HH_MM_SS((String) jsonObject_i.get("creatTime")).getTime());
+                    deviceVo.setContent(jsonObject_i.get("content").toString());
                     sdsEventInfoDtos.add(deviceVo);
                 }
 
