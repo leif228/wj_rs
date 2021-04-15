@@ -63,7 +63,7 @@ public class SdsController {
                                @RequestParam(value = "targetOid") String targetOid,
                                @RequestParam(value = "eventNo") String eventNo,
                                @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid, bussInfoId);
+        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid, bussInfoId, "");
     }
 
     @PostMapping("/areaServiceAndSend")
@@ -153,6 +153,11 @@ public class SdsController {
                                @RequestParam(value = "eventNo") String eventNo,
                                @RequestParam(value = "msgType") String msgType) {
         return sdsService.clubUserManage(oid,operaterOid, eventNo, msgType);
+    }
+
+    @PostMapping("/searchOriginEventno")
+    public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.searchOriginEventno(eventNo);
     }
 
 }

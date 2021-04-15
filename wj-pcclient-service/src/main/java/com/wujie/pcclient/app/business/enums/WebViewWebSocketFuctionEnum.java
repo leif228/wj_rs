@@ -32,5 +32,7 @@ public enum WebViewWebSocketFuctionEnum {
 
     nettyNetFileDownOver,//"http://" + ip + ":8080/tcube_app/APP_code/APP_choose_device.php"
     nettyNetGetDevListOver,//"http://" + ip + ":8080/tcube_app/APP_code/APP_choose_device.php"
-    backNets;
+    backNets,
+    netBack,
+    manageBack;
 }

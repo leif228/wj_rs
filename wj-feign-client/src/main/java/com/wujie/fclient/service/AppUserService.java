@@ -260,10 +260,10 @@ public interface AppUserService {
     public ApiResult getClass2nd(@RequestParam(value = "id") Long id);
 
     @PostMapping("/getClass3rd")
-    public ApiResult getClass3rd(@RequestParam(value = "id") Long id) ;
+    public ApiResult getClass3rd(@RequestParam(value = "id") Long id);
 
     @PostMapping("/getClass4th")
-    public ApiResult getClass4th(@RequestParam(value = "id") Long id) ;
+    public ApiResult getClass4th(@RequestParam(value = "id") Long id);
 
     @PostMapping("/userTrade")
     public ApiResult userTrade(@RequestParam(value = "idcard") String idcard,
@@ -294,6 +294,7 @@ public interface AppUserService {
     @PostMapping("/updataSdsEventRelation")
     public ApiResult updataSdsEventRelation(@RequestParam(value = "eventNo") String eventNo,
                                             @RequestParam(value = "targetOids") String targetOids);
+
     @PostMapping("/getUserInfo")
     public ApiResult getUserInfo(@RequestParam(value = "id") Long id);
 
@@ -321,6 +322,10 @@ public interface AppUserService {
                                     @RequestParam(value = "operaterOid") String operaterOid,
                                     @RequestParam(value = "eventNo") String eventNo,
                                     @RequestParam(value = "msgType") String msgType);
+
+
+    @PostMapping("/searchOriginEventno")
+    public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo);
 
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
@@ -607,6 +612,11 @@ public interface AppUserService {
 
         @Override
         public ApiResult clubUserManage(String oid, String operaterOid, String eventNo, String msgType) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchOriginEventno(String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

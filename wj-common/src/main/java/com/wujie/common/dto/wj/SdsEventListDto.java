@@ -9,7 +9,7 @@ import java.util.Date;
 public class SdsEventListDto implements Serializable {
     private String eventNo;
     private Long eventType;
-    private String status;
+    private String originEventNo;
     private String genOid;
 
     //
@@ -43,12 +43,12 @@ public class SdsEventListDto implements Serializable {
         this.eventNo = eventNo;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOriginEventNo() {
+        return originEventNo;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOriginEventNo(String originEventNo) {
+        this.originEventNo = originEventNo;
     }
 
     public String getEventName() {

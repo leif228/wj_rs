@@ -2,6 +2,7 @@ package com.wujie.pcclient.netty.client.decoder;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.pcclient.app.business.enums.NetManageEnum;
 import com.wujie.pcclient.netty.client.send.Sen_factory;
 import com.wujie.pcclient.netty.pojo.Rec_task_i;
 import com.wujie.pcclient.netty.client.send.Sen_0000_0000;
@@ -11,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TaskHandler {
+    NetManageEnum type;
+    public TaskHandler(NetManageEnum net) {
+        this.type = net;
+    }
 
     public void doProtocol(ChannelHandlerContext ctx, WjProtocol wjProtocol) {
         JSONObject objParam = null;
@@ -50,7 +55,7 @@ public class TaskHandler {
             log.debug( "className:" + className);
             Class genClass = Class.forName(className);
             Rec_task_i rec_task_i = (Rec_task_i) genClass.newInstance();
-            rec_task_i.doTask(ctx, tx, objParam);
+            rec_task_i.doTask(ctx, tx, objParam,type);
         } catch (Exception e) {
             log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());
         }

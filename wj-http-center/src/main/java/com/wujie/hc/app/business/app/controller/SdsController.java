@@ -167,4 +167,9 @@ public class SdsController {
                                     @RequestParam(value = "msgType") String msgType) {
         return sdsService.clubUserManage(oid,operaterOid, eventNo, msgType);
     }
+
+    @PostMapping("/searchOriginEventno")
+    public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.searchOriginEventno(eventNo);
+    }
 }

@@ -3,6 +3,7 @@ package com.wujie.pcclient.netty.server.decoder;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wujie.pcclient.netty.pojo.Rec_task_i;
+import com.wujie.pcclient.netty.pojo.Rec_task_i2;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +58,8 @@ public class TaskHandler {
             className = classPath + "." + className;
             log.debug( "className:" + className);
             Class genClass = Class.forName(className);
-            Rec_task_i rec_task_i = (Rec_task_i) genClass.newInstance();
-            rec_task_i.doTask(ctx, tx, objParam);
+            Rec_task_i2 rec_task_i2 = (Rec_task_i2) genClass.newInstance();
+            rec_task_i2.doTask(ctx, tx, objParam);
         } catch (Exception e) {
             log.debug( "TaskHandler.doProtocol_报错了:" + e.getMessage());
         }

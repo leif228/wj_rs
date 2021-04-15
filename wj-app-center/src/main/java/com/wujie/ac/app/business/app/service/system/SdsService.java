@@ -39,7 +39,7 @@ public interface SdsService {
     ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId);
 
     //    @Transactional(rollbackFor = Exception.class)
-    ApiResult pushEvent(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId);
+    ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId, String relativeEventNo);
 
     ApiResult myUserList(String oid);
 
@@ -48,4 +48,6 @@ public interface SdsService {
     ApiResult clubUserManage(String oid,String operaterOid, String eventNo, String msgType);
 
     ApiResult doNewClub(String flag, String oid, String pri, String buss, String port, String cmd, String param);
+
+    ApiResult searchOriginEventno(String eventNo);
 }

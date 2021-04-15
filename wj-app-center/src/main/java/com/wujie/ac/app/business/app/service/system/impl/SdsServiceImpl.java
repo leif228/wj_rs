@@ -145,7 +145,7 @@ public class SdsServiceImpl implements SdsService {
             String oid_relation = oid.substring(0, oid_relation_length);
             if (!relations.contains(oid_relation)) {
                 relations.add(oid_relation);
-                this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId);
+                this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId, "");
             }
 
             //事件流程记录
@@ -700,7 +700,7 @@ public class SdsServiceImpl implements SdsService {
      */
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId) {
+    public ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId, String relativeEventNo) {
         try {
             //根据targetOid查找oidFull
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(targetOid);
@@ -717,6 +717,7 @@ public class SdsServiceImpl implements SdsService {
                     sdsEventPersonRecord.setStatus(ststus1);
                     sdsEventPersonRecord.setGenOid(genOid);
                     sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(eventType));
+                    sdsEventPersonRecord.setOriginEventNo(relativeEventNo);
 
                     sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
 
@@ -781,12 +782,17 @@ public class SdsServiceImpl implements SdsService {
 
             String relation = clubUserManageAtParam.getOid().substring(0, 22);
 
+            String relativeEventNo = "";
+            OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
+            if ("2".equals(eventType)) {
+                relativeEventNo = this.searchOriginEventnoHttp(owerServiceDto.getIp(), eventNo);
+            }
+
             //保存事件记录
-            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "");
+            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "", relativeEventNo);
             if (ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
                 //在事件产生服务器上保存事件相关用户
-                OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
-                this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid(),oid);
+                this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid(), oid);
 
                 return ApiResult.success();
             } else {
@@ -799,12 +805,12 @@ public class SdsServiceImpl implements SdsService {
     }
 
     @Override
-    public ApiResult clubUserManage(String oid,String operaterOid, String eventNo, String msgType) {
+    public ApiResult clubUserManage(String oid, String operaterOid, String eventNo, String msgType) {
         try {
             //一、在事件产生服务器上保存事件相关用户
             SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
             if (sdsEventRelation == null)
-                throw new Exception("事件关系找不到记录！");
+                throw new Exception("clubUserManage  事件关系找不到记录！");
 
             String oids = sdsEventRelation.getEventManualOids();
             if (oids == null || "".equals(oids)) {
@@ -896,23 +902,42 @@ public class SdsServiceImpl implements SdsService {
             if (sdsEventTypeInfo == null)
                 throw new Exception("基础数据找不到！");
 
+            BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+            if (bussInfo == null)
+                throw new Exception("业务基础表找不到数据！");
+
             com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
             NewClubAtParam newClubAtParam = com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, NewClubAtParam.class);
 
-            SdsEventPersonRecord sdsEventPersonRecord = new SdsEventPersonRecord();
-            sdsEventPersonRecord.setEventTypeInfoId(Long.valueOf(sdsEventTypeInfo.getType()));
-            sdsEventPersonRecord.setGenOid(oid);
-            sdsEventPersonRecord.setStatus(newClubAtParam.getRelativeEventNo());
+            String eventNo = this.genEventNo(oid, String.valueOf(sdsEventTypeInfo.getType()));
 
-            sdsEventPersonRecord.setCreatTime(DateUtil.getDate());
-            sdsEventPersonRecord.setOid(oid);
+            String targetOid = oid.substring(0, oid_relation_length);
 
-            String eventNo = this.genEventNo(oid, sdsEventTypeInfo.getType().toString());
-            sdsEventPersonRecord.setEventNo(eventNo);
+            //查找事件关系组织,并保存关系
+            SdsEventRelation sdsEventRelation = new SdsEventRelation();
+            sdsEventRelation.setEventNo(eventNo);
+            sdsEventRelation.setEventRelationJson("");
+            sdsEventRelation.setStatus(ststus1);
+            sdsEventRelation.setUpdateTime(DateUtil.getDate());
+            sdsEventRelation.setEventTradeOids("");
 
-            sdsEventPersonRecordMapper.insertSelective(sdsEventPersonRecord);
+            sdsEventRelationMapper.insertSelective(sdsEventRelation);
 
-            return ApiResult.success();
+            return this.pushEvent(oid, String.valueOf(sdsEventTypeInfo.getType()), oid + "新建了一个群", eventNo, targetOid, bussInfo.getId() + "", newClubAtParam.getRelativeEventNo());
+
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult searchOriginEventno(String eventNo) {
+        try {
+            SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findOneByEventNo(eventNo);
+            if (sdsEventPersonRecord == null)
+                throw new Exception("SdsEventPersonRecord数据找不到！eventNo=" + eventNo);
+
+            return ApiResult.success(sdsEventPersonRecord.getOriginEventNo());
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -1276,6 +1301,30 @@ public class SdsServiceImpl implements SdsService {
         } else {
             log.info("++++++++++++++++请求genEvent失败:" + "连接错误");
             throw new Exception("genEvent失败:连接错误");
+        }
+    }
+
+    private String searchOriginEventnoHttp(String ip, String eventNo) throws Exception {
+        String url = "http://" + ip + ":" + "9999/searchOriginEventno";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("eventNo", eventNo);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+
+                String originEventno = (String) jsonObject.get(ApiResult.MESSAGE);
+                log.info("++++++++++++++++请求searchOriginEventno成功:originEventno=" + originEventno);
+                return originEventno;
+            } else {
+                log.info("++++++++++++++++请求searchOriginEventno失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchOriginEventno失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求searchOriginEventno失败:" + "连接错误");
+            throw new Exception("searchOriginEventno失败:连接错误");
         }
     }
 

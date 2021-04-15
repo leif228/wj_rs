@@ -1,6 +1,7 @@
 package com.wujie.pcclient.netty.client;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.pcclient.app.business.enums.NetManageEnum;
 import com.wujie.pcclient.app.business.enums.WebViewWebSocketFuctionEnum;
 import com.wujie.pcclient.app.business.util.WechatConstant;
 import com.wujie.pcclient.app.framework.netty.NioWebSocketHandler;
@@ -59,7 +60,7 @@ public class GTcpClient {
                     ch.pipeline().addLast(new IdleStateHandler(0, 30, 0));
                     ch.pipeline().addLast(new WjEncoderHandler());
 //                    ch.pipeline().addLast(new WjEchoHandler());
-                    ch.pipeline().addLast(new WjDecoderHandler(new TaskHandler()));//解码器，接收消息时候用
+                    ch.pipeline().addLast(new WjDecoderHandler(new TaskHandler(NetManageEnum.Net)));//解码器，接收消息时候用
 //                    ch.pipeline().addLast(new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                 }
             });
@@ -363,10 +364,12 @@ public class GTcpClient {
         }
     }
 
-    public static void atTask(String tx, JSONObject objParam) {
-        log.debug("收到网关atTask:" + tx);
+    public static void atTask(NetManageEnum netManageEnum, String tx, JSONObject objParam) {
+        log.debug("收到"+netManageEnum +"atTask:" + tx);
+        if (objParam != null)
+            log.debug("收到"+netManageEnum+"返回的at业务:" + tx + ":" + objParam.toJSONString());
 
-//        this.sendMsgToActivity(null, TOAST, "收到网关:at=" + tx);
+        GTcpClient.nioWebSocketHandler.backMsg(WebViewWebSocketFuctionEnum.netBack, tx);
     }
 
     public static void nettyNetSearchBack() {

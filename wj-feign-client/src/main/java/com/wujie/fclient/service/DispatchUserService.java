@@ -313,6 +313,11 @@ public interface DispatchUserService {
                                     @RequestParam(value = "msgType") String msgType);
 
 
+    @PostMapping("/searchOriginEventno")
+    public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo);
+
+
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -585,6 +590,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult clubUserManage(String oid, String operaterOid, String eventNo, String msgType) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchOriginEventno(String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

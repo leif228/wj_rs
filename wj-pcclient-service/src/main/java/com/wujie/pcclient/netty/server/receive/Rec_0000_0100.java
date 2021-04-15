@@ -2,6 +2,7 @@ package com.wujie.pcclient.netty.server.receive;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.pcclient.app.business.enums.NetManageEnum;
 import com.wujie.pcclient.netty.pojo.Device;
 import com.wujie.pcclient.netty.pojo.LoginTask;
 import com.wujie.pcclient.netty.pojo.Rec_task_i;
@@ -21,7 +22,7 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 public class Rec_0000_0100 implements Rec_task_i {
     @Override
-    public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam) {
+    public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam, NetManageEnum type) {
         log.debug( "===============Rec_0000_0100收到的objParam==========" + objParam.toJSONString());
         if (ObjectUtils.isEmpty(objParam)) {
             ctx.channel().close();

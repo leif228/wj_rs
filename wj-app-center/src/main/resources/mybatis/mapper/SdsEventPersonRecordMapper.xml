@@ -1,113 +1,124 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wujie.ac.app.business.repository.SdsEventPersonRecordMapper" >
-  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="gen_oid" property="genOid" jdbcType="VARCHAR" />
-    <result column="event_no" property="eventNo" jdbcType="VARCHAR" />
-    <result column="event_type_info_id" property="eventTypeInfoId" jdbcType="BIGINT" />
-    <result column="oid" property="oid" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+  <resultMap id="BaseResultMap" type="com.wujie.ac.app.business.entity.SdsEventPersonRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gen_oid" jdbcType="VARCHAR" property="genOid" />
+    <result column="event_no" jdbcType="VARCHAR" property="eventNo" />
+    <result column="origin_event_no" jdbcType="VARCHAR" property="originEventNo" />
+    <result column="event_type_info_id" jdbcType="BIGINT" property="eventTypeInfoId" />
+    <result column="oid" jdbcType="VARCHAR" property="oid" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, gen_oid, event_no, event_type_info_id, oid, status, creat_time
+  <sql id="Base_Column_List">
+    id, gen_oid, event_no, origin_event_no, event_type_info_id, oid, status, creat_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from sds_event_person_record
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from sds_event_person_record
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+  <insert id="insert" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord">
     insert into sds_event_person_record (id, gen_oid, event_no,
-    event_type_info_id, oid, status,
-    creat_time)
+    origin_event_no, event_type_info_id, oid,
+    status, creat_time)
     values (#{id,jdbcType=BIGINT}, #{genOid,jdbcType=VARCHAR}, #{eventNo,jdbcType=VARCHAR},
-    #{eventTypeInfoId,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
-    #{creatTime,jdbcType=TIMESTAMP})
+    #{originEventNo,jdbcType=VARCHAR}, #{eventTypeInfoId,jdbcType=BIGINT}, #{oid,jdbcType=VARCHAR},
+    #{status,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+  <insert id="insertSelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord">
     insert into sds_event_person_record
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="genOid != null" >
+      <if test="genOid != null">
         gen_oid,
       </if>
-      <if test="eventNo != null" >
+      <if test="eventNo != null">
         event_no,
       </if>
-      <if test="eventTypeInfoId != null" >
+      <if test="originEventNo != null">
+        origin_event_no,
+      </if>
+      <if test="eventTypeInfoId != null">
         event_type_info_id,
       </if>
-      <if test="oid != null" >
+      <if test="oid != null">
         oid,
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         status,
       </if>
-      <if test="creatTime != null" >
+      <if test="creatTime != null">
         creat_time,
       </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="genOid != null" >
+      <if test="genOid != null">
         #{genOid,jdbcType=VARCHAR},
       </if>
-      <if test="eventNo != null" >
+      <if test="eventNo != null">
         #{eventNo,jdbcType=VARCHAR},
       </if>
-      <if test="eventTypeInfoId != null" >
+      <if test="originEventNo != null">
+        #{originEventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null">
         #{eventTypeInfoId,jdbcType=BIGINT},
       </if>
-      <if test="oid != null" >
+      <if test="oid != null">
         #{oid,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         #{status,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null" >
+      <if test="creatTime != null">
         #{creatTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord">
     update sds_event_person_record
-    <set >
-      <if test="genOid != null" >
+    <set>
+      <if test="genOid != null">
         gen_oid = #{genOid,jdbcType=VARCHAR},
       </if>
-      <if test="eventNo != null" >
+      <if test="eventNo != null">
         event_no = #{eventNo,jdbcType=VARCHAR},
       </if>
-      <if test="eventTypeInfoId != null" >
+      <if test="originEventNo != null">
+        origin_event_no = #{originEventNo,jdbcType=VARCHAR},
+      </if>
+      <if test="eventTypeInfoId != null">
         event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
       </if>
-      <if test="oid != null" >
+      <if test="oid != null">
         oid = #{oid,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         status = #{status,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null" >
+      <if test="creatTime != null">
         creat_time = #{creatTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord" >
+  <update id="updateByPrimaryKey" parameterType="com.wujie.ac.app.business.entity.SdsEventPersonRecord">
     update sds_event_person_record
     set gen_oid = #{genOid,jdbcType=VARCHAR},
     event_no = #{eventNo,jdbcType=VARCHAR},
+    origin_event_no = #{originEventNo,jdbcType=VARCHAR},
     event_type_info_id = #{eventTypeInfoId,jdbcType=BIGINT},
     oid = #{oid,jdbcType=VARCHAR},
     status = #{status,jdbcType=VARCHAR},
@@ -127,13 +138,13 @@
   <select id="findByOid" resultType="com.wujie.common.dto.wj.SdsEventListDto">
     select a.event_no eventNo,
     a.event_type_info_id eventType,
-    a.status status,
+    a.origin_event_no originEventNo,
     b.event_name eventName,
     a.creat_time creatTime,
     a.gen_oid genOid
     from
     (select * from sds_event_person_record where oid = #{oid}) a,sds_event_type_info b
-    WHERE a.event_type_info_id = b.id
+    WHERE a.event_type_info_id = b.type
     ORDER BY creat_time desc limit 0,10
   </select>
 

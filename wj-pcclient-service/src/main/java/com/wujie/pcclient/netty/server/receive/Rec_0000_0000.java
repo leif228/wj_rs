@@ -2,6 +2,7 @@ package com.wujie.pcclient.netty.server.receive;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wujie.pcclient.app.business.enums.NetManageEnum;
 import com.wujie.pcclient.netty.pojo.Rec_task_i;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 import com.wujie.pcclient.netty.server.send.Sen_0000_0000;
@@ -13,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class Rec_0000_0000 implements Rec_task_i {
     @Override
-    public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam) {
+    public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam, NetManageEnum type) {
         sendIdle(ctx);
     }
 

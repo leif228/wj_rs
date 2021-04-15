@@ -13,6 +13,9 @@ public class SdsEventPersonRecord {
     private String eventNo;
 
     //
+    private String originEventNo;
+
+    //
     private Long eventTypeInfoId;
 
     //
@@ -46,6 +49,14 @@ public class SdsEventPersonRecord {
 
     public void setEventNo(String eventNo) {
         this.eventNo = eventNo == null ? null : eventNo.trim();
+    }
+
+    public String getOriginEventNo() {
+        return originEventNo;
+    }
+
+    public void setOriginEventNo(String originEventNo) {
+        this.originEventNo = originEventNo == null ? null : originEventNo.trim();
     }
 
     public Long getEventTypeInfoId() {
