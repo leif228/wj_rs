@@ -43,6 +43,10 @@ public class GTcpClient {
     static Timer timer = new Timer();
     static List<NetSearchNetDto> netSearchNetDtos = new ArrayList<>();
 
+    public static void setNioWebSocketHandler(NioWebSocketHandler nioWebSocketHandler){
+        GTcpClient.nioWebSocketHandler = nioWebSocketHandler;
+    }
+
     public static int init() {
         try {
             log.info("启动tcp客户端:去连接:" + ip + ":" + port);

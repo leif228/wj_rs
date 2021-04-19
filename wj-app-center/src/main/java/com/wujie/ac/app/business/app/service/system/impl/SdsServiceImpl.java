@@ -685,6 +685,10 @@ public class SdsServiceImpl implements SdsService {
             } else if ("5010".equals(bussInfo.getBusinessNum()) && "FFFF".equals(bussInfo.getCommand())) {
 
                 return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
+            } else if ("E012".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
+                NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
+
+                return atService.sendAt("N", nodeInfoOwer.getFzwno(), bussInfo.getPriority(), "E012", bussInfo.getPort(), "0002", content, toOid);
             } else {
                 return ApiResult.error("该业务暂时还不能处理！");
             }
@@ -923,7 +927,13 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventRelationMapper.insertSelective(sdsEventRelation);
 
-            return this.pushEvent(oid, String.valueOf(sdsEventTypeInfo.getType()), oid + "新建了一个群", eventNo, targetOid, bussInfo.getId() + "", newClubAtParam.getRelativeEventNo());
+            NewClubAtParamDto newClubAtParamDto = new NewClubAtParamDto();
+            newClubAtParamDto.setEventNo(eventNo);
+            newClubAtParamDto.setRelativeEventNo(newClubAtParam.getRelativeEventNo());
+
+            String content = JSON.toJSONString(newClubAtParamDto);
+
+            return this.pushEvent(oid, String.valueOf(sdsEventTypeInfo.getType()), content, eventNo, targetOid, bussInfo.getId() + "", newClubAtParam.getRelativeEventNo());
 
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());

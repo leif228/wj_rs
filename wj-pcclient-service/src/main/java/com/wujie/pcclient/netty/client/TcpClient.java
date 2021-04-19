@@ -43,6 +43,10 @@ public class TcpClient {
     private static Queue<WjProtocol> queue;
     private static NioWebSocketHandler nioWebSocketHandler;
 
+    public static void setNioWebSocketHandler(NioWebSocketHandler nioWebSocketHandler){
+        TcpClient.nioWebSocketHandler = nioWebSocketHandler;
+    }
+
     public static int init() {
         try {
             log.info("启动tcp客户端:去连接:" + ip + ":" + port);

@@ -206,6 +206,7 @@ secure:
       - /getTabsAreacs
       - /seachChinaAddr
       - /clubUserManage
+      - /searchOriginEventno
 
 
 

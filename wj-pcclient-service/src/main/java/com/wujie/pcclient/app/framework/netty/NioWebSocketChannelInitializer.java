@@ -1,5 +1,7 @@
 package com.wujie.pcclient.app.framework.netty;
 
+import com.wujie.pcclient.netty.client.GTcpClient;
+import com.wujie.pcclient.netty.client.TcpClient;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -22,6 +24,11 @@ public class NioWebSocketChannelInitializer extends ChannelInitializer<SocketCha
         // 每60秒检测一下这个通道是否活跃
         ch.pipeline().addLast(new IdleStateHandler(60, 0, 0, TimeUnit.SECONDS));
         ch.pipeline().addLast("idleStateTrigger", new ServerIdleStateTrigger());
-        ch.pipeline().addLast("handler",new NioWebSocketHandler());//自定义的业务handler
+
+        NioWebSocketHandler nioWebSocketHandler = new NioWebSocketHandler();
+        GTcpClient.setNioWebSocketHandler(nioWebSocketHandler);
+        TcpClient.setNioWebSocketHandler(nioWebSocketHandler);
+
+        ch.pipeline().addLast("handler",nioWebSocketHandler);//自定义的业务handler
     }
 }
