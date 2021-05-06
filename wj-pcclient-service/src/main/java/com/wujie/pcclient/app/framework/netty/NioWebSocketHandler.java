@@ -85,7 +85,7 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
         // 返回应答消息
         String request = ((TextWebSocketFrame) frame).text();
-        log.debug("服务端收到：" + request);
+        log.debug("websocket服务端收到：" + request);
 //        TextWebSocketFrame tws = new TextWebSocketFrame(request);
         // 群发
 //        ChannelSupervise.send2All(tws);
@@ -118,44 +118,44 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
                 break;
 
             case sendChatMsg:
-                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data, this);
+                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data);
                 break;
             case toGenEvent:
-                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data, this);
+                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data);
                 break;
             case toLightOn:
-                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data, this);
+                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data);
                 break;
             case toLightOff:
-                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data, this);
+                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data);
                 break;
             case toAt:
-                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data, this);
+                TcpClient.sendMsgToManageService(webViewWebSocketFuctionEnum, data);
                 break;
 
             case toNetInfo:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case deviceComp:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case saveDevice:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case authOver:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case toSearchNet:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case toNetTcp:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case toConfigNet:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             case toAtNet:
-                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data, this);
+                GTcpClient.sendMsgToNetService(webViewWebSocketFuctionEnum, data);
                 break;
             default:
         }

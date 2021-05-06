@@ -134,8 +134,7 @@ public class TcpClient {
         }
     }
 
-    public static void sendMsgToManageService(WebViewWebSocketFuctionEnum webViewWebSocketFuctionEnum, Object data, NioWebSocketHandler nioWebSocketHandler) {
-        TcpClient.nioWebSocketHandler = nioWebSocketHandler;
+    public static void sendMsgToManageService(WebViewWebSocketFuctionEnum webViewWebSocketFuctionEnum, Object data) {
         switch (webViewWebSocketFuctionEnum){
             case sendChatMsg:
                 ManageChatMsgTask manageChatMsgTask = JSONObject.parseObject(data.toString(),ManageChatMsgTask.class);

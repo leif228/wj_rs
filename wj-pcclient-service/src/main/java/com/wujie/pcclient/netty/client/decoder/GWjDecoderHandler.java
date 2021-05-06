@@ -1,5 +1,6 @@
 package com.wujie.pcclient.netty.client.decoder;
 
+import com.wujie.pcclient.netty.client.GTcpClient;
 import com.wujie.pcclient.netty.client.TcpClient;
 import com.wujie.pcclient.netty.protocol.WjProtocol;
 import io.netty.buffer.ByteBuf;
@@ -12,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public class WjDecoderHandler extends ByteToMessageDecoder {
+public class GWjDecoderHandler extends ByteToMessageDecoder {
 
-    com.wujie.pcclient.netty.client.decoder.TaskHandler taskHandler;
-    public WjDecoderHandler(TaskHandler taskHandler) {
+    TaskHandler taskHandler;
+    public GWjDecoderHandler(TaskHandler taskHandler) {
         this.taskHandler = taskHandler;
     }
 
@@ -170,8 +171,8 @@ public class WjDecoderHandler extends ByteToMessageDecoder {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
 
-        log.debug(String.format("TcpClient客户端 失去连接DecoderHandler# # connet out... : %s", ctx.channel().remoteAddress()));
-        TcpClient.doConnect();
+        log.debug(String.format("GTcpClient客户端 失去连接DecoderHandler# # connet out... : %s", ctx.channel().remoteAddress()));
+        GTcpClient.doConnect();
 //        Channel incoming = ctx.channel();
 //        if (incoming.hasAttr(ChannelManager.deviceInfoVoAttr)) {
 //            ChannelManager.deviceChannels.remove(incoming.attr(ChannelManager.deviceInfoVoAttr).get().getUniqueNo());

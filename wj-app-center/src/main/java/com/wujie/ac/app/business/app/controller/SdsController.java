@@ -106,6 +106,16 @@ public class SdsController {
         return sdsService.searchEvents(eventNo);
     }
 
+    @PostMapping("/clubUsers")
+    public ApiResult clubUsers(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.clubUsers(eventNo);
+    }
+
+    @PostMapping("/searchClubUsers")
+    public ApiResult searchClubUsers(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.searchClubUsers(eventNo);
+    }
+
     @PostMapping("/addUser")
     public ApiResult addUser(@RequestParam(value = "oid") String oid,
                              @RequestParam(value = "relationId") String relationId,

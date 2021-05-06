@@ -171,6 +171,7 @@ secure:
       #      - /deviceRegist
       - /userLogin
       - /userRegist
+      - /tcpClientConnect
 
 
 

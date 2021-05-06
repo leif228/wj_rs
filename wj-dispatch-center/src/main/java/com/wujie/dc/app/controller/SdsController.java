@@ -170,4 +170,14 @@ public class SdsController {
     public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo) {
         return sdsService.searchOriginEventno(eventNo);
     }
+
+    @PostMapping("/clubUsers")
+    public ApiResult clubUsers(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.clubUsers(eventNo);
+    }
+
+    @PostMapping("/searchClubUsers")
+    public ApiResult searchClubUsers(@RequestParam(value = "eventNo") String eventNo) {
+        return sdsService.searchClubUsers(eventNo);
+    }
 }

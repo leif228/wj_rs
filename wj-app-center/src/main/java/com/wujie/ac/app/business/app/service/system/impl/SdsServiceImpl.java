@@ -2,10 +2,12 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
+import com.google.inject.internal.cglib.core.$ClassEmitter;
 import com.wujie.ac.app.async.AsyncManager;
 import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.SdsService;
 import com.wujie.ac.app.business.entity.*;
+import com.wujie.ac.app.business.entity.at.ApplyOprationAtParam;
 import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.entity.at.NewClubAtParam;
@@ -148,9 +150,16 @@ public class SdsServiceImpl implements SdsService {
                 this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId, "");
             }
 
+            ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+            manageChatMsgAtParam.setEventNo(eventNo);
+            manageChatMsgAtParam.setMsgContent(content);
+            manageChatMsgAtParam.setMsgType("txt");
+
+            String eventInfo_content = JSON.toJSONString(manageChatMsgAtParam);
+
             //事件流程记录
             SdsEventInfo sdsEventInfo = new SdsEventInfo();
-            sdsEventInfo.setContent(content);
+            sdsEventInfo.setContent(eventInfo_content);
             sdsEventInfo.setCreatTime(DateUtil.getDate());
             sdsEventInfo.setEventNo(eventNo);
             sdsEventInfo.setEventTypeInfoId(Long.valueOf(eventType));
@@ -459,9 +468,9 @@ public class SdsServiceImpl implements SdsService {
             } else {
                 //根据SdsEventPersonRecord的genOid取得产生事件的管理服务器，然后去添加事件流程记录
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventPersonRecord.getGenOid());
-//                this.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId);
+                this.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId);
                 //异步
-                AsyncManager.me().execute(AsyncFactory.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId));
+//                AsyncManager.me().execute(AsyncFactory.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId));
 
             }
 
@@ -488,140 +497,146 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
-            try {
-                List<String> relations = new ArrayList<>();
-                //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
-                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findOneByEventNo(eventNo);
-
-                List<SdsPercomRelation> list = this.genEventRelation(sdsEventPersonRecord.getGenOid(), eventType);
-                if (list != null && list.size() > 0) {
-                    for (SdsPercomRelation sdsPercomRelation : list) {
-                        try {
-                            if (!relations.contains(sdsPercomRelation.getTargetOid())) {
-                                relations.add(sdsPercomRelation.getTargetOid());
-                                OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
-//                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
-                                //异步
-                                AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
-                            } else {
-                                continue;
-                            }
-                        } catch (Exception e) {
-                            //不处理， continue;
-                            log.error("事件推送失败：" + sdsPercomRelation.toString());
-                        }
-                    }
-                }
-                //推送到产生事件的设备,刷新事件产生设备chat页面
-                if (true) {
-                    String relation = "";
-                    if (sdsEventPersonRecord.getGenOid().length() > oid_relation_length) {
-                        relation = sdsEventPersonRecord.getGenOid().substring(0, oid_relation_length);
-                    } else {
-                        relation = sdsEventPersonRecord.getGenOid();
-                    }
-                    //TODO 可以优化，因为已经是在事件产生的服务器了，不用在查找ip
-//                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
-//                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                    if (!relations.contains(relation)) {
-                        relations.add(relation);
-                        pushTask(oid, eventType, content, eventNo, relation, bussInfoId);
-                    }
-                }
-
-                //根据行业推送
-                if (true) {
-                    SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
-                    if (sdsEventRelation != null) {
-                        String targetOids = sdsEventRelation.getEventTradeOids();
-                        if (targetOids != null && !targetOids.equals("")) {
-                            String[] arr = null;
-                            if (targetOids.contains(",")) {
-                                arr = targetOids.split(",");
-                            } else {
-                                arr = new String[]{targetOids};
-                            }
-                            //去除一个行业用户下有两个设备，互相推送的bug
-
-                            for (int i = 0; i < arr.length; i++) {
-                                String relation = "";
-                                try {
-                                    if (arr[i].length() > oid_relation_length) {
-                                        relation = arr[i].substring(0, oid_relation_length);
-                                    } else {
-                                        relation = arr[i];
-                                    }
-                                    //去除一个行业用户下有两个设备，互相推送的bug
-                                    if (relations.contains(relation)) {
-                                        continue;
-                                    } else {
-                                        relations.add(relation);
-
-                                        OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
-//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                                        //异步
-                                        AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
-                                    }
-
-                                } catch (Exception e) {
-                                    //不处理， continue;
-                                    log.error("事件推送失败：" + relation);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //根据手动添加用户推送
-                if (true) {
-                    SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
-                    if (sdsEventRelation != null) {
-                        String targetOids = sdsEventRelation.getEventManualOids();
-                        if (targetOids != null && !targetOids.equals("")) {
-                            String[] arr = null;
-                            if (targetOids.contains("--")) {
-                                arr = targetOids.split("--");
-                            } else {
-                                arr = new String[]{targetOids};
-                            }
-                            //去除一个行业用户下有两个设备，互相推送的bug
-
-                            for (int i = 0; i < arr.length; i++) {
-                                String relation = "";
-                                try {
-                                    if (arr[i].length() > oid_relation_length) {
-                                        relation = arr[i].substring(0, oid_relation_length);
-                                    } else {
-                                        relation = arr[i];
-                                    }
-                                    //去除一个行业用户下有两个设备，互相推送的bug
-                                    if (relations.contains(relation)) {
-                                        continue;
-                                    } else {
-                                        relations.add(relation);
-
-                                        OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
-//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
-                                        //异步
-                                        AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId));
-                                    }
-
-                                } catch (Exception e) {
-                                    //不处理， continue;
-                                    log.error("事件推送失败：" + relation);
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                //不处理
-                log.error("在事件产生管理服务器上查找关系,然后推送到相关管理服务器上，出现错误！");
-            }
+            pushTaskFunc(oid, eventType, content, eventNo, bussInfoId);
 
             return ApiResult.success();
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 要定位在事件产生的服务器上处理
+     */
+    public void pushTaskFunc(String fromOid, String eventType, String content, String eventNo, String bussInfoId) {
+        try {
+            List<String> relations = new ArrayList<>();
+            //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
+            SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findOneByEventNo(eventNo);
+
+            List<SdsPercomRelation> list = this.genEventRelation(sdsEventPersonRecord.getGenOid(), eventType);
+            if (list != null && list.size() > 0) {
+                for (SdsPercomRelation sdsPercomRelation : list) {
+                    try {
+                        if (!relations.contains(sdsPercomRelation.getTargetOid())) {
+                            relations.add(sdsPercomRelation.getTargetOid());
+                            OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
+//                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
+                            //异步
+                            AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                        } else {
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        //不处理， continue;
+                        log.error("事件推送失败：" + sdsPercomRelation.toString());
+                    }
+                }
+            }
+            //推送到产生事件的设备,刷新事件产生设备chat页面
+            if (true) {
+                String relation = "";
+                if (sdsEventPersonRecord.getGenOid().length() > oid_relation_length) {
+                    relation = sdsEventPersonRecord.getGenOid().substring(0, oid_relation_length);
+                } else {
+                    relation = sdsEventPersonRecord.getGenOid();
+                }
+                //TODO 可以优化，因为已经是在事件产生的服务器了，不用在查找ip
+//                    OwerServiceDto targetOwer = this.getOwerInfo(relation);
+//                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                if (!relations.contains(relation)) {
+                    relations.add(relation);
+                    pushTask(fromOid, eventType, content, eventNo, relation, bussInfoId);
+                }
+            }
+
+            //根据行业推送
+            if (true) {
+                SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+                if (sdsEventRelation != null) {
+                    String targetOids = sdsEventRelation.getEventTradeOids();
+                    if (targetOids != null && !targetOids.equals("")) {
+                        String[] arr = null;
+                        if (targetOids.contains(",")) {
+                            arr = targetOids.split(",");
+                        } else {
+                            arr = new String[]{targetOids};
+                        }
+                        //去除一个行业用户下有两个设备，互相推送的bug
+
+                        for (int i = 0; i < arr.length; i++) {
+                            String relation = "";
+                            try {
+                                if (arr[i].length() > oid_relation_length) {
+                                    relation = arr[i].substring(0, oid_relation_length);
+                                } else {
+                                    relation = arr[i];
+                                }
+                                //去除一个行业用户下有两个设备，互相推送的bug
+                                if (relations.contains(relation)) {
+                                    continue;
+                                } else {
+                                    relations.add(relation);
+
+                                    OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
+//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                                    //异步
+                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId));
+                                }
+
+                            } catch (Exception e) {
+                                //不处理， continue;
+                                log.error("事件推送失败：" + relation);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //根据手动添加用户推送
+            if (true) {
+                SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+                if (sdsEventRelation != null) {
+                    String targetOids = sdsEventRelation.getEventManualOids();
+                    if (targetOids != null && !targetOids.equals("")) {
+                        String[] arr = null;
+                        if (targetOids.contains("--")) {
+                            arr = targetOids.split("--");
+                        } else {
+                            arr = new String[]{targetOids};
+                        }
+                        //去除一个行业用户下有两个设备，互相推送的bug
+
+                        for (int i = 0; i < arr.length; i++) {
+                            String relation = "";
+                            try {
+                                if (arr[i].length() > oid_relation_length) {
+                                    relation = arr[i].substring(0, oid_relation_length);
+                                } else {
+                                    relation = arr[i];
+                                }
+                                //去除一个行业用户下有两个设备，互相推送的bug
+                                if (relations.contains(relation)) {
+                                    continue;
+                                } else {
+                                    relations.add(relation);
+
+                                    OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
+//                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
+                                    //异步
+                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId));
+                                }
+
+                            } catch (Exception e) {
+                                //不处理， continue;
+                                log.error("事件推送失败：" + relation);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("推送出现错误！" + e.getMessage());
         }
     }
 
@@ -689,6 +704,9 @@ public class SdsServiceImpl implements SdsService {
                 NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
 
                 return atService.sendAt("N", nodeInfoOwer.getFzwno(), bussInfo.getPriority(), "E012", bussInfo.getPort(), "0002", content, toOid);
+            } else if ("E021".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
+
+                return atService.sendAt("N", fromOid, bussInfo.getPriority(), "E021", bussInfo.getPort(), "0001", content, toOid);
             } else {
                 return ApiResult.error("该业务暂时还不能处理！");
             }
@@ -948,6 +966,149 @@ public class SdsServiceImpl implements SdsService {
                 throw new Exception("SdsEventPersonRecord数据找不到！eventNo=" + eventNo);
 
             return ApiResult.success(sdsEventPersonRecord.getOriginEventNo());
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult clubUsers(String eventNo) {
+        try {
+            String[] arr = eventNo.split("--");
+            String genOid = arr[0];
+            OwerServiceDto owerServiceDto = this.getOwerInfo(genOid);
+            //取出事件
+            List<SdsEventInfoDto> sdsEventInfoDtos = this.searchClubUsersHttp(owerServiceDto.getIp(), eventNo);
+
+            return ApiResult.success(sdsEventInfoDtos);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult searchClubUsers(String eventNo) {
+        try {
+            String[] arre = eventNo.split("--");
+            String genOid = arre[0];
+            String eventType = arre[2];
+
+            List<String> relations = new ArrayList<>();
+            List<String> relation_fulls = new ArrayList<>();
+
+            List<SdsPercomRelation> list = this.genEventRelation(genOid, eventType);
+            if (list != null && list.size() > 0) {
+                for (SdsPercomRelation sdsPercomRelation : list) {
+                    if (!relations.contains(sdsPercomRelation.getTargetOid())) {
+                        relations.add(sdsPercomRelation.getTargetOid());
+                        relation_fulls.add(sdsPercomRelation.getTargetOid());
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            //推送到产生事件的设备,刷新事件产生设备chat页面
+            if (true) {
+                String relation = "";
+                if (genOid.length() > oid_relation_length) {
+                    relation = genOid.substring(0, oid_relation_length);
+                } else {
+                    relation = genOid;
+                }
+                if (!relations.contains(relation)) {
+                    relations.add(relation);
+                    relation_fulls.add(genOid);
+                }
+            }
+
+            //根据行业推送
+            if (true) {
+                SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+                if (sdsEventRelation != null) {
+                    String targetOids = sdsEventRelation.getEventTradeOids();
+                    if (targetOids != null && !targetOids.equals("")) {
+                        String[] arr = null;
+                        if (targetOids.contains(",")) {
+                            arr = targetOids.split(",");
+                        } else {
+                            arr = new String[]{targetOids};
+                        }
+                        //去除一个行业用户下有两个设备，互相推送的bug
+                        for (int i = 0; i < arr.length; i++) {
+                            String relation = "";
+                            if (arr[i].length() > oid_relation_length) {
+                                relation = arr[i].substring(0, oid_relation_length);
+                            } else {
+                                relation = arr[i];
+                            }
+                            //去除一个行业用户下有两个设备，互相推送的bug
+                            if (relations.contains(relation)) {
+                                continue;
+                            } else {
+                                relations.add(relation);
+                                relation_fulls.add(relation);
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            //根据手动添加用户推送
+            if (true) {
+                SdsEventRelation sdsEventRelation = sdsEventRelationMapper.findByEventNo(eventNo);
+                if (sdsEventRelation != null) {
+                    String targetOids = sdsEventRelation.getEventManualOids();
+                    if (targetOids != null && !targetOids.equals("")) {
+                        String[] arr = null;
+                        if (targetOids.contains("--")) {
+                            arr = targetOids.split("--");
+                        } else {
+                            arr = new String[]{targetOids};
+                        }
+                        //去除一个行业用户下有两个设备，互相推送的bug
+
+                        for (int i = 0; i < arr.length; i++) {
+                            String relation = "";
+                            if (arr[i].length() > oid_relation_length) {
+                                relation = arr[i].substring(0, oid_relation_length);
+                            } else {
+                                relation = arr[i];
+                            }
+                            //去除一个行业用户下有两个设备，互相推送的bug
+                            if (relations.contains(relation)) {
+                                continue;
+                            } else {
+                                relations.add(relation);
+                                relation_fulls.add(arr[i]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<SdsEventInfoDto> sdsEventInfoDtos = new ArrayList<>();
+            for (String oid : relation_fulls) {
+                SdsEventInfoDto sdsEventInfoDto = new SdsEventInfoDto();
+                sdsEventInfoDto.setEventNo(eventNo);
+                sdsEventInfoDto.setOid(oid);
+                try {
+                    OwerServiceDto owerServiceDto = this.getOwerInfo(oid);
+                    WjuserOwerDto wjuserOwerDto = this.searchOwerUserInfoHttp(owerServiceDto.getIp(), oid);
+                    if (wjuserOwerDto != null) {
+                        sdsEventInfoDto.setUserName(wjuserOwerDto.getUserName());
+                        sdsEventInfoDto.setHeadIconUrl(wjuserOwerDto.getHeadIconUrl());
+                        sdsEventInfoDto.setMajor(wjuserOwerDto.getMajor());
+                    }
+                }catch (Exception e){
+                    log.error("searchClubUsers去归属地查找用户oid="+oid+"信息失败！====原因："+e.getMessage());
+                    continue;
+                }
+
+                sdsEventInfoDtos.add(sdsEventInfoDto);
+            }
+
+            return ApiResult.success(sdsEventInfoDtos);
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }
@@ -1218,14 +1379,50 @@ public class SdsServiceImpl implements SdsService {
             String code = (String) jsonObject.get(ApiResult.RETURNCODE);
             if (ApiResult.SUCCESS.equals(code)) {
 
-                log.info("++++++++++++++++请求pushDoEvent成功:");
+                log.info("++++++++++++++++请求pushEvent成功:");
             } else {
-                log.info("++++++++++++++++请求pushDoEvent失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
-                throw new Exception("pushDoEvent失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                log.info("++++++++++++++++请求pushEvent失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("pushEvent失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
             }
         } else {
-            log.info("++++++++++++++++请求pushDoEvent失败:" + "连接错误");
-            throw new Exception("pushDoEvent失败:连接错误");
+            log.info("++++++++++++++++请求pushEvent失败:" + "连接错误");
+            throw new Exception("pushEvent失败:连接错误");
+        }
+    }
+
+    private List<SdsEventInfoDto> searchClubUsersHttp(String ip, String eventNo) throws Exception {
+        String url = "http://" + ip + ":" + "9999/searchClubUsers";
+        String params = "";
+        Map<String, String> map = new HashMap<>();
+        map.put("eventNo", eventNo);
+        params = new Gson().toJson(map);
+        JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
+        if (jsonObject != null) {
+            String code = (String) jsonObject.get(ApiResult.RETURNCODE);
+            if (ApiResult.SUCCESS.equals(code)) {
+                List<SdsEventInfoDto> sdsEventInfoDtos = new ArrayList<>();
+                JSONArray datas = (JSONArray) jsonObject.get(ApiResult.CONTENT);
+                for (int i = 0; i < datas.size(); i++) {
+                    JSONObject jsonObject_i = (JSONObject) datas.get(i);
+//                    SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
+                    SdsEventInfoDto deviceVo = new SdsEventInfoDto();
+                    deviceVo.setUserName(String.valueOf(jsonObject_i.get("userName")));
+                    deviceVo.setOid(String.valueOf(jsonObject_i.get("oid")));
+                    deviceVo.setEventNo(String.valueOf(jsonObject_i.get("eventNo")));
+                    deviceVo.setMajor(String.valueOf(jsonObject_i.get("major")));
+                    deviceVo.setHeadIconUrl(String.valueOf(jsonObject_i.get("headIconUrl")));
+                    sdsEventInfoDtos.add(deviceVo);
+                }
+
+                log.info("++++++++++++++++请求searchClubUsers成功:");
+                return sdsEventInfoDtos;
+            } else {
+                log.info("++++++++++++++++请求searchClubUsers失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+                throw new Exception("searchClubUsers失败：服务端错误：" + jsonObject.get(ApiResult.MESSAGE));
+            }
+        } else {
+            log.info("++++++++++++++++请求searchClubUsers失败:" + "连接错误");
+            throw new Exception("searchClubUsers失败:连接错误");
         }
     }
 
@@ -1243,9 +1440,18 @@ public class SdsServiceImpl implements SdsService {
                 JSONArray datas = (JSONArray) jsonObject.get(ApiResult.CONTENT);
                 for (int i = 0; i < datas.size(); i++) {
                     JSONObject jsonObject_i = (JSONObject) datas.get(i);
-                    SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
-                    deviceVo.setCreatTime(CalendarUtil.parseYYYY_MM_DD_HH_MM_SS((String) jsonObject_i.get("creatTime")).getTime());
-                    deviceVo.setContent(jsonObject_i.get("content").toString());
+//                    SdsEventInfoDto deviceVo = (SdsEventInfoDto) JSONObject.toBean(jsonObject_i, SdsEventInfoDto.class);
+                    SdsEventInfoDto deviceVo = new SdsEventInfoDto();
+                    deviceVo.setCreatTime(CalendarUtil.parseYYYY_MM_DD_HH_MM_SS(String.valueOf(jsonObject_i.get("creatTime"))).getTime());
+                    deviceVo.setContent(String.valueOf(jsonObject_i.get("content")));
+                    deviceVo.setUserName(String.valueOf(jsonObject_i.get("userName")));
+                    deviceVo.setOid(String.valueOf(jsonObject_i.get("oid")));
+                    deviceVo.setEventNo(String.valueOf(jsonObject_i.get("eventNo")));
+                    deviceVo.setId(Long.valueOf(String.valueOf(jsonObject_i.get("id"))));
+//                    deviceVo.setEventTypeInfoId(Long.valueOf(String.valueOf(jsonObject_i.get("eventTypeInfoId"))));
+                    deviceVo.setStatus(String.valueOf(jsonObject_i.get("status")));
+                    deviceVo.setMajor(String.valueOf(jsonObject_i.get("major")));
+                    deviceVo.setHeadIconUrl(String.valueOf(jsonObject_i.get("headIconUrl")));
                     sdsEventInfoDtos.add(deviceVo);
                 }
 
@@ -1437,6 +1643,45 @@ public class SdsServiceImpl implements SdsService {
                     continue;
                 }
             }
+
+            return ApiResult.success();
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    public ApiResult doApplyOpration(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+        try {
+            BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+            if (bussInfo == null)
+                throw new Exception("业务基础表找不到数据！");
+
+            com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+            ApplyOprationAtParam applyOprationAtParam = (ApplyOprationAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ApplyOprationAtParam.class);
+            String eventNo = applyOprationAtParam.getEventNo();
+            String[] arr = eventNo.split("--");
+            String genOid = arr[0];
+            String eventType = arr[2];
+
+            String content = "";
+            ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+            manageChatMsgAtParam.setEventNo(eventNo);
+            manageChatMsgAtParam.setMsgContent(param);
+            manageChatMsgAtParam.setMsgType("json");
+
+            content = JSON.toJSONString(manageChatMsgAtParam);
+
+            SdsEventInfo sdsEventInfo = new SdsEventInfo();
+            sdsEventInfo.setContent(content);
+            sdsEventInfo.setCreatTime(DateUtil.getDate());
+            sdsEventInfo.setEventNo(eventNo);
+            sdsEventInfo.setEventTypeInfoId(Long.valueOf(eventType));
+            sdsEventInfo.setOid(oid);
+            sdsEventInfo.setStatus(ststus1);
+
+            sdsEventInfoMapper.insertSelective(sdsEventInfo);
+
+            pushTaskFunc(oid, eventType, param, eventNo, String.valueOf(bussInfo.getId()));
 
             return ApiResult.success();
         } catch (Exception e) {

@@ -5,6 +5,7 @@ import com.wujie.ac.app.async.AsyncManager;
 import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.AtService;
 import com.wujie.ac.app.business.entity.*;
+import com.wujie.ac.app.business.entity.at.ApplyOprationAtParam;
 import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.repository.*;
@@ -48,7 +49,7 @@ public class AtServiceImpl implements AtService {
     public static final String END = "#*";
 
     @Autowired
-    public AtServiceImpl(WjuserTradeMapper wjuserTradeMapper,EventtypeTradecodeMdInfoMapper eventtypeTradecodeMdInfoMapper,TcpUserService tcpUserService,SdsServiceImpl sdsService,EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper,BussInfoMapper bussInfoMapper,FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
+    public AtServiceImpl(WjuserTradeMapper wjuserTradeMapper, EventtypeTradecodeMdInfoMapper eventtypeTradecodeMdInfoMapper, TcpUserService tcpUserService, SdsServiceImpl sdsService, EventtypeBussMdInfoMapper eventtypeBussMdInfoMapper, BussInfoMapper bussInfoMapper, FzwnoMapper fzwnoMapper, NodeInfoOwerMapper nodeInfoOwerMapper, SdsEventInfoMapper sdsEventInfoMapper, SdsEventPersonRecordMapper sdsEventPersonRecordMapper, SdsEventRelationMapper sdsEventRelationMapper,
                          SdsEventTypeInfoMapper sdsEventTypeInfoMapper, SdsPercomRelationMapper sdsPercomRelationMapper, SdsRelationTypeInfoMapper sdsRelationTypeInfoMapper,
                          WjuserOwerMapper wjuserOwerMapper) {
         this.wjuserTradeMapper = wjuserTradeMapper;
@@ -67,7 +68,6 @@ public class AtServiceImpl implements AtService {
         this.sdsRelationTypeInfoMapper = sdsRelationTypeInfoMapper;
         this.wjuserOwerMapper = wjuserOwerMapper;
     }
-
 
     @Override
     public ApiResult doAtTask(String tx) {
@@ -102,24 +102,26 @@ public class AtServiceImpl implements AtService {
                 index += cmd.length();
 
                 String tempEnd = tx.substring(index);
-                if(END.equals(tempEnd)){
+                if (END.equals(tempEnd)) {
                     String strend = tx.substring(index, index + END.length());//取出帧尾
 
-                    doAtTask(flag,oid,pri,buss,port,cmd,"");
-                }else{
+                    doAtTask(flag, oid, pri, buss, port, cmd, "");
+                } else {
 
                     String paramLen = tx.substring(index, index + 4);
                     log.debug("解码后的paramLen为：" + paramLen);
                     int len = NumConvertUtil.HexStringToInt(paramLen);
                     log.debug("len：" + len);
                     index += paramLen.length();
-                    String param = tx.substring(index, index + len);
+//                    String param = tx.substring(index, index + len);
+//
+//                    log.debug("解码后的param为：" + param);
+//                    index += param.length();
+//                    String strend = tx.substring(index, index + END.length());//取出帧尾
 
-                    log.debug("解码后的param为：" + param);
-                    index += param.length();
-                    String strend = tx.substring(index, index + END.length());//取出帧尾
+                    String param = tx.substring(index, tx.length()-END.length());
 
-                    doAtTask(flag,oid,pri,buss,port,cmd,param);
+                    doAtTask(flag, oid, pri, buss, port, cmd, param);
                 }
 
                 return ApiResult.success("成功");
@@ -127,22 +129,24 @@ public class AtServiceImpl implements AtService {
                 return ApiResult.error("传输的数据格式错误！数据为：" + tx);
             }
         } catch (Exception e) {
-            return ApiResult.error("AT数据处理出错了！"+ e.getMessage());
+            return ApiResult.error("AT数据处理出错了！" + e.getMessage());
         }
     }
 
     @Override
-    public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param)  {
+    public ApiResult atTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) {
         try {
-            if(true){
+            if (true) {
                 //开灯业务处理
-                if("5010".equals(buss) && "FFFF".equals(cmd)){
+                if ("5010".equals(buss) && "FFFF".equals(cmd)) {
                     return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
 
-                }else if("E011".equals(buss) && "0001".equals(cmd)){  //群成员管理业务处理
+                } else if ("E011".equals(buss) && "0001".equals(cmd)) {  //群成员管理业务处理
                     return sdsService.doClubUserManage(flag, oid, pri, buss, port, cmd, param);
-                }else if("E012".equals(buss) && "0001".equals(cmd)){  //新建群管理业务处理
+                } else if ("E012".equals(buss) && "0001".equals(cmd)) {  //新建群管理业务处理
                     return sdsService.doNewClub(flag, oid, pri, buss, port, cmd, param);
+                }else if ("E021".equals(buss) && "0001".equals(cmd)) {  //请求执行业务处理
+                    return sdsService.doApplyOpration(flag, oid, pri, buss, port, cmd, param);
                 }
             }
 
@@ -161,54 +165,71 @@ public class AtServiceImpl implements AtService {
                 //查找是否已经有事件记录
 //                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
 //                if (sdsEventPersonRecord == null) {
-                    //新产生事件
-                    return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), param,bussInfo.getId()+"");
+                //新产生事件
+                return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), param, bussInfo.getId() + "");
 //                } else {
 //                    //处理事件
 //                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
 //                }
-            }else if("E001".equals(buss) && "0001".equals(cmd)){
+            } else if ("E001".equals(buss) && "0001".equals(cmd)) {
                 com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
                 ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
 
                 //处理事件
-                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId()+"");
+                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId() + "");
 
-            }else{
+            } else {
                 return ApiResult.error("该业务暂时还不能处理！");
             }
 
-        }catch (Exception e){
-            return ApiResult.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("atTask报错了！" + e.getMessage());
+            return ApiResult.error("atTask报错了！" + e.getMessage());
         }
     }
 
     private void doAtTask(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
-        if(true){
+        try {
             //群成员管理业务处理
-            if("E011".equals(buss) && "0001".equals(cmd)){
+            if ("E011".equals(buss) && "0001".equals(cmd)) {
 
                 com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
                 ClubUserManageAtParam clubUserManageAtParam = (ClubUserManageAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ClubUserManageAtParam.class);
                 //查找oid归属服务器
                 OwerServiceDto owerServiceDto = sdsService.getOwerInfo(clubUserManageAtParam.getOid());
 
-                String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+                String result = this.atTaskHttp(owerServiceDto.getIp(), flag, oid, pri, buss, port, cmd, param);
 
-                return;
             }
-        }
+            //请求执行业务处理
+            else if ("E021".equals(buss) && "0001".equals(cmd)) {
 
-        //查找oid归属服务器,处理用户关系相关的任务推送
-        OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
+                com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
+                ApplyOprationAtParam applyOprationAtParam = (ApplyOprationAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ApplyOprationAtParam.class);
+                String eventNo = applyOprationAtParam.getEventNo();
+                String[] arr = eventNo.split("--");
+                String genOid = arr[0];
+                String eventType = arr[2];
+                //查找oid归属服务器
+                OwerServiceDto owerServiceDto = sdsService.getOwerInfo(genOid);
 
-        String result = this.atTaskHttp(owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
+                String result = this.atTaskHttp(owerServiceDto.getIp(), flag, oid, pri, buss, port, cmd, param);
 
-        //在区域服务器，处理与行业相关的任务推送
+            } else {
+
+                //查找oid归属服务器,处理用户关系相关的任务推送
+                OwerServiceDto owerServiceDto = sdsService.getOwerInfo(oid);
+
+                String result = this.atTaskHttp(owerServiceDto.getIp(), flag, oid, pri, buss, port, cmd, param);
+            }
+            //在区域服务器，处理与行业相关的任务推送
 //        this.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param);
-        //异步
+            //异步
 //        AsyncManager.me().execute(AsyncFactory.doTradeTask(result,owerServiceDto.getIp(),flag,oid,pri,buss,port,cmd,param));
-
+        } catch (Exception e) {
+            log.error("doAtTask报错了！" + e.getMessage());
+            throw new Exception("doAtTask报错了！" + e.getMessage());
+        }
     }
 
     public static void main(String[] args) {
@@ -220,77 +241,78 @@ public class AtServiceImpl implements AtService {
         System.out.println(clubUserManageAtParam.getOid());
     }
 
-    public void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
-        try{
-            if ("A001".equals(buss) && "0001".equals(cmd)) {
-                BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
-                if (bussInfo == null)
-                    throw new Exception("业务基础表找不到数据！");
-
-                List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(Long.valueOf(bussInfo.getId()));
-                if (eventtypeBussMdInfos.size() == 0)
-                    throw new Exception("业务基础表找不到数据！");
-
-                //TODO　后续根据算法实现匹配
-                EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
-
-                String targetOids = "";
-
-                List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
-                //去除一个行业用户下有两个设备，互相推送的bug
-                List<String> relations = new ArrayList<>();
-                for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
-                    List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
-
-                    log.error("3333333：" + wjuserTrades.size());
-                    for (WjuserTrade wjuserTrade : wjuserTrades) {
-                        try {
-                            //去除事件产生者又是行业相关的oid
-                            if(oid.equals(wjuserTrade.getOid()))
-                                continue;
-
-                            OwerServiceDto targetOwer = sdsService.getOwerInfo(wjuserTrade.getOid());
-                            String relation = wjuserTrade.getOid().substring(0, 22);
-                            targetOids += wjuserTrade.getOid() + ",";
-
-                            //去除一个行业用户下有两个设备，互相推送的bug
-                            if(relations.contains(relation)){
-                                continue;
-                            }else {
-                                relations.add(relation);
-
-                                log.error("44444444：" + relation);
-//                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
-                                //异步
-                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+""));
-                            }
-
-                        } catch (Exception e) {
-                            //不处理， continue;
-
-                            log.error("事件推送失败：" + wjuserTrade.getOid().toString());
-                        }
-                    }
-                }
-
-                if (!targetOids.equals("")) {
-                    targetOids = targetOids.substring(0, targetOids.length() - 1);
-                }
-
-                this.updataSdsEventRelationHttp(ip,eventNo,targetOids);
-            }
-
-        }catch (Exception e){
-            log.error("atService.doTradeTask_报错了："+ e.getMessage());
-        }
-    }
+//    public void doTradeTask(String eventNo,String ip, String flag, String oid, String pri, String buss, String port, String cmd, String param) {
+//        try{
+//            if ("A001".equals(buss) && "0001".equals(cmd)) {
+//                BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+//                if (bussInfo == null)
+//                    throw new Exception("业务基础表找不到数据！");
+//
+//                List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(Long.valueOf(bussInfo.getId()));
+//                if (eventtypeBussMdInfos.size() == 0)
+//                    throw new Exception("业务基础表找不到数据！");
+//
+//                //TODO　后续根据算法实现匹配
+//                EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
+//
+//                String targetOids = "";
+//
+//                List<EventtypeTradecodeMdInfo> eventtypeTradecodeMdInfos = eventtypeTradecodeMdInfoMapper.findByEventId(targInfo.getEventTypeInfoId());
+//                //去除一个行业用户下有两个设备，互相推送的bug
+//                List<String> relations = new ArrayList<>();
+//                for (EventtypeTradecodeMdInfo eventtypeTradecodeMdInfo : eventtypeTradecodeMdInfos) {
+//                    List<WjuserTrade> wjuserTrades = wjuserTradeMapper.findByLikeTrades(eventtypeTradecodeMdInfo.getTradeCodeInfoId() + "");
+//
+//                    log.error("3333333：" + wjuserTrades.size());
+//                    for (WjuserTrade wjuserTrade : wjuserTrades) {
+//                        try {
+//                            //去除事件产生者又是行业相关的oid
+//                            if(oid.equals(wjuserTrade.getOid()))
+//                                continue;
+//
+//                            OwerServiceDto targetOwer = sdsService.getOwerInfo(wjuserTrade.getOid());
+//                            String relation = wjuserTrade.getOid().substring(0, 22);
+//                            targetOids += wjuserTrade.getOid() + ",";
+//
+//                            //去除一个行业用户下有两个设备，互相推送的bug
+//                            if(relations.contains(relation)){
+//                                continue;
+//                            }else {
+//                                relations.add(relation);
+//
+//                                log.error("44444444：" + relation);
+////                            sdsService.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+"");
+//                                //异步
+//                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, targInfo.getEventTypeInfoId()+"", "新事件产生", relation, bussInfo.getId()+""));
+//                            }
+//
+//                        } catch (Exception e) {
+//                            //不处理， continue;
+//
+//                            log.error("事件推送失败：" + wjuserTrade.getOid().toString());
+//                        }
+//                    }
+//                }
+//
+//                if (!targetOids.equals("")) {
+//                    targetOids = targetOids.substring(0, targetOids.length() - 1);
+//                }
+//
+//                this.updataSdsEventRelationHttp(ip,eventNo,targetOids);
+//            }
+//
+//        }catch (Exception e){
+//            log.error("atService.doTradeTask_报错了："+ e.getMessage());
+//        }
+//    }
 
     private String genAt(String flag, String oid, String pri, String buss, String port, String cmd, String param) throws Exception {
         //AT@Nchn0L0a002020091100011000000000E00200010500A001000100010027chn0L0a00202009110001100000000011110102#*
+        byte[] objectBytes = param.getBytes("UTF-8");
 
-        String paramLen = NumConvertUtil.IntToHexStringLimit4(param.length());
+        String paramLen = NumConvertUtil.IntToHexStringLimit4(objectBytes.length);
         String at = HEARD + flag + oid + pri + buss + port + cmd + paramLen + param + END;//取出帧头
-        log.debug("编码后的at为：" + at);
+        log.debug("genAt编码后的at为：" + at);
 
         return at;
     }
@@ -299,12 +321,12 @@ public class AtServiceImpl implements AtService {
         try {
             String at = this.genAt(flag, senOid, pri, buss, port, cmd, param);
 
-            log.info("++++++++++++++++++6 sendAt:at="+at);
-            log.info("++++++++++++++++++sendAt:senOid="+senOid);
-            log.info("++++++++++++++++++sendAt:recOid="+recOid);
+            log.info("++++++++++++++++++6 sendAt:at=" + at);
+            log.info("++++++++++++++++++sendAt:senOid=" + senOid);
+            log.info("++++++++++++++++++sendAt:recOid=" + recOid);
             return tcpUserService.sendAtTask(recOid, at);
-        }catch (Exception e){
-            return ApiResult.error("at发送失败！原因："+ e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.error("at发送失败！原因：" + e.getMessage());
         }
     }
 
@@ -328,7 +350,7 @@ public class AtServiceImpl implements AtService {
 //                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
 
 //                OwerServiceDto deviceVo = (OwerServiceDto) JSONObject.toBean(data, OwerServiceDto.class);
-                log.info("++++++++++++++++请求atTask成功:eventNo=" + eventNo );
+                log.info("++++++++++++++++请求atTask成功:eventNo=" + eventNo);
 //                return data.toString();
                 return eventNo;
             } else {
@@ -355,7 +377,7 @@ public class AtServiceImpl implements AtService {
 //                JSONObject data = (JSONObject) jsonObject.get(ApiResult.CONTENT);
 
 //                OwerServiceDto deviceVo = (OwerServiceDto) JSONObject.toBean(data, OwerServiceDto.class);
-                log.info("++++++++++++++++请求updataSdsEventRelation成功:" );
+                log.info("++++++++++++++++请求updataSdsEventRelation成功:");
 //                return data.toString();
             } else {
                 log.info("++++++++++++++++请求updataSdsEventRelation失败:" + "服务端错误：" + jsonObject.get(ApiResult.MESSAGE));

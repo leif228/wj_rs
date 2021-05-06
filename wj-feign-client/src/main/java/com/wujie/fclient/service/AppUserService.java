@@ -327,6 +327,12 @@ public interface AppUserService {
     @PostMapping("/searchOriginEventno")
     public ApiResult searchOriginEventno(@RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/clubUsers")
+    public ApiResult clubUsers(@RequestParam(value = "eventNo") String eventNo);
+
+    @PostMapping("/searchClubUsers")
+    public ApiResult searchClubUsers(@RequestParam(value = "eventNo") String eventNo);
+
     @Component
     class AppUserServiceFallBack implements com.wujie.fclient.service.AppUserService {
 
@@ -617,6 +623,16 @@ public interface AppUserService {
 
         @Override
         public ApiResult searchOriginEventno(String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult clubUsers(String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchClubUsers(String eventNo) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

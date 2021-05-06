@@ -207,6 +207,8 @@ secure:
       - /seachChinaAddr
       - /clubUserManage
       - /searchOriginEventno
+      - /clubUsers
+      - /searchClubUsers
 
 
 

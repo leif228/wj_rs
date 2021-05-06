@@ -85,19 +85,19 @@ public class AsyncFactory {
     /*
      * 在区域服务器，处理与行业相关的任务推送
      */
-    public static TimerTask doTradeTask(final String eventNo, final String ip, final String flag, final String oid, final String pri, final String buss, final String port, final String cmd, final String param) {
-        return new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    log.info("doTradeTask异步开始了");
-                    AtServiceImpl atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
-                    atService.doTradeTask(eventNo, ip, flag, oid, pri, buss, port, cmd, param);
-                    log.info("doTradeTask异步结束");
-                } catch (Exception e) {
-                    log.info("AsyncFactory.doTradeTask报错了" + e.getMessage());
-                }
-            }
-        };
-    }
+//    public static TimerTask doTradeTask(final String eventNo, final String ip, final String flag, final String oid, final String pri, final String buss, final String port, final String cmd, final String param) {
+//        return new TimerTask() {
+//            @Override
+//            public void run() {
+//                try {
+//                    log.info("doTradeTask异步开始了");
+//                    AtServiceImpl atService = (AtServiceImpl) SpringContextUtil2.getBean("atServiceImpl");
+//                    atService.doTradeTask(eventNo, ip, flag, oid, pri, buss, port, cmd, param);
+//                    log.info("doTradeTask异步结束");
+//                } catch (Exception e) {
+//                    log.info("AsyncFactory.doTradeTask报错了" + e.getMessage());
+//                }
+//            }
+//        };
+//    }
 }

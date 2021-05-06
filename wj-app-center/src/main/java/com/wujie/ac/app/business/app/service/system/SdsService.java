@@ -50,4 +50,8 @@ public interface SdsService {
     ApiResult doNewClub(String flag, String oid, String pri, String buss, String port, String cmd, String param);
 
     ApiResult searchOriginEventno(String eventNo);
+
+    ApiResult clubUsers(String eventNo);
+
+    ApiResult searchClubUsers(String eventNo);
 }

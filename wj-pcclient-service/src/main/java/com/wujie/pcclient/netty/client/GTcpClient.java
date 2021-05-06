@@ -6,8 +6,8 @@ import com.wujie.pcclient.app.business.enums.WebViewWebSocketFuctionEnum;
 import com.wujie.pcclient.app.business.util.WechatConstant;
 import com.wujie.pcclient.app.framework.netty.NioWebSocketHandler;
 import com.wujie.pcclient.netty.client.GUtil.BroadCastToCenter;
+import com.wujie.pcclient.netty.client.decoder.GWjDecoderHandler;
 import com.wujie.pcclient.netty.client.decoder.TaskHandler;
-import com.wujie.pcclient.netty.client.decoder.WjDecoderHandler;
 import com.wujie.pcclient.netty.client.encoder.WjEncoderHandler;
 import com.wujie.pcclient.netty.client.send.*;
 import com.wujie.pcclient.netty.pojo.*;
@@ -23,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static com.wujie.pcclient.app.business.enums.WebViewWebSocketFuctionEnum.toSearchNet;
 
 @Slf4j
 public class GTcpClient {
@@ -64,7 +62,7 @@ public class GTcpClient {
                     ch.pipeline().addLast(new IdleStateHandler(0, 30, 0));
                     ch.pipeline().addLast(new WjEncoderHandler());
 //                    ch.pipeline().addLast(new WjEchoHandler());
-                    ch.pipeline().addLast(new WjDecoderHandler(new TaskHandler(NetManageEnum.Net)));//解码器，接收消息时候用
+                    ch.pipeline().addLast(new GWjDecoderHandler(new TaskHandler(NetManageEnum.Net)));//解码器，接收消息时候用
 //                    ch.pipeline().addLast(new InBusinessHandler());//业务处理类，最终的消息会在这个handler中进行业务处理
                 }
             });
@@ -133,8 +131,7 @@ public class GTcpClient {
         }
     }
 
-    public static  void sendMsgToNetService(WebViewWebSocketFuctionEnum webViewWebSocketFuctionEnum, Object data, NioWebSocketHandler nioWebSocketHandler) {
-        GTcpClient.nioWebSocketHandler = nioWebSocketHandler;
+    public static  void sendMsgToNetService(WebViewWebSocketFuctionEnum webViewWebSocketFuctionEnum, Object data) {
         switch (webViewWebSocketFuctionEnum) {
             case toNetInfo:
                 NetInfoTask netInfoTask = JSONObject.parseObject(data.toString(), NetInfoTask.class);
