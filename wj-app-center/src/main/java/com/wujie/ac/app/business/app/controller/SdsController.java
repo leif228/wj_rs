@@ -170,4 +170,11 @@ public class SdsController {
         return sdsService.searchOriginEventno(eventNo);
     }
 
+    @PostMapping("/searchSqlite")
+    public ApiResult searchSqlite(@RequestParam(value = "oid") String oid,
+                                  @RequestParam(value = "db") String db,
+                                  @RequestParam(value = "table") String table) {
+        return sdsService.searchSqlite(oid,db,table);
+    }
+
 }

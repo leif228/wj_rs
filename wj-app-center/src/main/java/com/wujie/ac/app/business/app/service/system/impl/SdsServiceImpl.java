@@ -2,7 +2,6 @@ package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
-import com.google.inject.internal.cglib.core.$ClassEmitter;
 import com.wujie.ac.app.async.AsyncManager;
 import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.SdsService;
@@ -11,11 +10,15 @@ import com.wujie.ac.app.business.entity.at.ApplyOprationAtParam;
 import com.wujie.ac.app.business.entity.at.ClubUserManageAtParam;
 import com.wujie.ac.app.business.entity.at.ManageChatMsgAtParam;
 import com.wujie.ac.app.business.entity.at.NewClubAtParam;
+import com.wujie.common.dto.sqlite.DeviceSpaceTable;
+import com.wujie.common.dto.sqlite.Room;
 import com.wujie.ac.app.business.enums.ClubUserManageTypeEnum;
 import com.wujie.ac.app.business.repository.*;
 import com.wujie.ac.app.business.util.date.DateUtil;
 import com.wujie.ac.app.framework.util.request.BaseRestfulUtil;
 import com.wujie.ac.app.framework.util.spring.SpringContextUtil2;
+import com.wujie.ac.app.framework.util.sqlite.RowMapper;
+import com.wujie.ac.app.framework.util.sqlite.SqliteHelper;
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.wj.*;
 import com.wujie.common.utils.CalendarUtil;
@@ -27,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1100,8 +1105,8 @@ public class SdsServiceImpl implements SdsService {
                         sdsEventInfoDto.setHeadIconUrl(wjuserOwerDto.getHeadIconUrl());
                         sdsEventInfoDto.setMajor(wjuserOwerDto.getMajor());
                     }
-                }catch (Exception e){
-                    log.error("searchClubUsers去归属地查找用户oid="+oid+"信息失败！====原因："+e.getMessage());
+                } catch (Exception e) {
+                    log.error("searchClubUsers去归属地查找用户oid=" + oid + "信息失败！====原因：" + e.getMessage());
                     continue;
                 }
 
@@ -1109,6 +1114,61 @@ public class SdsServiceImpl implements SdsService {
             }
 
             return ApiResult.success(sdsEventInfoDtos);
+        } catch (Exception e) {
+            return ApiResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResult searchSqlite(String oid, String db, String table) {
+        try {
+
+            String oid_sub = oid.substring(0, 31);
+
+            String dbPath = "F:\\data\\usr\\";
+            dbPath += oid_sub;
+            dbPath += "\\devices\\";
+            dbPath += oid;
+            dbPath += "\\updata\\";
+            dbPath += db;
+
+            log.info("dbPath:" + dbPath);
+            SqliteHelper h = new SqliteHelper(dbPath);
+
+            switch (table) {
+                case "Room":
+                    List<Room> sList = h.executeQuery("select * from " + table, new RowMapper<Room>() {
+                        @Override
+                        public Room mapRow(ResultSet rs, int index)
+                                throws SQLException {
+                            Room room = new Room();
+                            room.setRoomName(rs.getString("RoomName"));
+                            room.setRoomNum(rs.getString("RoomNum"));
+                            return room;
+                        }
+                    });
+                    return ApiResult.success(sList);
+                case "DeviceSpaceTable":
+                    List<DeviceSpaceTable> dList = h.executeQuery("select * from " + table, new RowMapper<DeviceSpaceTable>() {
+                        @Override
+                        public DeviceSpaceTable mapRow(ResultSet rs, int index)
+                                throws SQLException {
+                            DeviceSpaceTable room = new DeviceSpaceTable();
+                            room.setData_id(rs.getString("data_id"));
+                            room.setDevtype(rs.getString("devtype"));
+                            room.setDev_company(rs.getString("dev_company"));
+                            room.setDev_company_SN(rs.getString("dev_company_SN"));
+                            room.setDev_room(rs.getString("dev_room"));
+                            room.setDev_inROOMID(rs.getString("dev_inROOMID"));
+                            return room;
+
+                        }
+                    });
+                    return ApiResult.success(dList);
+                default:
+                    throw new Exception(table + "不存在！");
+            }
+
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
         }

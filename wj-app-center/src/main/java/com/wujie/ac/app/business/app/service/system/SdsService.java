@@ -54,4 +54,6 @@ public interface SdsService {
     ApiResult clubUsers(String eventNo);
 
     ApiResult searchClubUsers(String eventNo);
+
+    ApiResult searchSqlite(String oid, String db, String table);
 }

@@ -254,12 +254,13 @@ public class TcpClient {
     private static void toGenEvent(WebViewWebSocketFuctionEnum type, ManageChatMsgTask manageChatMsgTask) {
         log.info("事件产生json：" + manageChatMsgTask.getOid());
 
-        ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
-        manageChatMsgAtParam.setMsgContent("新事件开始了");
-        manageChatMsgAtParam.setMsgType("txt");
-        manageChatMsgAtParam.setEventNo("");
-
-        String content = JSON.toJSONString(manageChatMsgAtParam);
+//        ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
+//        manageChatMsgAtParam.setMsgContent("新事件开始了");
+//        manageChatMsgAtParam.setMsgType("txt");
+//        manageChatMsgAtParam.setEventNo("");
+//
+//        String content = JSON.toJSONString(manageChatMsgAtParam);
+        String content = JSON.toJSONString("新事件开始了");
 
         String at = genAt("N", manageChatMsgTask.getOid(), "0500", "A001", "0001", "0001", content);
         AtTask atTask = new AtTask();

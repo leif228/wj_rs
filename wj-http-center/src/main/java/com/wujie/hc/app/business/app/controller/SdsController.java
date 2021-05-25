@@ -182,4 +182,11 @@ public class SdsController {
     public ApiResult searchClubUsers(@RequestParam(value = "eventNo") String eventNo) {
         return sdsService.searchClubUsers(eventNo);
     }
+
+    @PostMapping("/searchSqlite")
+    public ApiResult searchSqlite(@RequestParam(value = "oid") String oid,
+                                  @RequestParam(value = "db") String db,
+                                  @RequestParam(value = "table") String table) {
+        return sdsService.searchSqlite(oid,db,table);
+    }
 }

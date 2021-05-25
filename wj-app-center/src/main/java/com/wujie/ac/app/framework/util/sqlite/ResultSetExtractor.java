@@ -1,0 +1,9 @@
+package com.wujie.ac.app.framework.util.sqlite;
+
+import java.sql.ResultSet;
+
+public interface ResultSetExtractor<T> {
+
+    public abstract T extractData(ResultSet rs);
+
+}

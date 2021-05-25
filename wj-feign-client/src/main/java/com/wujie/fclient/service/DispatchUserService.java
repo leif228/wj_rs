@@ -323,6 +323,11 @@ public interface DispatchUserService {
     @PostMapping("/searchClubUsers")
     public ApiResult searchClubUsers(@RequestParam(value = "eventNo") String eventNo);
 
+    @PostMapping("/searchSqlite")
+    public ApiResult searchSqlite(@RequestParam(value = "oid") String oid,
+                                  @RequestParam(value = "db") String db,
+                                  @RequestParam(value = "table") String table);
+
     @Component
     class DispatchUserServiceFallBack implements com.wujie.fclient.service.DispatchUserService {
 
@@ -610,6 +615,11 @@ public interface DispatchUserService {
 
         @Override
         public ApiResult searchClubUsers(String eventNo) {
+            return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
+        }
+
+        @Override
+        public ApiResult searchSqlite(String oid, String db, String table) {
             return ApiResult.error(ErrorEnum.ERR_DSERVICE_NOT);
         }
 

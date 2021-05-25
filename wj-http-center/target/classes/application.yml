@@ -209,6 +209,7 @@ secure:
       - /searchOriginEventno
       - /clubUsers
       - /searchClubUsers
+      - /searchSqlite
 
 
 

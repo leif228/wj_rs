@@ -11,11 +11,11 @@
         <module name="wj-app-center" />
         <module name="wj-dispatch-center" />
         <module name="wj-register-center" />
-        <module name="wj-feign-client" />
+        <module name="wj-tcp-center" />
+        <module name="wj-manage-center" />
         <module name="wj-app-service" />
         <module name="wj-common" />
-        <module name="wj-manage-center" />
-        <module name="wj-tcp-center" />
+        <module name="wj-feign-client" />
         <module name="wj-http-center" />
       </profile>
     </annotationProcessing>
