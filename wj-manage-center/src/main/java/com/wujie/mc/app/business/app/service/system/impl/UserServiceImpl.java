@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private AreaChangSeqMapper areaChangSeqMapper;
     private DevtypeMapper devtypeMapper;
     private BussInfoMapper bussInfoMapper;
+    private ComDevOptMapper comDevOptMapper;
 
     private WjuserMapper wjuserMapper;
     private AuthUserService authUserService;
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public UserServiceImpl(AreaChangSeqMapper areaChangSeqMapper,DevtypeMapper devtypeMapper,BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(ComDevOptMapper comDevOptMapper,AreaChangSeqMapper areaChangSeqMapper,DevtypeMapper devtypeMapper,BussInfoMapper bussInfoMapper,TabsVersionMapper tabsVersionMapper, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+        this.comDevOptMapper = comDevOptMapper;
         this.areaChangSeqMapper = areaChangSeqMapper;
         this.devtypeMapper = devtypeMapper;
         this.bussInfoMapper = bussInfoMapper;
@@ -184,6 +186,24 @@ public class UserServiceImpl implements UserService {
                         BeanUtils.copyProperties(bussInfoDto, bussInfo);
 
                         bussInfoMapper.updateByPrimaryKey(bussInfo);
+                    }
+                    break;
+                case com_dev_opt:
+                    ComDevOptDto comDevOptDto = JSONObject.parseObject(jsonObject, ComDevOptDto.class);
+
+                    ComDevOpt comDevOpt = comDevOptMapper.selectByPrimaryKey(comDevOptDto.getId());
+                    if (comDevOpt == null) {
+                        comDevOpt = new ComDevOpt();
+                        BeanUtils.copyProperties(comDevOptDto, comDevOpt);
+
+                        comDevOpt.setId(null);
+
+                        comDevOptMapper.insertSelective(comDevOpt);
+                    } else {
+                        comDevOpt = new ComDevOpt();
+                        BeanUtils.copyProperties(comDevOptDto, comDevOpt);
+
+                        comDevOptMapper.updateByPrimaryKey(comDevOpt);
                     }
                     break;
             }

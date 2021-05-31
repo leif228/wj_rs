@@ -7,6 +7,15 @@ public class DeviceSpaceTable {
     private String dev_company_SN;
     private String dev_room;
     private String dev_inROOMID;
+    private String dev_company_devtype;
+
+    public String getDev_company_devtype() {
+        return dev_company_devtype;
+    }
+
+    public void setDev_company_devtype(String dev_company_devtype) {
+        this.dev_company_devtype = dev_company_devtype;
+    }
 
     public String getData_id() {
         return data_id;

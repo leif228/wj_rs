@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wujie.mc.app.business.repository.ComDevOptMapper">
+  <resultMap id="BaseResultMap" type="com.wujie.mc.app.business.entity.ComDevOpt">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="devtype" jdbcType="VARCHAR" property="devtype" />
+    <result column="dev_company" jdbcType="VARCHAR" property="devCompany" />
+    <result column="dev_company_name" jdbcType="VARCHAR" property="devCompanyName" />
+    <result column="dev_company_devtype" jdbcType="VARCHAR" property="devCompanyDevtype" />
+    <result column="dev_company_devtype_name" jdbcType="VARCHAR" property="devCompanyDevtypeName" />
+    <result column="buss" jdbcType="VARCHAR" property="buss" />
+    <result column="ability_name" jdbcType="VARCHAR" property="abilityName" />
+    <result column="way" jdbcType="VARCHAR" property="way" />
+    <result column="port_max" jdbcType="VARCHAR" property="portMax" />
+    <result column="at_para" jdbcType="VARCHAR" property="atPara" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, devtype, dev_company, dev_company_name, dev_company_devtype, dev_company_devtype_name, 
+    buss, ability_name, way, port_max, at_para
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from com_dev_opt
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from com_dev_opt
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
+    insert into com_dev_opt (id, devtype, dev_company, 
+      dev_company_name, dev_company_devtype, dev_company_devtype_name, 
+      buss, ability_name, way, 
+      port_max, at_para)
+    values (#{id,jdbcType=BIGINT}, #{devtype,jdbcType=VARCHAR}, #{devCompany,jdbcType=VARCHAR}, 
+      #{devCompanyName,jdbcType=VARCHAR}, #{devCompanyDevtype,jdbcType=VARCHAR}, #{devCompanyDevtypeName,jdbcType=VARCHAR}, 
+      #{buss,jdbcType=VARCHAR}, #{abilityName,jdbcType=VARCHAR}, #{way,jdbcType=VARCHAR}, 
+      #{portMax,jdbcType=VARCHAR}, #{atPara,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
+    insert into com_dev_opt
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="devtype != null">
+        devtype,
+      </if>
+      <if test="devCompany != null">
+        dev_company,
+      </if>
+      <if test="devCompanyName != null">
+        dev_company_name,
+      </if>
+      <if test="devCompanyDevtype != null">
+        dev_company_devtype,
+      </if>
+      <if test="devCompanyDevtypeName != null">
+        dev_company_devtype_name,
+      </if>
+      <if test="buss != null">
+        buss,
+      </if>
+      <if test="abilityName != null">
+        ability_name,
+      </if>
+      <if test="way != null">
+        way,
+      </if>
+      <if test="portMax != null">
+        port_max,
+      </if>
+      <if test="atPara != null">
+        at_para,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="devtype != null">
+        #{devtype,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompany != null">
+        #{devCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyName != null">
+        #{devCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyDevtype != null">
+        #{devCompanyDevtype,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyDevtypeName != null">
+        #{devCompanyDevtypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="buss != null">
+        #{buss,jdbcType=VARCHAR},
+      </if>
+      <if test="abilityName != null">
+        #{abilityName,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="portMax != null">
+        #{portMax,jdbcType=VARCHAR},
+      </if>
+      <if test="atPara != null">
+        #{atPara,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
+    update com_dev_opt
+    <set>
+      <if test="devtype != null">
+        devtype = #{devtype,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompany != null">
+        dev_company = #{devCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyName != null">
+        dev_company_name = #{devCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyDevtype != null">
+        dev_company_devtype = #{devCompanyDevtype,jdbcType=VARCHAR},
+      </if>
+      <if test="devCompanyDevtypeName != null">
+        dev_company_devtype_name = #{devCompanyDevtypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="buss != null">
+        buss = #{buss,jdbcType=VARCHAR},
+      </if>
+      <if test="abilityName != null">
+        ability_name = #{abilityName,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        way = #{way,jdbcType=VARCHAR},
+      </if>
+      <if test="portMax != null">
+        port_max = #{portMax,jdbcType=VARCHAR},
+      </if>
+      <if test="atPara != null">
+        at_para = #{atPara,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
+    update com_dev_opt
+    set devtype = #{devtype,jdbcType=VARCHAR},
+      dev_company = #{devCompany,jdbcType=VARCHAR},
+      dev_company_name = #{devCompanyName,jdbcType=VARCHAR},
+      dev_company_devtype = #{devCompanyDevtype,jdbcType=VARCHAR},
+      dev_company_devtype_name = #{devCompanyDevtypeName,jdbcType=VARCHAR},
+      buss = #{buss,jdbcType=VARCHAR},
+      ability_name = #{abilityName,jdbcType=VARCHAR},
+      way = #{way,jdbcType=VARCHAR},
+      port_max = #{portMax,jdbcType=VARCHAR},
+      at_para = #{atPara,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

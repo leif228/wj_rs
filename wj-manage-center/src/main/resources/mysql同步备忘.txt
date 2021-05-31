@@ -1,0 +1,53 @@
+mysql数据库备份：
+
+root服务器
+版本：mysql8.0.21
+位置：/etc/mysql/my.cnf
+
+获取主节点当前binary log文件名和位置（position）
+mysql> SHOW MASTER STATUS;
+
+从服务器my.cnf文件中配置：    
+[mysqld]
+server-id=？  //修改，不重复的值
+replicate-do-db=wjdb
+replicate-do-table=wjdb.area_chang_seq
+replicate-do-table=wjdb.buss_info
+replicate-do-table=wjdb.devtype
+replicate-do-table=wjdb.driver_comp
+replicate-do-table=wjdb.eventtype_buss_md_info
+replicate-do-table=wjdb.eventtype_tradecode_md_info
+replicate-do-table=wjdb.sds_event_type_info
+replicate-do-table=wjdb.sds_relation_type_info
+replicate-do-table=wjdb.tabs_version
+
+
+我是改变了MY.INI配置后出现的这个问题
+我最后尝试解决办法是改变my.ini的编码格式
+使用Notepad++把它的编码改成ANSI
+完成。。服务启动成功
+
+mysql命令行配置：
+mysql>CHANGE MASTER TO
+MASTER_HOST='192.168.4.15',
+MASTER_USER='root',
+MASTER_PASSWORD='root',
+MASTER_LOG_FILE='mysql-bin.000005',
+MASTER_LOG_POS=18463;
+
+开启同步
+mysql>start slave;
+
+检查是否连接上主节点
+mysql>show slave status\G;
+
+ Slave_IO_Running: Yes
+ Slave_SQL_Running: Yes   //说明连接成功了
+
+
+备忘：MySQL 连接出错 mysqladmin flush-hosts 解决方法
+如果出现在数据库中进行，执行命令如下：
+flush hosts;
+
+
+

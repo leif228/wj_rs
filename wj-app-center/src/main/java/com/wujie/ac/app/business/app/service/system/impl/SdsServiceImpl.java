@@ -1160,6 +1160,7 @@ public class SdsServiceImpl implements SdsService {
                             room.setDev_company_SN(rs.getString("dev_company_SN"));
                             room.setDev_room(rs.getString("dev_room"));
                             room.setDev_inROOMID(rs.getString("dev_inROOMID"));
+                            room.setDev_company_devtype(rs.getString("dev_company_devtype"));
                             return room;
 
                         }

@@ -53,12 +53,14 @@ public class UserServiceImpl implements UserService {
     private AreaChangSeqMapper areaChangSeqMapper;
     private TabsVersionMapper tabsVersionMapper;
     private BussInfoMapper bussInfoMapper;
+    private ComDevOptMapper comDevOptMapper;
     private static final String COUNTRY = "chn";
     private static final String TRADE = "0";//通用（互联网）:0，电力：1，军队：2，政府：3
     private static final String SPA_STR = "!";//没有选择时fzw地址信息暂用“!”表示   TODO 注意不与area_chang_seq表内容一样
 
     @Autowired
-    public UserServiceImpl(BussInfoMapper bussInfoMapper, TabsVersionMapper tabsVersionMapper, AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+    public UserServiceImpl(ComDevOptMapper comDevOptMapper,BussInfoMapper bussInfoMapper, TabsVersionMapper tabsVersionMapper, AreaChangSeqMapper areaChangSeqMapper, WjuserTradeMapper wjuserTradeMapper, TradeDataService tradeDataService, NodeInfoOwerMapper nodeInfoOwerMapper, WjuserOwerMapper wjuserOwerMapper, DriverCompMapper driverCompMapper, LoginServerMapper loginServerMapper, FzwnoMapper fzwnoMapper, DevtypeMapper devtypeMapper, BaseDataService baseDataService, NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, DeviceMapper deviceMapper) {
+        this.comDevOptMapper = comDevOptMapper;
         this.bussInfoMapper = bussInfoMapper;
         this.tabsVersionMapper = tabsVersionMapper;
         this.areaChangSeqMapper = areaChangSeqMapper;
@@ -1481,6 +1483,9 @@ public class UserServiceImpl implements UserService {
                 case area_chang_seq:
                     List<AreaChangSeqDto> tabsVersions = areaChangSeqMapper.findAll();
                     return ApiResult.success(tabsVersions);
+                case com_dev_opt:
+                    List<ComDevOptDto> comDevOptDtos = comDevOptMapper.findAll();
+                    return ApiResult.success(comDevOptDtos);
                 case devtype:
                     List<DevtypeDto> devtypeDtos = devtypeMapper.findAll();
                     return ApiResult.success(devtypeDtos);
