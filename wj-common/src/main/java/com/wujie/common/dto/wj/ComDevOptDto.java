@@ -34,6 +34,9 @@ public class ComDevOptDto {
     // at_para AT命令中的参数
     private String atPara;
 
+    //
+    private String command;
+
     public Long getId() {
         return id;
     }
@@ -120,5 +123,13 @@ public class ComDevOptDto {
 
     public void setAtPara(String atPara) {
         this.atPara = atPara == null ? null : atPara.trim();
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command == null ? null : command.trim();
     }
 }

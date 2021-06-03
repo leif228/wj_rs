@@ -13,13 +13,14 @@
     <result column="way" jdbcType="VARCHAR" property="way" />
     <result column="port_max" jdbcType="VARCHAR" property="portMax" />
     <result column="at_para" jdbcType="VARCHAR" property="atPara" />
+    <result column="command" jdbcType="VARCHAR" property="command" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, devtype, dev_company, dev_company_name, dev_company_devtype, dev_company_devtype_name, 
-    buss, ability_name, way, port_max, at_para
+    id, devtype, dev_company, dev_company_name, dev_company_devtype, dev_company_devtype_name,
+    buss, ability_name, way, port_max, at_para, command
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from com_dev_opt
     where id = #{id,jdbcType=BIGINT}
@@ -29,14 +30,16 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
-    insert into com_dev_opt (id, devtype, dev_company, 
-      dev_company_name, dev_company_devtype, dev_company_devtype_name, 
-      buss, ability_name, way, 
-      port_max, at_para)
-    values (#{id,jdbcType=BIGINT}, #{devtype,jdbcType=VARCHAR}, #{devCompany,jdbcType=VARCHAR}, 
-      #{devCompanyName,jdbcType=VARCHAR}, #{devCompanyDevtype,jdbcType=VARCHAR}, #{devCompanyDevtypeName,jdbcType=VARCHAR}, 
-      #{buss,jdbcType=VARCHAR}, #{abilityName,jdbcType=VARCHAR}, #{way,jdbcType=VARCHAR}, 
-      #{portMax,jdbcType=VARCHAR}, #{atPara,jdbcType=VARCHAR})
+    insert into com_dev_opt (id, devtype, dev_company,
+    dev_company_name, dev_company_devtype, dev_company_devtype_name,
+    buss, ability_name, way,
+    port_max, at_para, command
+    )
+    values (#{id,jdbcType=BIGINT}, #{devtype,jdbcType=VARCHAR}, #{devCompany,jdbcType=VARCHAR},
+    #{devCompanyName,jdbcType=VARCHAR}, #{devCompanyDevtype,jdbcType=VARCHAR}, #{devCompanyDevtypeName,jdbcType=VARCHAR},
+    #{buss,jdbcType=VARCHAR}, #{abilityName,jdbcType=VARCHAR}, #{way,jdbcType=VARCHAR},
+    #{portMax,jdbcType=VARCHAR}, #{atPara,jdbcType=VARCHAR}, #{command,jdbcType=VARCHAR}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
     insert into com_dev_opt
@@ -74,6 +77,9 @@
       <if test="atPara != null">
         at_para,
       </if>
+      <if test="command != null">
+        command,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -108,6 +114,9 @@
       </if>
       <if test="atPara != null">
         #{atPara,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null">
+        #{command,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -144,21 +153,25 @@
       <if test="atPara != null">
         at_para = #{atPara,jdbcType=VARCHAR},
       </if>
+      <if test="command != null">
+        command = #{command,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wujie.mc.app.business.entity.ComDevOpt">
     update com_dev_opt
     set devtype = #{devtype,jdbcType=VARCHAR},
-      dev_company = #{devCompany,jdbcType=VARCHAR},
-      dev_company_name = #{devCompanyName,jdbcType=VARCHAR},
-      dev_company_devtype = #{devCompanyDevtype,jdbcType=VARCHAR},
-      dev_company_devtype_name = #{devCompanyDevtypeName,jdbcType=VARCHAR},
-      buss = #{buss,jdbcType=VARCHAR},
-      ability_name = #{abilityName,jdbcType=VARCHAR},
-      way = #{way,jdbcType=VARCHAR},
-      port_max = #{portMax,jdbcType=VARCHAR},
-      at_para = #{atPara,jdbcType=VARCHAR}
+    dev_company = #{devCompany,jdbcType=VARCHAR},
+    dev_company_name = #{devCompanyName,jdbcType=VARCHAR},
+    dev_company_devtype = #{devCompanyDevtype,jdbcType=VARCHAR},
+    dev_company_devtype_name = #{devCompanyDevtypeName,jdbcType=VARCHAR},
+    buss = #{buss,jdbcType=VARCHAR},
+    ability_name = #{abilityName,jdbcType=VARCHAR},
+    way = #{way,jdbcType=VARCHAR},
+    port_max = #{portMax,jdbcType=VARCHAR},
+    at_para = #{atPara,jdbcType=VARCHAR},
+    command = #{command,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
