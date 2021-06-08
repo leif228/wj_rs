@@ -159,28 +159,39 @@ public interface AppUserService {
     public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
                                 @RequestParam(value = "eventType") String eventType,
                                 @RequestParam(value = "content") String content,
-                                @RequestParam(value = "bussInfoId") String bussInfoId);
+                                @RequestParam(value = "bussInfoId") String bussInfoId,
+                                @RequestParam(value = "flag") String flag,
+                                @RequestParam(value = "pri") String pri,
+                                @RequestParam(value = "port") String port);
 
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
                               @RequestParam(value = "content") String content,
-                              @RequestParam(value = "bussInfoId") String bussInfoId);
-
+                              @RequestParam(value = "bussInfoId") String bussInfoId,
+                              @RequestParam(value = "flag") String flag,
+                              @RequestParam(value = "pri") String pri,
+                              @RequestParam(value = "port") String port);
 
     @PostMapping("/doEvent")
     public ApiResult doEvent(@RequestParam(value = "oid") String oid,
                              @RequestParam(value = "eventType") String eventType,
                              @RequestParam(value = "content") String content,
                              @RequestParam(value = "eventNo") String eventNo,
-                             @RequestParam(value = "bussInfoId") String bussInfoId);
+                             @RequestParam(value = "bussInfoId") String bussInfoId,
+                             @RequestParam(value = "flag") String flag,
+                             @RequestParam(value = "pri") String pri,
+                             @RequestParam(value = "port") String port);
 
     @PostMapping("/doEventWrite")
     public ApiResult doEventWrite(@RequestParam(value = "oid") String oid,
                                   @RequestParam(value = "eventType") String eventType,
                                   @RequestParam(value = "content") String content,
                                   @RequestParam(value = "eventNo") String eventNo,
-                                  @RequestParam(value = "bussInfoId") String bussInfoId);
+                                  @RequestParam(value = "bussInfoId") String bussInfoId,
+                                  @RequestParam(value = "flag") String flag,
+                                  @RequestParam(value = "pri") String pri,
+                                  @RequestParam(value = "port") String port);
 
     @PostMapping("/pushEvent")
     public ApiResult pushEvent(@RequestParam(value = "oid") String oid,
@@ -188,15 +199,10 @@ public interface AppUserService {
                                @RequestParam(value = "content") String content,
                                @RequestParam(value = "targetOid") String targetOid,
                                @RequestParam(value = "eventNo") String eventNo,
-                               @RequestParam(value = "bussInfoId") String bussInfoId);
-
-    @PostMapping("/pushTask")
-    public ApiResult pushTask(@RequestParam(value = "oid") String oid,
-                              @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content,
-                              @RequestParam(value = "targetOid") String targetOid,
-                              @RequestParam(value = "eventNo") String eventNo,
-                              @RequestParam(value = "bussInfoId") String bussInfoId);
+                               @RequestParam(value = "bussInfoId") String bussInfoId,
+                               @RequestParam(value = "flag") String flag,
+                               @RequestParam(value = "pri") String pri,
+                               @RequestParam(value = "port") String port) ;
 
     @PostMapping("/areaServiceAndSend")
     public ApiResult areaServiceAndSend(@RequestParam(value = "fromOid") String fromOid,
@@ -204,7 +210,21 @@ public interface AppUserService {
                                         @RequestParam(value = "content") String content,
                                         @RequestParam(value = "toOid") String toOid,
                                         @RequestParam(value = "eventNo") String eventNo,
-                                        @RequestParam(value = "bussInfoId") String bussInfoId);
+                                        @RequestParam(value = "bussInfoId") String bussInfoId,
+                                        @RequestParam(value = "flag") String flag,
+                                        @RequestParam(value = "pri") String pri,
+                                        @RequestParam(value = "port") String port) ;
+
+    @PostMapping("/pushTask")
+    public ApiResult pushTask(@RequestParam(value = "oid") String oid,
+                              @RequestParam(value = "eventType") String eventType,
+                              @RequestParam(value = "content") String content,
+                              @RequestParam(value = "targetOid") String targetOid,
+                              @RequestParam(value = "eventNo") String eventNo,
+                              @RequestParam(value = "bussInfoId") String bussInfoId,
+                              @RequestParam(value = "flag") String flag,
+                              @RequestParam(value = "pri") String pri,
+                              @RequestParam(value = "port") String port);
 
     @PostMapping("/myEventList")
     public ApiResult myEventList(@RequestParam(value = "oid") String oid);
@@ -442,37 +462,37 @@ public interface AppUserService {
         }
 
         @Override
-        public ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId) {
+        public ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId) {
+        public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId) {
+        public ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId) {
+        public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult pushEvent(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId) {
+        public ApiResult pushEvent(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult pushTask(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId) {
+        public ApiResult pushTask(String oid, String eventType, String content, String targetOid, String eventNo, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 
         @Override
-        public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String toOid, String eventNo, String bussInfoId) {
+        public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String toOid, String eventNo, String bussInfoId, String flag, String pri, String port) {
             return ApiResult.error(ErrorEnum.ERR_ASERVICE_NOT);
         }
 

@@ -23,21 +23,26 @@ public class SdsController {
         this.sdsService = sdsService;
     }
 
-
     @PostMapping("/doGenEvent")
     public ApiResult doGenEvent(@RequestParam(value = "oid") String oid,
                                 @RequestParam(value = "eventType") String eventType,
                                 @RequestParam(value = "content") String content,
-                                @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.doGenEvent(oid, eventType, content, bussInfoId);
+                                @RequestParam(value = "bussInfoId") String bussInfoId,
+                                @RequestParam(value = "flag") String flag,
+                                @RequestParam(value = "pri") String pri,
+                                @RequestParam(value = "port") String port) {
+        return sdsService.doGenEvent(oid, eventType, content, bussInfoId, flag, pri, port);
     }
 
     @PostMapping("/genEvent")
     public ApiResult genEvent(@RequestParam(value = "oid") String oid,
                               @RequestParam(value = "eventType") String eventType,
                               @RequestParam(value = "content") String content,
-                              @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.genEvent(oid, eventType, content, bussInfoId);
+                              @RequestParam(value = "bussInfoId") String bussInfoId,
+                              @RequestParam(value = "flag") String flag,
+                              @RequestParam(value = "pri") String pri,
+                              @RequestParam(value = "port") String port) {
+        return sdsService.genEvent(oid, eventType, content, bussInfoId, flag, pri, port);
     }
 
     @PostMapping("/doEvent")
@@ -45,8 +50,11 @@ public class SdsController {
                              @RequestParam(value = "eventType") String eventType,
                              @RequestParam(value = "content") String content,
                              @RequestParam(value = "eventNo") String eventNo,
-                             @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.doEvent(oid, eventType, content, eventNo, bussInfoId);
+                             @RequestParam(value = "bussInfoId") String bussInfoId,
+                             @RequestParam(value = "flag") String flag,
+                             @RequestParam(value = "pri") String pri,
+                             @RequestParam(value = "port") String port) {
+        return sdsService.doEvent(oid, eventType, content, eventNo, bussInfoId, flag, pri, port);
     }
 
     @PostMapping("/doEventWrite")
@@ -54,8 +62,11 @@ public class SdsController {
                                   @RequestParam(value = "eventType") String eventType,
                                   @RequestParam(value = "content") String content,
                                   @RequestParam(value = "eventNo") String eventNo,
-                                  @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.doEventWrite(oid, eventType, content, eventNo, bussInfoId);
+                                  @RequestParam(value = "bussInfoId") String bussInfoId,
+                                  @RequestParam(value = "flag") String flag,
+                                  @RequestParam(value = "pri") String pri,
+                                  @RequestParam(value = "port") String port) {
+        return sdsService.doEventWrite(oid, eventType, content, eventNo, bussInfoId, flag, pri, port);
     }
 
     @PostMapping("/pushEvent")
@@ -64,18 +75,11 @@ public class SdsController {
                                @RequestParam(value = "content") String content,
                                @RequestParam(value = "targetOid") String targetOid,
                                @RequestParam(value = "eventNo") String eventNo,
-                               @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid, bussInfoId);
-    }
-
-    @PostMapping("/pushTask")
-    public ApiResult pushTask(@RequestParam(value = "oid") String oid,
-                              @RequestParam(value = "eventType") String eventType,
-                              @RequestParam(value = "content") String content,
-                              @RequestParam(value = "targetOid") String targetOid,
-                              @RequestParam(value = "eventNo") String eventNo,
-                              @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.pushTask(oid, eventType, content, eventNo, targetOid, bussInfoId);
+                               @RequestParam(value = "bussInfoId") String bussInfoId,
+                               @RequestParam(value = "flag") String flag,
+                               @RequestParam(value = "pri") String pri,
+                               @RequestParam(value = "port") String port) {
+        return sdsService.pushEvent(oid, eventType, content, eventNo, targetOid, bussInfoId,  flag, pri, port);
     }
 
     @PostMapping("/areaServiceAndSend")
@@ -84,8 +88,24 @@ public class SdsController {
                                         @RequestParam(value = "content") String content,
                                         @RequestParam(value = "toOid") String toOid,
                                         @RequestParam(value = "eventNo") String eventNo,
-                                        @RequestParam(value = "bussInfoId") String bussInfoId) {
-        return sdsService.areaServiceAndSend(fromOid, eventType, content, eventNo, toOid, bussInfoId);
+                                        @RequestParam(value = "bussInfoId") String bussInfoId,
+                                        @RequestParam(value = "flag") String flag,
+                                        @RequestParam(value = "pri") String pri,
+                                        @RequestParam(value = "port") String port) {
+        return sdsService.areaServiceAndSend(fromOid, eventType, content, eventNo, toOid, bussInfoId, flag, pri, port);
+    }
+
+    @PostMapping("/pushTask")
+    public ApiResult pushTask(@RequestParam(value = "oid") String oid,
+                              @RequestParam(value = "eventType") String eventType,
+                              @RequestParam(value = "content") String content,
+                              @RequestParam(value = "targetOid") String targetOid,
+                              @RequestParam(value = "eventNo") String eventNo,
+                              @RequestParam(value = "bussInfoId") String bussInfoId,
+                              @RequestParam(value = "flag") String flag,
+                              @RequestParam(value = "pri") String pri,
+                              @RequestParam(value = "port") String port) {
+        return sdsService.pushTask(oid, eventType, content, eventNo, targetOid, bussInfoId, flag, pri, port);
     }
 
     @PostMapping("/myEventList")

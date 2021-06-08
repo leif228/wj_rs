@@ -1,8 +1,6 @@
 package com.wujie.ac.app.business.app.service.system.impl;
 
 import com.google.gson.Gson;
-import com.wujie.ac.app.async.AsyncManager;
-import com.wujie.ac.app.async.factory.AsyncFactory;
 import com.wujie.ac.app.business.app.service.system.AtService;
 import com.wujie.ac.app.business.entity.*;
 import com.wujie.ac.app.business.entity.at.ApplyOprationAtParam;
@@ -19,7 +17,6 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +144,8 @@ public class AtServiceImpl implements AtService {
                     return sdsService.doNewClub(flag, oid, pri, buss, port, cmd, param);
                 }else if ("E021".equals(buss) && "0001".equals(cmd)) {  //请求执行业务处理
                     return sdsService.doApplyOpration(flag, oid, pri, buss, port, cmd, param);
+                }else{
+                    return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
                 }
             }
 
@@ -166,7 +165,7 @@ public class AtServiceImpl implements AtService {
 //                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
 //                if (sdsEventPersonRecord == null) {
                 //新产生事件
-                return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), param, bussInfo.getId() + "");
+                return sdsService.doGenEvent(oid, "" + targInfo.getEventTypeInfoId(), param, bussInfo.getId() + "", flag, pri, port);
 //                } else {
 //                    //处理事件
 //                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
@@ -176,7 +175,7 @@ public class AtServiceImpl implements AtService {
                 ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
 
                 //处理事件
-                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId() + "");
+                return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId() + "", flag, pri, port);
 
             } else {
                 return ApiResult.error("该业务暂时还不能处理！");

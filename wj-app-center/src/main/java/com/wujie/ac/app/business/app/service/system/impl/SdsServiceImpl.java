@@ -115,7 +115,7 @@ public class SdsServiceImpl implements SdsService {
      * 产生新事件
      */
     @Override
-    public ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId) {
+    public ApiResult doGenEvent(String oid, String eventType, String content, String bussInfoId, String flag, String pri, String port) {
         try {
             //查找oid归属服务器
 //            OwerServiceDto owerServiceDto = this.getOwerInfo(oid);
@@ -123,7 +123,7 @@ public class SdsServiceImpl implements SdsService {
 
 //            return ApiResult.success("成功");
 
-            return this.genEvent(oid, eventType, content, bussInfoId);
+            return this.genEvent(oid, eventType, content, bussInfoId, flag, pri, port);
 
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
@@ -132,7 +132,7 @@ public class SdsServiceImpl implements SdsService {
 
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId) {
+    public ApiResult genEvent(String oid, String eventType, String content, String bussInfoId, String flag, String pri, String port) {
         try {
             List<String> relations = new ArrayList<>();
             String eventNo = this.genEventNo(oid, eventType);
@@ -152,7 +152,7 @@ public class SdsServiceImpl implements SdsService {
             String oid_relation = oid.substring(0, oid_relation_length);
             if (!relations.contains(oid_relation)) {
                 relations.add(oid_relation);
-                this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId, "");
+                this.pushEvent(oid, eventType, content, eventNo, oid_relation, bussInfoId, "", flag, pri, port);
             }
 
             ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
@@ -205,7 +205,7 @@ public class SdsServiceImpl implements SdsService {
                             if (!relations.contains(target_relation)) {
                                 relations.add(target_relation);
                                 OwerServiceDto targetOwer = this.getOwerInfo(arr[i]);
-                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId));
+                                AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId,flag,pri,port));
                             } else {
                                 continue;
                             }
@@ -215,7 +215,7 @@ public class SdsServiceImpl implements SdsService {
                         if (!relations.contains(target_relation)) {
                             relations.add(target_relation);
                             OwerServiceDto targetOwer = this.getOwerInfo(targetOids);
-                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId));
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, target_relation, bussInfoId,flag,pri,port));
                         }
                     }
                 } catch (Exception e) {
@@ -233,7 +233,7 @@ public class SdsServiceImpl implements SdsService {
                             OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
 //                        this.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
                             //异步
-                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                            AsyncManager.me().execute(AsyncFactory.pushEventHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId,flag,pri,port));
                         } else {
                             continue;
                         }
@@ -464,7 +464,7 @@ public class SdsServiceImpl implements SdsService {
      */
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId) {
+    public ApiResult doEvent(String oid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) {
         try {
             //判断个人事件是否记录过
             SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findByEventNoAndOid(eventNo, oid);
@@ -473,7 +473,7 @@ public class SdsServiceImpl implements SdsService {
             } else {
                 //根据SdsEventPersonRecord的genOid取得产生事件的管理服务器，然后去添加事件流程记录
                 OwerServiceDto owerServiceDto = this.getOwerInfo(sdsEventPersonRecord.getGenOid());
-                this.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId);
+                this.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId,flag,pri,port);
                 //异步
 //                AsyncManager.me().execute(AsyncFactory.pushDoEventWriteHttp(owerServiceDto.getIp(), oid, eventType, content, eventNo, bussInfoId));
 
@@ -490,7 +490,7 @@ public class SdsServiceImpl implements SdsService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId) {
+    public ApiResult doEventWrite(String oid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) {
         try {
             SdsEventInfo sdsEventInfo = new SdsEventInfo();
             sdsEventInfo.setContent(content);
@@ -502,7 +502,7 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
-            pushTaskFunc(oid, eventType, content, eventNo, bussInfoId);
+            pushTaskFunc(oid, eventType, content, eventNo, bussInfoId,flag,pri,port);
 
             return ApiResult.success();
         } catch (Exception e) {
@@ -513,7 +513,7 @@ public class SdsServiceImpl implements SdsService {
     /**
      * 要定位在事件产生的服务器上处理
      */
-    public void pushTaskFunc(String fromOid, String eventType, String content, String eventNo, String bussInfoId) {
+    public void pushTaskFunc(String fromOid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) {
         try {
             List<String> relations = new ArrayList<>();
             //在事件产生管理服务器上查找事件产生oid的关系,然后推送到相关管理服务器上
@@ -528,7 +528,7 @@ public class SdsServiceImpl implements SdsService {
                             OwerServiceDto targetOwer = this.getOwerInfo(sdsPercomRelation.getTargetOid());
 //                            this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId);
                             //异步
-                            AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId));
+                            AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, sdsPercomRelation.getTargetOid(), bussInfoId,flag,pri,port));
                         } else {
                             continue;
                         }
@@ -551,7 +551,7 @@ public class SdsServiceImpl implements SdsService {
 //                    this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
                 if (!relations.contains(relation)) {
                     relations.add(relation);
-                    pushTask(fromOid, eventType, content, eventNo, relation, bussInfoId);
+                    pushTask(fromOid, eventType, content, eventNo, relation, bussInfoId, flag, pri, port);
                 }
             }
 
@@ -586,7 +586,7 @@ public class SdsServiceImpl implements SdsService {
                                     OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
 //                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
                                     //异步
-                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId));
+                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId,flag,pri,port));
                                 }
 
                             } catch (Exception e) {
@@ -629,7 +629,7 @@ public class SdsServiceImpl implements SdsService {
                                     OwerServiceDto targetOwer = SdsServiceImpl.this.getOwerInfo(arr[i]);
 //                                    SdsServiceImpl.this.pushTaskHttp(targetOwer.getIp(), eventNo, oid, eventType, content, relation, bussInfoId);
                                     //异步
-                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId));
+                                    AsyncManager.me().execute(AsyncFactory.pushTaskHttp(targetOwer.getIp(), eventNo, fromOid, eventType, content, relation, bussInfoId,flag,pri,port));
                                 }
 
                             } catch (Exception e) {
@@ -647,7 +647,7 @@ public class SdsServiceImpl implements SdsService {
 
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId) {
+    public ApiResult pushTask(String oid, String eventType, String content, String eventNo, String targetOid, String bussInfoId, String flag, String pri, String port) {
         try {
             //根据targetOid查找oidFull
             log.info("++++++++++++++++++1 pushTask:targetOid=" + targetOid);
@@ -656,7 +656,7 @@ public class SdsServiceImpl implements SdsService {
                 String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
 
                 //查找区域服务器然后发送at
-                this.searchAreaServiceAndSend(oid, eventType, content, eventNo, oidFull, bussInfoId);
+                this.searchAreaServiceAndSend(oid, eventType, content, eventNo, oidFull, bussInfoId, flag, pri, port);
             }
 
             return ApiResult.success();
@@ -666,7 +666,7 @@ public class SdsServiceImpl implements SdsService {
     }
 
     //查找区域服务器然后发送at
-    private void searchAreaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId) {
+    private void searchAreaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId, String flag, String pri, String port) {
         try {
 
             log.info("++++++++++++++++++2 searchAreaServiceAndSendHttp:toOid=" + toOid);
@@ -674,7 +674,7 @@ public class SdsServiceImpl implements SdsService {
             log.info("++++++++++++++++++3 searchAreaServiceAndSendHttp:ip=" + loginServer.getServerIp());
 //            this.searchAreaServiceAndSendHttp(loginServer.getServerIp(), fromOid, eventType, content, eventNo, toOid, bussInfoId);
             //异步
-            AsyncManager.me().execute(AsyncFactory.searchAreaServiceAndSendHttp(loginServer.getServerIp(), fromOid, eventType, content, eventNo, toOid, bussInfoId));
+            AsyncManager.me().execute(AsyncFactory.searchAreaServiceAndSendHttp(loginServer.getServerIp(), fromOid, eventType, content, eventNo, toOid, bussInfoId,flag,pri,port));
 
         } catch (Exception e) {
             log.error("查找区域服务器然后发送at,出错了！" + e.getMessage());
@@ -682,7 +682,7 @@ public class SdsServiceImpl implements SdsService {
     }
 
     @Override
-    public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId) {
+    public ApiResult areaServiceAndSend(String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId, String flag, String pri, String port) {
         try {
 
             log.info("++++++++++++++++++5 areaServiceAndSend:toOid=" + toOid);
@@ -693,7 +693,7 @@ public class SdsServiceImpl implements SdsService {
 
             if ("A001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
 
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), fromOid, toOid);
+                return atService.sendAt(flag, fromOid, pri, bussInfo.getBusinessNum(), port, bussInfo.getCommand(), fromOid, toOid);
             } else if ("E001".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
 //                ManageChatMsgAtParam manageChatMsgAtParam = new ManageChatMsgAtParam();
 //                manageChatMsgAtParam.setMsgContent(content);
@@ -701,19 +701,20 @@ public class SdsServiceImpl implements SdsService {
 //                manageChatMsgAtParam.setEventNo(eventNo);
 //
 //                String param = com.alibaba.fastjson.JSONObject.toJSONString(manageChatMsgAtParam);
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
+                return atService.sendAt(flag, fromOid, pri, bussInfo.getBusinessNum(), port, bussInfo.getCommand(), content, toOid);
             } else if ("5010".equals(bussInfo.getBusinessNum()) && "FFFF".equals(bussInfo.getCommand())) {
 
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), bussInfo.getBusinessNum(), bussInfo.getPort(), bussInfo.getCommand(), content, toOid);
+                return atService.sendAt(flag, fromOid, pri, bussInfo.getBusinessNum(), port, bussInfo.getCommand(), content, toOid);
             } else if ("E012".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
                 NodeInfoOwer nodeInfoOwer = nodeInfoOwerMapper.selectByPrimaryKey(1l);
 
-                return atService.sendAt("N", nodeInfoOwer.getFzwno(), bussInfo.getPriority(), "E012", bussInfo.getPort(), "0002", content, toOid);
+                return atService.sendAt(flag, nodeInfoOwer.getFzwno(), pri, "E012", port, "0002", content, toOid);
             } else if ("E021".equals(bussInfo.getBusinessNum()) && "0001".equals(bussInfo.getCommand())) {
 
-                return atService.sendAt("N", fromOid, bussInfo.getPriority(), "E021", bussInfo.getPort(), "0001", content, toOid);
+                return atService.sendAt(flag, fromOid, pri, "E021", port, "0001", content, toOid);
             } else {
-                return ApiResult.error("该业务暂时还不能处理！");
+                return atService.sendAt(flag, fromOid, pri, bussInfo.getBusinessNum(), port, bussInfo.getCommand(), content, toOid);
+//                return ApiResult.error("该业务暂时还不能处理！");
             }
 
 
@@ -727,7 +728,7 @@ public class SdsServiceImpl implements SdsService {
      */
     @Override
 //    @Transactional(rollbackFor = Exception.class)
-    public ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId, String relativeEventNo) {
+    public ApiResult pushEvent(String genOid, String eventType, String content, String eventNo, String targetOid, String bussInfoId, String relativeEventNo, String flag, String pri, String port) {
         try {
             //根据targetOid查找oidFull
             List<Fzwno> fzwnos = fzwnoMapper.findByRelation(targetOid);
@@ -750,7 +751,7 @@ public class SdsServiceImpl implements SdsService {
 
                 }
                 //查找区域服务器然后发送at
-                this.searchAreaServiceAndSend(genOid, eventType, content, eventNo, oidFull, bussInfoId);
+                this.searchAreaServiceAndSend(genOid, eventType, content, eventNo, oidFull, bussInfoId, flag, pri, port);
             }
 
             return ApiResult.success();
@@ -816,7 +817,7 @@ public class SdsServiceImpl implements SdsService {
             }
 
             //保存事件记录
-            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "", relativeEventNo);
+            ApiResult apiResult = this.pushEvent(genOid, eventType, content, eventNo, relation, bussInfo.getId() + "", relativeEventNo, flag, pri, port);
             if (ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
                 //在事件产生服务器上保存事件相关用户
                 this.clubUserManageHttp(owerServiceDto.getIp(), clubUserManageAtParam.getMsgType(), eventNo, clubUserManageAtParam.getOid(), oid);
@@ -956,7 +957,7 @@ public class SdsServiceImpl implements SdsService {
 
             String content = JSON.toJSONString(newClubAtParamDto);
 
-            return this.pushEvent(oid, String.valueOf(sdsEventTypeInfo.getType()), content, eventNo, targetOid, bussInfo.getId() + "", newClubAtParam.getRelativeEventNo());
+            return this.pushEvent(oid, String.valueOf(sdsEventTypeInfo.getType()), content, eventNo, targetOid, bussInfo.getId() + "", newClubAtParam.getRelativeEventNo(), flag, pri, port);
 
         } catch (Exception e) {
             return ApiResult.error(e.getMessage());
@@ -1292,7 +1293,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    public void pushDoEventWriteHttp(String ip, String oid, String eventType, String content, String eventNo, String bussInfoId) throws Exception {
+    public void pushDoEventWriteHttp(String ip, String oid, String eventType, String content, String eventNo, String bussInfoId, String flag, String pri, String port) throws Exception {
         String url = "http://" + ip + ":" + "9999/doEventWrite";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1301,6 +1302,9 @@ public class SdsServiceImpl implements SdsService {
         map.put("content", content);
         map.put("eventNo", eventNo);
         map.put("bussInfoId", bussInfoId);
+        map.put("flag", flag);
+        map.put("pri", pri);
+        map.put("port", port);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
         if (jsonObject != null) {
@@ -1368,7 +1372,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    public void searchAreaServiceAndSendHttp(String ip, String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId) throws Exception {
+    public void searchAreaServiceAndSendHttp(String ip, String fromOid, String eventType, String content, String eventNo, String toOid, String bussInfoId, String flag, String pri, String port) throws Exception {
         String url = "http://" + ip + ":" + "9999/areaServiceAndSend";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1378,6 +1382,9 @@ public class SdsServiceImpl implements SdsService {
         map.put("eventNo", eventNo);
         map.put("toOid", toOid);
         map.put("bussInfoId", bussInfoId);
+        map.put("flag", flag);
+        map.put("pri", pri);
+        map.put("port", port);
 
         log.info("++++++++++++++++4 searchAreaServiceAndSendHttp:toOid" + toOid);
         params = new Gson().toJson(map);
@@ -1397,7 +1404,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    public void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
+    public void pushTaskHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId, String flag, String pri, String port) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushTask";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1407,6 +1414,9 @@ public class SdsServiceImpl implements SdsService {
         map.put("eventNo", eventNo);
         map.put("targetOid", targetOid);
         map.put("bussInfoId", bussInfoId);
+        map.put("flag", flag);
+        map.put("pri", pri);
+        map.put("port", port);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
         if (jsonObject != null) {
@@ -1424,7 +1434,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    public void pushEventHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId) throws Exception {
+    public void pushEventHttp(String ip, String eventNo, String oid, String eventType, String content, String targetOid, String bussInfoId, String flag, String pri, String port) throws Exception {
         String url = "http://" + ip + ":" + "9999/pushEvent";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1434,6 +1444,9 @@ public class SdsServiceImpl implements SdsService {
         map.put("eventNo", eventNo);
         map.put("targetOid", targetOid);
         map.put("bussInfoId", bussInfoId);
+        map.put("flag", flag);
+        map.put("pri", pri);
+        map.put("port", port);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
         if (jsonObject != null) {
@@ -1553,7 +1566,7 @@ public class SdsServiceImpl implements SdsService {
         }
     }
 
-    private void genEventHttp(String ip, String oid, String eventType, String content, String bussInfoId) throws Exception {
+    private void genEventHttp(String ip, String oid, String eventType, String content, String bussInfoId, String flag, String pri, String port) throws Exception {
         String url = "http://" + ip + ":" + "9999/genEvent";
         String params = "";
         Map<String, String> map = new HashMap<>();
@@ -1561,6 +1574,9 @@ public class SdsServiceImpl implements SdsService {
         map.put("eventType", eventType);
         map.put("content", content);
         map.put("bussInfoId", bussInfoId);
+        map.put("flag", flag);
+        map.put("pri", pri);
+        map.put("port", port);
         params = new Gson().toJson(map);
         JSONObject jsonObject = BaseRestfulUtil.doPostForJson(url, map);
         if (jsonObject != null) {
@@ -1699,7 +1715,7 @@ public class SdsServiceImpl implements SdsService {
                     String oidFull = fzwno.getFzwRelation() + fzwno.getFzwDevice();
 
                     //查找区域服务器然后发送at
-                    this.searchAreaServiceAndSend(oid, "", param, "", oidFull, bussInfo.getId() + "");
+                    this.searchAreaServiceAndSend(oid, "", param, "", oidFull, bussInfo.getId() + "",flag,pri,port);
                 } else {
                     continue;
                 }
@@ -1742,7 +1758,7 @@ public class SdsServiceImpl implements SdsService {
 
             sdsEventInfoMapper.insertSelective(sdsEventInfo);
 
-            pushTaskFunc(oid, eventType, param, eventNo, String.valueOf(bussInfo.getId()));
+            pushTaskFunc(oid, eventType, param, eventNo, String.valueOf(bussInfo.getId()),flag,pri,port);
 
             return ApiResult.success();
         } catch (Exception e) {
