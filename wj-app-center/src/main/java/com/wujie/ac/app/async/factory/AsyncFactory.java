@@ -15,7 +15,7 @@ import java.util.TimerTask;
 @Slf4j
 public class AsyncFactory {
 
-    public static TimerTask pushTaskHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId, String flag, String pri, String port) {
+    public static TimerTask pushTaskHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId,final String flag,final String pri,final String port) {
         return new TimerTask() {
             @Override
             public void run() {
@@ -31,7 +31,7 @@ public class AsyncFactory {
         };
     }
 
-    public static TimerTask pushDoEventWriteHttp(final String ip, final String oid, final String eventType, final String content, final String eventNo, final String bussInfoId, String flag, String pri, String port) {
+    public static TimerTask pushDoEventWriteHttp(final String ip, final String oid, final String eventType, final String content, final String eventNo, final String bussInfoId,final String flag,final String pri,final String port) {
         return new TimerTask() {
             @Override
             public void run() {
@@ -47,7 +47,7 @@ public class AsyncFactory {
         };
     }
 
-    public static TimerTask searchAreaServiceAndSendHttp(final String ip, final String fromOid, final String eventType, final String content, final String eventNo, final String toOid, final String bussInfoId, String flag, String pri, String port) {
+    public static TimerTask searchAreaServiceAndSendHttp(final String ip, final String fromOid, final String eventType, final String content, final String eventNo, final String toOid, final String bussInfoId,final String flag,final String pri,final String port) {
         return new TimerTask() {
             @Override
             public void run() {
@@ -63,7 +63,7 @@ public class AsyncFactory {
         };
     }
 
-    public static TimerTask pushEventHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId, String flag, String pri, String port) {
+    public static TimerTask pushEventHttp(final String ip, final String eventNo, final String oid, final String eventType, final String content, final String targetOid, final String bussInfoId,final String flag,final String pri,final String port) {
         return new TimerTask() {
             @Override
             public void run() {

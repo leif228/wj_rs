@@ -144,8 +144,6 @@ public class AtServiceImpl implements AtService {
                     return sdsService.doNewClub(flag, oid, pri, buss, port, cmd, param);
                 }else if ("E021".equals(buss) && "0001".equals(cmd)) {  //请求执行业务处理
                     return sdsService.doApplyOpration(flag, oid, pri, buss, port, cmd, param);
-                }else{
-                    return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
                 }
             }
 
@@ -178,7 +176,7 @@ public class AtServiceImpl implements AtService {
                 return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", param, manageChatMsgAtParam.getEventNo(), bussInfo.getId() + "", flag, pri, port);
 
             } else {
-                return ApiResult.error("该业务暂时还不能处理！");
+                return sdsService.doLightOn(flag, oid, pri, buss, port, cmd, param);
             }
 
         } catch (Exception e) {

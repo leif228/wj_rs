@@ -101,9 +101,9 @@ public class UserServiceImpl implements UserService {
             channel.flush();
 
             log.error("+++++++++++++++++sendAtTask成功oid="+oid);
-            return ApiResult.success("成功oid="+oid);
+            return ApiResult.success("sendAtTask成功oid="+oid);
         }else{
-            log.error("+++++++++++++++++sendAtTask失败oid="+oid);
+            log.error("+++++++++++++++++sendAtTask失败！用户不在线！oid="+oid);
             return ApiResult.error("发送失败！用户不在线！oid="+oid);
         }
 
