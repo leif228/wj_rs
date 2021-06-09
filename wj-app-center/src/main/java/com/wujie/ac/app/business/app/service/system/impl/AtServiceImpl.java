@@ -147,18 +147,18 @@ public class AtServiceImpl implements AtService {
                 }
             }
 
-            BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
-            if (bussInfo == null)
-                throw new Exception("业务基础表找不到数据！");
-
-            List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(bussInfo.getId());
-            if (eventtypeBussMdInfos.size() == 0)
-                throw new Exception("业务基础表找不到数据！");
-
-            //TODO　后续根据算法实现匹配
-            EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
-
             if ("A001".equals(buss) && "0001".equals(cmd)) {
+
+                BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+                if (bussInfo == null)
+                    throw new Exception("BussInfo业务基础表找不到数据！");
+
+                List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(bussInfo.getId());
+                if (eventtypeBussMdInfos.size() == 0)
+                    throw new Exception("EventtypeBussMdInfo业务基础表找不到数据！");
+
+                //TODO　后续根据算法实现匹配
+                EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
                 //查找是否已经有事件记录
 //                SdsEventPersonRecord sdsEventPersonRecord = sdsEventPersonRecordMapper.findMaxByGenOidAndEventTypeId(param, targInfo.getEventTypeInfoId());
 //                if (sdsEventPersonRecord == null) {
@@ -169,6 +169,18 @@ public class AtServiceImpl implements AtService {
 //                    return sdsService.doEvent(oid, targInfo.getEventTypeInfoId() + "", bussInfo.getTxt(), sdsEventPersonRecord.getEventNo(), bussInfo.getId()+"");
 //                }
             } else if ("E001".equals(buss) && "0001".equals(cmd)) {
+
+                BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
+                if (bussInfo == null)
+                    throw new Exception("业务基础表找不到数据！");
+
+                List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(bussInfo.getId());
+                if (eventtypeBussMdInfos.size() == 0)
+                    throw new Exception("业务基础表找不到数据！");
+
+                //TODO　后续根据算法实现匹配
+                EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);
+
                 com.alibaba.fastjson.JSONObject objParamAt = com.alibaba.fastjson.JSONObject.parseObject(param);
                 ManageChatMsgAtParam manageChatMsgAtParam = (ManageChatMsgAtParam) com.alibaba.fastjson.JSONObject.toJavaObject(objParamAt, ManageChatMsgAtParam.class);
 
