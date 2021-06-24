@@ -14,12 +14,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Rec_1000_0000 implements Rec_task_i {
     AppUserService appUserService;
+
     @Override
     public void doTask(ChannelHandlerContext ctx, String tx, JSONObject objParam) {
-        log.info( "===============Rec_1000_0000收到的tx==========" + tx);
+        log.info("===============Rec_1000_0000收到的tx==========" + tx);
+        Long startTime = System.currentTimeMillis();
         ApiResult apiResult = appUserService.doAtTask(tx);
-        if(!ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE)))
-            log.info( "===============Rec_1000_0000收到的appUserService.doAtTask错误==========" + apiResult.get(ApiResult.MESSAGE));
+        if (!ApiResult.SUCCESS.equals(apiResult.get(ApiResult.RETURNCODE))) {
+            log.info("===============Rec_1000_0000处理-错误tx=" + tx + "==========" + apiResult.get(ApiResult.MESSAGE));
+            Long endTime = (System.currentTimeMillis() - startTime);
+            log.info("===============Rec_1000_0000处理-错误tx=" + tx + "==========耗时：" + endTime + "ms");
+        } else {
+            log.info("===============Rec_1000_0000处理-成功tx=" + tx + "==========" + apiResult.get(ApiResult.MESSAGE));
+            Long endTime = (System.currentTimeMillis() - startTime);
+            log.info("===============Rec_1000_0000处理-成功tx=" + tx + "==========耗时：" + endTime + "ms");
+
+        }
     }
 
     @Override
