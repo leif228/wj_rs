@@ -68,19 +68,19 @@ public class Constants
     /**
      * 文件服务器地址
      */
-    public static String FS_HOST = "http://fs.qingchuanyi.com";
+    public static String FS_HOST = "http://192.168.4.15";
     /**
      * 文件服务器地址端口
      */
-    public static int FS_PORT = 80;
+    public static int FS_PORT = 22122;
     /**
      * demo文件服务器地址
      */
-    public static String FS_DEV_HOST = "http://dev.qingchuanyi.com";
+    public static String FS_DEV_HOST = "http://192.168.4.15";
     /**
      * 文件服务器地址
      */
-    public static int FS_DEV_PORT = 8888;
+    public static int FS_DEV_PORT = 9899;
 
     /**
      * 消息队列相关配置

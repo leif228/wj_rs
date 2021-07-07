@@ -17,6 +17,7 @@
         <module name="wj-manage-center" />
         <module name="wj-tcp-center" />
         <module name="wj-http-center" />
+        <module name="wj-file-center" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -32,6 +33,7 @@
       <module name="wj-common" options="-parameters" />
       <module name="wj-dispatch-center" options="-parameters" />
       <module name="wj-feign-client" options="-parameters" />
+      <module name="wj-file-center" options="-parameters" />
       <module name="wj-http-center" options="-parameters" />
       <module name="wj-manage-center" options="-parameters" />
       <module name="wj-pcclient-service" options="-parameters" />

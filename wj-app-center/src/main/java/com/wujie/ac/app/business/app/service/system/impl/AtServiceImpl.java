@@ -172,11 +172,11 @@ public class AtServiceImpl implements AtService {
 
                 BussInfo bussInfo = bussInfoMapper.findByBussAndCmd(buss, cmd);
                 if (bussInfo == null)
-                    throw new Exception("业务基础表找不到数据！");
+                    throw new Exception("BussInfo业务基础表找不到数据！");
 
                 List<EventtypeBussMdInfo> eventtypeBussMdInfos = eventtypeBussMdInfoMapper.findbyBussId(bussInfo.getId());
                 if (eventtypeBussMdInfos.size() == 0)
-                    throw new Exception("业务基础表找不到数据！");
+                    throw new Exception("EventtypeBussMdInfo业务基础表找不到数据！");
 
                 //TODO　后续根据算法实现匹配
                 EventtypeBussMdInfo targInfo = eventtypeBussMdInfos.get(0);

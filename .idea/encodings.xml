@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/wj-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wj-dispatch-center/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wj-feign-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wj-file-center/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wj-http-center/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wj-manage-center/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wj-pcclient-service/src/main/java" charset="UTF-8" />

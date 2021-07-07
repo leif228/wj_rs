@@ -41,6 +41,7 @@
         <module>wj-manage-center</module>
         <module>wj-app-service</module>
         <module>wj-pcclient-service</module>
+        <module>wj-file-center</module>
     </modules>
 
     <parent>
