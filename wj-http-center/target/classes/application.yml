@@ -210,6 +210,8 @@ secure:
       - /clubUsers
       - /searchClubUsers
       - /searchSqlite
+      - /upload
+      - /test
 
 
 

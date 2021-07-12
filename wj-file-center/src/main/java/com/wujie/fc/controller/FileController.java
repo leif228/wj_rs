@@ -17,10 +17,7 @@ import com.wujie.fc.component.FastDFSClientWrapper;
 import com.wujie.fc.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -31,14 +28,13 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 1.0.0
  */
 @RestController
-@RequestMapping("/fs")
 public class FileController{
     @Autowired
     FileService fileService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping( value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResult uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        String imgUrl = FastDFSClientWrapper.uploadFile(file);
+        String imgUrl = FastDFSClientWrapper.uploadImageAndCrtThumbImage(file);
         String profile = SpringContextUtil.getActiveProfile();
 //        if(profile.equals("prod")) {//生产环境文件服务器地址和开发环境不同
 //            imgUrl = FastDFSClientWrapper.getHttpAccessUrl(imgUrl);
@@ -52,5 +48,10 @@ public class FileController{
             return ApiResult.error("文件上传失败");
         }
 
+    }
+
+    @PostMapping("/test")
+    public ApiResult test(@RequestParam(value = "testp") String testp) {
+        return  ApiResult.success("testsss");
     }
 }

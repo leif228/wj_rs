@@ -12,6 +12,7 @@ package com.wujie.fc.component;
 
 import com.github.tobato.fastdfs.conn.FdfsWebServer;
 import com.github.tobato.fastdfs.domain.StorePath;
+import com.github.tobato.fastdfs.domain.ThumbImageConfig;
 import com.github.tobato.fastdfs.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.wujie.common.constant.Constants;
@@ -46,10 +47,13 @@ public class FastDFSClientWrapper {
 
     private static FdfsWebServer fdfsWebServer;
 
+    private static ThumbImageConfig thumbImageConfig;
+
     @Autowired
-    public void setFastDFSClient(FastFileStorageClient fastFileStorageClient, FdfsWebServer fdfsWebServer) {
+    public void setFastDFSClient(FastFileStorageClient fastFileStorageClient, FdfsWebServer fdfsWebServer, ThumbImageConfig thumbImageConfig) {
         FastDFSClientWrapper.fastFileStorageClient = fastFileStorageClient;
         FastDFSClientWrapper.fdfsWebServer = fdfsWebServer;
+        FastDFSClientWrapper.thumbImageConfig = thumbImageConfig;
     }
 
     /**
@@ -82,7 +86,8 @@ public class FastDFSClientWrapper {
         try {
             if(null != multipartFile) {
                 StorePath storePath = fastFileStorageClient.uploadImageAndCrtThumbImage(multipartFile.getInputStream(), multipartFile.getSize(), FilenameUtils.getExtension(multipartFile.getOriginalFilename()), null);
-                return storePath.getFullPath();
+//                return storePath.getFullPath();
+                return thumbImageConfig.getThumbImagePath(storePath.getFullPath());
             }else{
                 return "";
             }
@@ -193,9 +198,9 @@ public class FastDFSClientWrapper {
         if(profile.equals("prod")){
             url = Constants.FS_HOST + ":" + Constants.FS_PORT + "/" + path;
         }else if(profile.equals("dev")) {
-            url = fdfsWebServer.getWebServerUrl() + path;
-        }else {
             url = Constants.FS_DEV_HOST+ ":" + Constants.FS_DEV_PORT + "/" + path;
+        }else {
+            url = fdfsWebServer.getWebServerUrl() + path;
         }
         log.info("上传文件地址为：\n" + url);
         return url;

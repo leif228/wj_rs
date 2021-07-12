@@ -135,6 +135,7 @@ public enum ErrorEnum {
     ERR_DSERVICE_NOT("S00166", "Dispach服务不可用！"),
     ERR_ASERVICE_NOT("S00166", "App服务不可用！"),
     ERR_TSERVICE_NOT("S00167", "Tcp服务不可用！"),
+    ERR_FSERVICE_NOT("S00167", "File服务不可用！"),
     ERR_HSERVICE_NOT("S00168", "Http服务不可用！"),
     ERR_CONNECTTCP_NOT("S00169", "连接tcp服务器失败！"),
     ERR_CCONFIGWRITE_NOT("S00170", "写cconfig.properties失败！"),

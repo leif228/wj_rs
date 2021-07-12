@@ -2,17 +2,19 @@ package com.wujie.hc.app.business.app.controller;
 
 import com.wujie.common.base.ApiResult;
 import com.wujie.common.dto.ResultVo;
+import com.wujie.common.utils.SpringContextUtil;
+import com.wujie.common.utils.StringUtils;
 import com.wujie.fclient.service.DispatchUserService;
+import com.wujie.fclient.service.FileUserService;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.UserService;
 import com.wujie.hc.app.business.vo.UserDetailsVo;
 import com.wujie.hc.app.framework.auth.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,9 +29,11 @@ public class UserController {
     private DispatchUserService dispatchUserService;
     private TcpUserService tcpUserService;
     private UserService userService;
+    private FileUserService fileUserService;
 
     @Autowired
-    public UserController(DispatchUserService dispatchUserService, UserService userService, TcpUserService tcpUserService) {
+    public UserController(FileUserService fileUserService, DispatchUserService dispatchUserService, UserService userService, TcpUserService tcpUserService) {
+        this.fileUserService = fileUserService;
         this.dispatchUserService = dispatchUserService;
         this.tcpUserService = tcpUserService;
         this.userService = userService;
@@ -216,7 +220,7 @@ public class UserController {
                                       @RequestParam(value = "threeSum") Integer threeSum,
                                       @RequestParam(value = "threeTab") String threeTab
     ) {
-        return dispatchUserService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort,oneSum,oneTab,twoSum,twoTab,threeSum,threeTab);
+        return dispatchUserService.deviceRegistElse(rootIp, idcard, deviceSelected, deviceName, pSort, cSort, aSort, sSort, oneSum, oneTab, twoSum, twoTab, threeSum, threeTab);
     }
 
     @PostMapping("/acsAll")
@@ -308,5 +312,15 @@ public class UserController {
     @PostMapping("/getTabsAreacs")
     public ApiResult getTabsAreacs() {
         return dispatchUserService.getTabsAreacs();
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult uploadFile(@RequestPart(value = "file") MultipartFile file) {
+        return fileUserService.uploadFile(file);
+    }
+
+    @PostMapping("/test")
+    public ApiResult test(@RequestParam(value = "testp") String testp) {
+        return fileUserService.test(testp);
     }
 }

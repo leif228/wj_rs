@@ -1,5 +1,7 @@
 server:
   port: 8889
+  tomcat:
+    basedir: /opt/javahome/wj/temp
   # 单位 KB
   #max-http-header-size: 1024000
 logging:
