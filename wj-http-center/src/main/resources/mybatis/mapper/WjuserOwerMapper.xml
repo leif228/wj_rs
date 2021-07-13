@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wujie.hc.app.business.repository.WjuserOwerMapper" >
+  <resultMap id="BaseResultMap" type="com.wujie.hc.app.business.entity.WjuserOwer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pass_word" property="passWord" jdbcType="VARCHAR" />
+    <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="oid" property="oid" jdbcType="VARCHAR" />
+    <result column="ower_ip" property="owerIp" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="addr" property="addr" jdbcType="VARCHAR" />
+    <result column="head_icon_url" property="headIconUrl" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="p_sort" property="pSort" jdbcType="INTEGER" />
+    <result column="c_sort" property="cSort" jdbcType="INTEGER" />
+    <result column="a_sort" property="aSort" jdbcType="INTEGER" />
+    <result column="s_sort" property="sSort" jdbcType="INTEGER" />
+    <result column="trades" property="trades" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_name, pass_word, idcard, oid, ower_ip, phone, addr, head_icon_url, major,
+    sex, user_type, p_sort, c_sort, a_sort, s_sort, trades, creat_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from wjuser_ower
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wujie.hc.app.business.entity.WjuserOwer" >
+    insert into wjuser_ower (id, user_name, pass_word,
+    idcard, oid, ower_ip,
+    phone, addr, head_icon_url,
+    major, sex, user_type,
+    p_sort, c_sort, a_sort,
+    s_sort, trades, creat_time
+    )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR},
+    #{idcard,jdbcType=VARCHAR}, #{oid,jdbcType=VARCHAR}, #{owerIp,jdbcType=VARCHAR},
+    #{phone,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{headIconUrl,jdbcType=VARCHAR},
+    #{major,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER},
+    #{pSort,jdbcType=INTEGER}, #{cSort,jdbcType=INTEGER}, #{aSort,jdbcType=INTEGER},
+    #{sSort,jdbcType=INTEGER}, #{trades,jdbcType=VARCHAR}, #{creatTime,jdbcType=DATE}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wujie.hc.app.business.entity.WjuserOwer" >
+    insert into wjuser_ower
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="passWord != null" >
+        pass_word,
+      </if>
+      <if test="idcard != null" >
+        idcard,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="owerIp != null" >
+        ower_ip,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="addr != null" >
+        addr,
+      </if>
+      <if test="headIconUrl != null" >
+        head_icon_url,
+      </if>
+      <if test="major != null" >
+        major,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="pSort != null" >
+        p_sort,
+      </if>
+      <if test="cSort != null" >
+        c_sort,
+      </if>
+      <if test="aSort != null" >
+        a_sort,
+      </if>
+      <if test="sSort != null" >
+        s_sort,
+      </if>
+      <if test="trades != null" >
+        trades,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="owerIp != null" >
+        #{owerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="headIconUrl != null" >
+        #{headIconUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="pSort != null" >
+        #{pSort,jdbcType=INTEGER},
+      </if>
+      <if test="cSort != null" >
+        #{cSort,jdbcType=INTEGER},
+      </if>
+      <if test="aSort != null" >
+        #{aSort,jdbcType=INTEGER},
+      </if>
+      <if test="sSort != null" >
+        #{sSort,jdbcType=INTEGER},
+      </if>
+      <if test="trades != null" >
+        #{trades,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wujie.hc.app.business.entity.WjuserOwer" >
+    update wjuser_ower
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        pass_word = #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="owerIp != null" >
+        ower_ip = #{owerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="headIconUrl != null" >
+        head_icon_url = #{headIconUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        major = #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="pSort != null" >
+        p_sort = #{pSort,jdbcType=INTEGER},
+      </if>
+      <if test="cSort != null" >
+        c_sort = #{cSort,jdbcType=INTEGER},
+      </if>
+      <if test="aSort != null" >
+        a_sort = #{aSort,jdbcType=INTEGER},
+      </if>
+      <if test="sSort != null" >
+        s_sort = #{sSort,jdbcType=INTEGER},
+      </if>
+      <if test="trades != null" >
+        trades = #{trades,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wujie.hc.app.business.entity.WjuserOwer" >
+    update wjuser_ower
+    set user_name = #{userName,jdbcType=VARCHAR},
+    pass_word = #{passWord,jdbcType=VARCHAR},
+    idcard = #{idcard,jdbcType=VARCHAR},
+    oid = #{oid,jdbcType=VARCHAR},
+    ower_ip = #{owerIp,jdbcType=VARCHAR},
+    phone = #{phone,jdbcType=VARCHAR},
+    addr = #{addr,jdbcType=VARCHAR},
+    head_icon_url = #{headIconUrl,jdbcType=VARCHAR},
+    major = #{major,jdbcType=VARCHAR},
+    sex = #{sex,jdbcType=VARCHAR},
+    user_type = #{userType,jdbcType=INTEGER},
+    p_sort = #{pSort,jdbcType=INTEGER},
+    c_sort = #{cSort,jdbcType=INTEGER},
+    a_sort = #{aSort,jdbcType=INTEGER},
+    s_sort = #{sSort,jdbcType=INTEGER},
+    trades = #{trades,jdbcType=VARCHAR},
+    creat_time = #{creatTime,jdbcType=DATE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="findByUserInfoName" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where user_name = #{username}
+  </select>
+  <select id="findByIdCard" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where idcard = #{idcard}
+  </select>
+  <select id="findByFzwnoLikeCAT" resultMap="BaseResultMap">
+    select * from wjuser_ower  where id=(
+    select MAX(id) from wjuser_ower where oid like concat(#{cat},'%'))
+  </select>
+
+  <select id="findByOid" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where oid = #{targetOid}
+  </select>
+
+  <select id="findByRelationLikeOid" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wjuser_ower
+    where #{oid} like concat(oid,'%')
+  </select>
+</mapper>
