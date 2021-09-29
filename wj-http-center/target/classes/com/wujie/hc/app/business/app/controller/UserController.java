@@ -314,9 +314,9 @@ public class UserController {
         return dispatchUserService.getTabsAreacs();
     }
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResult uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return fileUserService.uploadFile(file);
+    @PostMapping(value = "/uploadHead", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResult uploadHead(@RequestPart(value = "file") MultipartFile file,@RequestParam(value = "idcard") String idcard) {
+        return userService.uploadHead(file,idcard);
     }
 
     @PostMapping("/test")

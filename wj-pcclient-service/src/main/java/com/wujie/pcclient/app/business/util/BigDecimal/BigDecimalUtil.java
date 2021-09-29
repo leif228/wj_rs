@@ -9,7 +9,6 @@ import java.math.BigInteger;
 /**
  * @Description: BigDecimal基本处理
  * @ClassName: BigDecimalUtil.java
- * @author 董璨
  * @version 1.0
  * @Date 2019年7月17日 下午3:16:04
  */

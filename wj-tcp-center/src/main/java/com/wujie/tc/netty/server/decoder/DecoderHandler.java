@@ -87,6 +87,12 @@ public class DecoderHandler extends ByteToMessageDecoder {
             throws Exception {
 
         log.debug("DecoderHandler# # 客户端连接  Netty 出错...");
+
+        Channel incoming = ctx.channel();
+        if(incoming.hasAttr(ChannelManager.deviceInfoVoAttr)){
+            ChannelManager.deviceChannels.remove(incoming.attr(ChannelManager.deviceInfoVoAttr).get().getUniqueNo());
+        }
+        incoming.close();
 //        cause.printStackTrace();
         //关闭连接
 //        closeConnection(ctx);
@@ -136,6 +142,7 @@ public class DecoderHandler extends ByteToMessageDecoder {
         if(incoming.hasAttr(ChannelManager.deviceInfoVoAttr)){
             ChannelManager.deviceChannels.remove(incoming.attr(ChannelManager.deviceInfoVoAttr).get().getUniqueNo());
         }
+        incoming.close();
 
 //        DeviceSession session = ctx.channel().attr(KEY).getAndSet(null);
 //

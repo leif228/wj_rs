@@ -6,17 +6,12 @@ import com.wujie.common.dto.NodeVo;
 import com.wujie.common.dto.wj.DeviceTypeDto;
 import com.wujie.common.enums.ErrorEnum;
 import com.wujie.common.utils.MD5;
+import com.wujie.fclient.service.FileUserService;
 import com.wujie.fclient.service.TcpUserService;
 import com.wujie.hc.app.business.app.service.system.AuthUserService;
 import com.wujie.hc.app.business.app.service.system.UserService;
-import com.wujie.hc.app.business.entity.Device;
-import com.wujie.hc.app.business.entity.Node;
-import com.wujie.hc.app.business.entity.NodeStandby;
-import com.wujie.hc.app.business.entity.Wjuser;
-import com.wujie.hc.app.business.repository.DeviceMapper;
-import com.wujie.hc.app.business.repository.NodeMapper;
-import com.wujie.hc.app.business.repository.NodeStandbyMapper;
-import com.wujie.hc.app.business.repository.WjuserMapper;
+import com.wujie.hc.app.business.entity.*;
+import com.wujie.hc.app.business.repository.*;
 import com.wujie.hc.app.business.util.NumConvertUtil;
 import com.wujie.hc.app.business.util.date.DateUtil;
 import com.wujie.hc.app.business.vo.UserDetailsVo;
@@ -29,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,8 +44,13 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     private JwtTokenUtil jwtTokenUtil;
 
+    private FileUserService fileUserService;
+    private WjuserOwerMapper wjuserOwerMapper;
+
     @Autowired
-    public UserServiceImpl(NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+    public UserServiceImpl(WjuserOwerMapper wjuserOwerMapper,FileUserService fileUserService,NodeStandbyMapper nodeStandbyMapper, NodeMapper nodeMapper, WjuserMapper wjuserMapper, JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder, AuthUserService authUserService, DeviceMapper deviceMapper) {
+        this.wjuserOwerMapper = wjuserOwerMapper;
+        this.fileUserService = fileUserService;
         this.nodeStandbyMapper = nodeStandbyMapper;
         this.nodeMapper = nodeMapper;
         this.deviceMapper = deviceMapper;
@@ -169,6 +170,31 @@ public class UserServiceImpl implements UserService {
         log.info("设备注册成功");
 
         return ApiResult.success("设备注册成功");
+    }
+
+    @Override
+    public ApiResult uploadHead(MultipartFile file, String idcard) {
+        try{
+            WjuserOwer wjuserOwer = wjuserOwerMapper.findByIdCard(idcard);
+            if(wjuserOwer == null)
+                return ApiResult.error("找不到用户！！");
+
+            ApiResult result = fileUserService.uploadFile(file);
+            String imgUrl = "";
+            if(ApiResult.SUCCESS.equals(result.get(ApiResult.RETURNCODE))){
+                imgUrl = (String) result.get(ApiResult.MESSAGE);
+
+                log.info("==uploadHeadUrl=="+imgUrl);
+                wjuserOwer.setHeadIconUrl(imgUrl);
+                wjuserOwerMapper.updateByPrimaryKeySelective(wjuserOwer);
+
+                return ApiResult.success(imgUrl);
+            }else {
+                return result;
+            }
+        }catch (Exception e){
+            return ApiResult.error(e.getMessage());
+        }
     }
 
     @Override
